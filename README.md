@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>AI-Mentored Development for Juniors</strong><br>
-  <em>Claude becomes your senior engineer mentor, not your code monkey.</em>
+  <em>Ship code AND build skills. Not one or the other.</em>
 </p>
 
 <p align="center">
@@ -16,10 +16,10 @@
 
 <p align="center">
   <a href="#the-problem">The Problem</a> •
+  <a href="#how-mentorspec-works">How It Works</a> •
   <a href="#installation">Installation</a> •
   <a href="#commands">Commands</a> •
-  <a href="#philosophy">Philosophy</a> •
-  <a href="#uninstall">Uninstall</a>
+  <a href="#faq">FAQ</a>
 </p>
 
 ---
@@ -108,40 +108,78 @@ Open Claude Code in your project:
 
 <table>
 <tr>
-<th width="50%">❌ Without MentorSpec</th>
-<th width="50%">✅ With MentorSpec</th>
+<th width="50%">Typical AI Workflow</th>
+<th width="50%">MentorSpec Workflow</th>
 </tr>
 <tr>
 <td>
 
 ```
-You: "Write me a login form"
+You: "Build me a login form"
 
-AI: "Here's a complete login
-form with validation..."
+AI: [Plans it]
+AI: [Codes it for you]
 
-[200 lines of code]
+You: Review → Ship
+
+You shipped.
+But did you grow?
 ```
 
 </td>
 <td>
 
 ```
-You: "Write me a login form"
+You: "Build me a login form"
 
-AI: "I'll help you build that!
+AI: [Plans it, designs it,
+     breaks it into tasks]
 
-First, let's think through it:
-1. What fields do you need?
-2. Where does it submit to?
-3. What validation rules?
+AI: "Now let's build this together.
+     What fields does it need?
+     Write the form structure..."
 
-What's your approach?"
+You: [Types every line] → Ship
+
+You shipped AND you grew.
 ```
 
 </td>
 </tr>
 </table>
+
+---
+
+## 🔄 How MentorSpec Works
+
+MentorSpec is a **spec-driven development** system with two phases:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     PHASE 1: AI-LED SPECIFICATION                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   • AI helps define your mission, stack, and roadmap                │
+│   • AI breaks features into specs, designs, and tasks               │
+│   • You learn to THINK about problems before coding                 │
+│                                                                     │
+│   This part is similar to other spec-driven tools.                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                 PHASE 2: MENTORED IMPLEMENTATION                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   • AI guides, questions, and teaches                               │
+│   • YOU write the actual code                                       │
+│   • AI never touches your production code                           │
+│                                                                     │
+│   This is where juniors build real skills. ← THE DIFFERENCE         │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -249,6 +287,34 @@ rm -rf ~/mentor-spec
 - **Job seekers** — Create a portfolio you can defend in interviews
 - **Self-taught devs** — Get the mentorship bootcamps charge $20k for
 - **Anyone** who wants to need AI LESS over time
+
+---
+
+## ❓ FAQ
+
+### "Won't this slow me down?"
+
+Yes. That's the point.
+
+Building a house fast with someone else's hands means you can't build the next one alone.
+
+Building it yourself, with guidance, takes longer. But now you can build anything.
+
+### "What if I just want the AI to code it?"
+
+Then MentorSpec will feel frustrating.
+
+It's designed to feel a bit uncomfortable — like a workout. Growth requires resistance.
+
+If you want AI to just write code, use a different tool. No judgment.
+
+### "Is this only for complete beginners?"
+
+No. MentorSpec is for anyone who wants to **grow**, not just ship.
+
+If you're already senior and just want to ship fast, MentorSpec isn't for you. That's okay.
+
+But if you're a junior who wants skills that last — welcome.
 
 ---
 
