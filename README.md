@@ -9,17 +9,17 @@
 
 <p align="center">
   <!-- TODO: Add badges after pushing to GitHub -->
-  <a href="#installation"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-brightgreen?style=for-the-badge" alt="Install"></a>
+  <a href="#-installation"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-brightgreen?style=for-the-badge" alt="Install"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License"></a>
-  <a href="#commands"><img src="https://img.shields.io/badge/commands-6-orange?style=for-the-badge" alt="Commands"></a>
+  <a href="#-commands"><img src="https://img.shields.io/badge/commands-6-orange?style=for-the-badge" alt="Commands"></a>
 </p>
 
 <p align="center">
-  <a href="#the-problem">The Problem</a> •
-  <a href="#how-mentorspec-works">How It Works</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#commands">Commands</a> •
-  <a href="#faq">FAQ</a>
+  <a href="#-the-problem">The Problem</a> •
+  <a href="#-how-mentorspec-works">How It Works</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-commands">Commands</a> •
+  <a href="#-faq">FAQ</a>
 </p>
 
 ---
@@ -334,7 +334,7 @@ But if you're a junior who wants skills that last — welcome.
 </p>
 
 <p align="center">
-  <a href="#installation">Get Started →</a>
+  <a href="#-installation">Get Started →</a>
 </p>
 
 ---
