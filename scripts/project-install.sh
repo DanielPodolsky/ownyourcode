@@ -80,6 +80,8 @@ mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/testing"
 mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/seo"
 mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/accessibility"
 mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/documentation"
+mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/debugging"
+mkdir -p "$PROJECT_DIR/.claude/skills/fundamentals/resistance"
 mkdir -p "$PROJECT_DIR/.claude/skills/gates/ownership"
 mkdir -p "$PROJECT_DIR/.claude/skills/gates/security"
 mkdir -p "$PROJECT_DIR/.claude/skills/gates/error"
@@ -157,13 +159,13 @@ info "Installing skills..."
 
 # Copy fundamentals
 if [ -d "$BASE_DIR/.claude/skills/fundamentals" ]; then
-    for skill in frontend backend security performance error-handling engineering database testing seo accessibility documentation; do
+    for skill in frontend backend security performance error-handling engineering database testing seo accessibility documentation debugging resistance; do
         if [ -f "$BASE_DIR/.claude/skills/fundamentals/$skill/SKILL.md" ]; then
             cp "$BASE_DIR/.claude/skills/fundamentals/$skill/SKILL.md" \
                "$PROJECT_DIR/.claude/skills/fundamentals/$skill/"
         fi
     done
-    success "11 Core Fundamental skills installed"
+    success "13 Core Fundamental skills installed"
 fi
 
 # Copy gates
@@ -280,6 +282,19 @@ EOF
 success "Product templates created"
 
 # ============================================================================
+# STEP 9: Update .gitignore
+# ============================================================================
+
+if [ -f "$PROJECT_DIR/.gitignore" ]; then
+    if ! grep -q "ownyourcode/career/" "$PROJECT_DIR/.gitignore" 2>/dev/null; then
+        echo "" >> "$PROJECT_DIR/.gitignore"
+        echo "# OwnYourCode - personal career tracking" >> "$PROJECT_DIR/.gitignore"
+        echo "ownyourcode/career/" >> "$PROJECT_DIR/.gitignore"
+        success "Updated .gitignore"
+    fi
+fi
+
+# ============================================================================
 # COMPLETE
 # ============================================================================
 
@@ -304,7 +319,7 @@ echo "  📁 .claude/                 — Claude Code configuration"
 echo "     ├── CLAUDE.md            — THE STRICTNESS (mentor behavior)"
 echo "     ├── commands/            — 10 slash commands"
 echo "     └── skills/              — Auto-invoked mentorship skills"
-echo "         ├── fundamentals/    — 11 Core review skills"
+echo "         ├── fundamentals/    — 13 Core review skills"
 echo "         ├── gates/           — 6 Mentorship gates"
 echo "         ├── career/          — STAR & resume extraction"
 echo "         └── learned/         — Auto-generated from /retrospective"
@@ -315,31 +330,21 @@ echo "     ├── patterns/            — Reusable solutions"
 echo "     └── failures/            — Documented anti-patterns"
 echo ""
 
-info "New in v2.1:"
-echo "  • GLOBAL learning registry (persists across all projects)"
-echo "  • Package manager education (npm, pnpm, bun, yarn)"
-echo "  • Version intelligence (always verify latest)"
-echo "  • Silent skill activation (quality without jargon)"
-echo "  • Dual MCP research (Context7 + OctoCode mandatory)"
-echo "  • Automatic spec archival on completion"
-echo "  • Real-time task tracking"
-echo ""
-info "From v2.0:"
-echo "  • 6 Mentorship Gates (including Testing)"
-echo "  • /test and /docs commands"
-echo "  • Learning Flywheel (/advise → /retrospective)"
-echo "  • MCP integration (Context7 + Octocode)"
-echo ""
-
 info "Next steps:"
 echo "  1. Open Claude Code in this project"
 echo "  2. Run: /own:init"
-echo "  3. Before each task: /own:advise"
-echo "  4. After each task: /own:done → /own:retrospective"
+echo ""
+info "The workflow:"
+echo "  /own:feature  →  Plan a new feature (creates spec, design, tasks)"
+echo "  /own:advise   →  Get relevant learnings before starting a task"
+echo "  /own:guide    →  Get implementation help as you code"
+echo "  /own:done     →  Pass 6 Gates, code review, extract STAR story"
+echo "  /own:retro    →  Capture what you learned"
 echo ""
 
 info "MCP Setup (recommended):"
-echo "  claude mcp add --transport http context7 https://mcp.context7.com/mcp"
+echo "  Context7:  claude mcp add context7 --transport http https://mcp.context7.com/mcp"
+echo "  OctoCode:  https://octocode.ai/#installation"
 echo ""
 
 info "To remove OwnYourCode later:"

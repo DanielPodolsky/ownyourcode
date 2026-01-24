@@ -36,6 +36,8 @@ OwnYourCode flips this. The AI becomes your **mentor**, not your coder. It guide
 
 ## Quick Start
 
+### macOS / Linux
+
 **Step 1: Install OwnYourCode**
 
 ```bash
@@ -49,7 +51,22 @@ cd your-project
 ~/ownyourcode/scripts/project-install.sh
 ```
 
-**Step 3: Initialize**
+### Windows (PowerShell)
+
+**Step 1: Install OwnYourCode**
+
+```powershell
+irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.ps1 | iex
+```
+
+**Step 2: Add to Your Project**
+
+```powershell
+cd your-project
+~/ownyourcode/scripts/project-install.ps1
+```
+
+### Then Initialize
 
 Open Claude Code in your project and run:
 
