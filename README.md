@@ -4,12 +4,12 @@
 
 <p align="center">
   <strong>AI-Mentored Development for Juniors</strong><br>
-  <em>Build engineers, not dependencies.</em>
+  <em>Less dependency, more ownership.</em>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-2.1-blueviolet?style=for-the-badge" alt="Version 2.1">
-  <a href="#-installation"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-brightgreen?style=for-the-badge" alt="Install"></a>
+  <a href="#quick-start"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-brightgreen?style=for-the-badge" alt="Install"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License"></a>
 </p>
 
@@ -17,355 +17,38 @@
   <img src="https://img.shields.io/badge/commands-10-orange?style=flat-square" alt="10 Commands">
   <img src="https://img.shields.io/badge/skills-11-green?style=flat-square" alt="11 Skills">
   <img src="https://img.shields.io/badge/gates-6-red?style=flat-square" alt="6 Gates">
-  <img src="https://img.shields.io/badge/flywheel-learning-purple?style=flat-square" alt="Learning Flywheel">
-</p>
-
-<p align="center">
-  <a href="#the-problem">Problem</a> •
-  <a href="#why-not-just-learning-mode">Why Not Learning Mode?</a> •
-  <a href="#the-6-gates">6 Gates</a> •
-  <a href="#installation">Install</a> •
-  <a href="#mcp-integration-recommended">MCPs</a> •
-  <a href="#commands">Commands</a>
 </p>
 
 ---
 
-## What's New in v2.1
+## What is OwnYourCode?
 
-| Feature                       | Description                                                          |
-| ----------------------------- | -------------------------------------------------------------------- |
-| **Global Learning Registry**  | Learnings persist across ALL projects at `~/ownyourcode/learning/`   |
-| **Package Manager Education** | Learn npm vs pnpm vs bun vs yarn during `/init`                      |
-| **Version Intelligence**      | Always verifies latest package versions via MCP before recommending  |
-| **Silent Skill Activation**   | Skills shape specs and reviews without jargon — quality just happens |
-| **Dual MCP Research**         | BOTH Context7 AND OctoCode are mandatory for research                |
-| **Automatic Spec Archival**   | Completed specs auto-move to `completed/`                            |
-| **Real-time Task Tracking**   | Tasks marked complete as you work, not just at `/done`               |
+AI coding tools optimize for **shipping**, not **learning**. Junior asks AI → AI writes code → Junior copy-pastes → "It works!" → No understanding gained → Dependency grows.
+
+OwnYourCode flips this. The AI becomes your **mentor**, not your coder. It guides, questions, and reviews — but **you** write every line.
+
+**The result:** Skills that last. Code you can defend in an interview. Independence, not dependency.
+
+> See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 
-## From v2.0
+## Quick Start
 
-| Feature                   | Description                                              |
-| ------------------------- | -------------------------------------------------------- |
-| **6 Mentorship Gates**    | Mandatory quality checkpoints before completing any task |
-| **Learning Flywheel**     | Your learnings compound across sessions                  |
-| **11 Auto-Invoke Skills** | Testing, SEO, Accessibility, Documentation + 7 more      |
-| **10 Commands**           | Added `/test` and `/docs` commands                       |
-| **Resistance Protocol**   | Pushback when juniors try to shortcut the process        |
-| **Career Extraction**     | STAR stories + resume bullets from every task            |
-
----
-
-## The Problem
-
-**AI coding tools optimize for SHIPPING, not LEARNING.**
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        THE BRAIN ROT CYCLE                               │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│         Junior has problem                                               │
-│                │                                                         │
-│                ▼                                                         │
-│         Asks AI to solve it                                              │
-│                │                                                         │
-│                ▼                                                         │
-│         AI writes the code                                               │
-│                │                                                         │
-│                ▼                                                         │
-│         Junior copy-pastes                                               │
-│                │                                                         │
-│                ▼                                                         │
-│         "It works!" ────────────▶  No understanding gained               │
-│                │                                                         │
-│                │  Next problem...                                        │
-│                └──────────────────────────────┐                          │
-│                                               │                          │
-│                                    ┌──────────┘                          │
-│                                    ▼                                     │
-│                            DEPENDENCY GROWS                              │
-│                                                                          │
-│   RESULT: Junior needs AI MORE over time, not LESS                       │
-│   INTERVIEW: "Explain this code you wrote" → "Uh... the AI wrote it" 😰  │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Why Not Just "Learning Mode"?
-
-Claude has a built-in "Learning" output style. **It's not enough.**
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                CLAUDE'S LEARNING MODE vs OWNYOURCODE                      │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   LEARNING MODE                      OWNYOURCODE                          │
-│   ─────────────                      ──────────                          │
-│                                                                          │
-│   ❌ A "preference" - suggestive     ✅ RULES - enforced strictly        │
-│      Can be overridden easily           Cannot be bypassed               │
-│                                                                          │
-│   ❌ No memory across sessions       ✅ Learning Flywheel persists       │
-│      Each chat starts fresh             Your growth compounds            │
-│                                                                          │
-│   ❌ No structured checkpoints       ✅ 6 Mandatory Gates                │
-│      Just "tries to teach"              Must pass to complete            │
-│                                                                          │
-│   ❌ No career value extraction      ✅ STAR stories + Resume bullets    │
-│      Learning is implicit               After every task                 │
-│                                                                          │
-│   ❌ Still writes full code          ✅ MAX 8 lines of example           │
-│      if you ask nicely                  YOU write production code        │
-│                                                                          │
-│   ❌ No resistance to shortcuts      ✅ Resistance Protocol              │
-│      "Just do it" works                 Pushes back on laziness          │
-│                                                                          │
-│   ❌ No documentation-first          ✅ "What do the docs say?"          │
-│      AI answers from memory             Before EVERY answer              │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-
-              LEARNING MODE = SUGGESTION
-              OWNYOURCODE = SYSTEM
-```
-
----
-
-## How It Works
-
-### The Two-Phase System
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     PHASE 1: AI-LED SPECIFICATION                        │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
-│   │   Define    │    │   Break     │    │   Create    │                 │
-│   │   Mission   │───▶│   Feature   │───▶│   Specs     │                 │
-│   │   & Stack   │    │   into      │    │   & Tasks   │                 │
-│   │             │    │   Tasks     │    │             │                 │
-│   └─────────────┘    └─────────────┘    └─────────────┘                 │
-│                                                                          │
-│   • AI helps you THINK about the problem                                 │
-│   • AI creates specifications, designs, task breakdowns                  │
-│   • YOU review and approve the plan                                      │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                   PHASE 2: MENTORED IMPLEMENTATION                       │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
-│   │    AI       │    │    YOU      │    │    AI       │                 │
-│   │   Guides    │───▶│   Write     │───▶│   Reviews   │                 │
-│   │  Questions  │    │   Code      │    │   via Gates │                 │
-│   │  Patterns   │    │             │    │             │                 │
-│   └─────────────┘    └─────────────┘    └─────────────┘                 │
-│                                                                          │
-│   • AI provides patterns (MAX 8 lines)                                   │
-│   • AI asks guiding questions                                            │
-│   • YOU write ALL production code                                        │
-│   • AI NEVER touches your codebase                                       │
-│                                                                          │
-│   ════════════════════════════════════════════════════════════════════  │
-│   ║  THIS IS WHERE JUNIORS BUILD REAL SKILLS  ←  THE DIFFERENCE  ║      │
-│   ════════════════════════════════════════════════════════════════════  │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## The Anti-Brain-Rot Rules
-
-These rules are **enforced**, not suggested:
-
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                                                                          │
-│  RULE 1: AI NEVER WRITES PRODUCTION CODE                                 │
-│          Maximum 8 lines of EXAMPLE code (patterns only)                 │
-│          Every example: "Your implementation will differ..."             │
-│                                                                          │
-│  RULE 2: DOCUMENTATION IS SACRED                                         │
-│          "What do the docs say?" before every technical answer           │
-│          AI fetches official docs and cites sources                      │
-│                                                                          │
-│  RULE 3: NEVER GIVE ANSWERS DIRECTLY                                     │
-│          First: "What have you tried?"                                   │
-│          Second: "What's your current approach?"                         │
-│          ONLY THEN: Provide guidance (not solutions)                     │
-│                                                                          │
-│  RULE 4: FORCE UNDERSTANDING                                             │
-│          "Explain back to me what you're implementing"                   │
-│          If they can't explain it → They don't understand it             │
-│                                                                          │
-│  RULE 5: EMBRACE THE STRUGGLE                                            │
-│          Confusion is the sweat of learning                              │
-│          Don't rush to solve their problems                              │
-│                                                                          │
-└──────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## The 6 Gates
-
-Before completing ANY task, you must pass through 6 quality checkpoints:
-
-```
-╔══════════════════════════════════════════════════════════════════════════╗
-║                           THE 6 MENTORSHIP GATES                          ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║                                                                          ║
-║  GATE 1: OWNERSHIP                                          🛑 CAN BLOCK ║
-║  ─────────────────                                                       ║
-║  "Walk me through what this code does, line by line."                    ║
-║                                                                          ║
-║  If you can't explain your own code, you don't understand it.            ║
-║  This is the ONLY gate that can completely block completion.             ║
-║                                                                          ║
-║──────────────────────────────────────────────────────────────────────────║
-║                                                                          ║
-║  GATE 2: SECURITY                                           ⚠️ WARNINGS  ║
-║  ────────────────                                                        ║
-║  "Where does user input enter this code? How is it validated?"           ║
-║  Checks for OWASP Top 10: injection, XSS, auth issues, secrets           ║
-║                                                                          ║
-║──────────────────────────────────────────────────────────────────────────║
-║                                                                          ║
-║  GATE 3: ERROR HANDLING                                     ⚠️ WARNINGS  ║
-║  ──────────────────────                                                  ║
-║  "What happens if the network fails? What does the user see?"            ║
-║  No empty catch blocks. User-friendly messages. Proper logging.          ║
-║                                                                          ║
-║──────────────────────────────────────────────────────────────────────────║
-║                                                                          ║
-║  GATE 4: PERFORMANCE                                        ⚠️ WARNINGS  ║
-║  ───────────────────                                                     ║
-║  "What happens with 10,000 items? How many database queries?"            ║
-║  No O(n²) without justification. No N+1 queries. Pagination.             ║
-║                                                                          ║
-║──────────────────────────────────────────────────────────────────────────║
-║                                                                          ║
-║  GATE 5: FUNDAMENTALS                                     💡 SUGGESTIONS ║
-║  ────────────────────                                                    ║
-║  "Would a new developer understand this code?"                           ║
-║  Descriptive names. No magic numbers. Reasonable function sizes.         ║
-║                                                                          ║
-║──────────────────────────────────────────────────────────────────────────║
-║                                                                          ║
-║  GATE 6: TESTING                                            ⚠️ WARNINGS  ║
-║  ───────────────                                                         ║
-║  "What tests prove this feature works?"                                  ║
-║  Encourages testing habit through positive reinforcement, not blocking.  ║
-║                                                                          ║
-╚══════════════════════════════════════════════════════════════════════════╝
-
-This is what senior code review looks like. Now it happens on every task.
-```
-
----
-
-## The Learning Flywheel
-
-**Your learnings compound over time.** Unlike normal AI chats that forget everything, OwnYourCode remembers.
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        THE LEARNING FLYWHEEL                             │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│                         ┌────────────────┐                               │
-│              ┌──────────│   /advise      │◀─────────────┐                │
-│              │          │                │              │                │
-│              │          │  "Before you   │              │                │
-│              │          │   start, here  │              │                │
-│              │          │   are lessons  │              │                │
-│              │          │   from last    │              │                │
-│              │          │   time..."     │              │                │
-│              │          └───────┬────────┘              │                │
-│              │                  │                       │                │
-│              │                  ▼                       │                │
-│              │          ┌────────────────┐              │                │
-│              │          │   WORK ON      │              │                │
-│              │          │   TASK         │              │                │
-│              │          └───────┬────────┘              │                │
-│              │                  │                       │                │
-│              │                  ▼                       │                │
-│              │          ┌────────────────┐              │                │
-│              │          │   /done        │              │                │
-│              │          │   (6 Gates)    │              │                │
-│              │          └───────┬────────┘              │                │
-│              │                  │                       │                │
-│              │                  ▼                       │                │
-│              │          ┌────────────────┐              │                │
-│              │          │ /retrospective │              │                │
-│              │          │  "What did     │              │                │
-│              │          │   you learn?"  │              │                │
-│              │          └───────┬────────┘              │                │
-│              │                  │                       │                │
-│              │                  ▼                       │                │
-│              │          ┌────────────────┐              │                │
-│              └──────────│   LEARNING     │──────────────┘                │
-│                         │   REGISTRY     │                               │
-│                         │                │                               │
-│                         │  Patterns ✓    │                               │
-│                         │  Failures ✓    │                               │
-│                         │  Growth ✓      │                               │
-│                         └────────────────┘                               │
-│                                                                          │
-│   EACH CYCLE MAKES THE NEXT ONE SMARTER                                 │
-│   • Your failures become warnings                                        │
-│   • Your patterns become shortcuts                                       │
-│   • Your growth is tracked and visible                                   │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## The Resistance Protocol
-
-When juniors try to shortcut the process:
-
-| They Say                               | Mentor Responds                                                                                     |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| "Just write the code for me"           | "I could write it in 10 seconds. But then you'd learn nothing. What specifically are you stuck on?" |
-| "This is taking too long"              | "Growth takes time. If we rush, you'll be stuck again tomorrow. Where exactly are you losing time?" |
-| "I don't need to explain it, it works" | "Working code you don't understand is a liability. Walk me through it, or we're not done."          |
-| "Can you just fix this one thing?"     | "I'll guide you to fix it. What do the logs/errors say?"                                            |
-| "I already know this stuff"            | "Great! Then explaining it should be quick. Walk me through your approach."                         |
-
-**The resistance IS the workout. Growth requires friction.**
-
----
-
-## Installation
-
-### Step 1: Install OwnYourCode Base
+**Step 1: Install OwnYourCode**
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.sh | bash
 ```
 
-### Step 2: Add to Your Project
+**Step 2: Add to Your Project**
 
 ```bash
 cd your-project
 ~/ownyourcode/scripts/project-install.sh
 ```
 
-### Step 3: Initialize
+**Step 3: Initialize**
 
 Open Claude Code in your project and run:
 
@@ -373,103 +56,114 @@ Open Claude Code in your project and run:
 /own:init
 ```
 
-**That's it.** Claude is now your mentor, not your coder.
+That's it. Claude is now your mentor, not your coder.
 
 ---
 
-## MCP Integration (Recommended)
+## How It Works
 
-OwnYourCode uses MCPs (Model Context Protocol) for enhanced mentorship:
+OwnYourCode operates in two phases:
 
-### Context7 — Documentation Lookup
+1. **AI-Led Specification** — AI helps you think, plan, and break down features into tasks. You review and approve.
 
-Before answering technical questions, the mentor fetches official docs and cites sources.
+2. **Mentored Implementation** — AI provides patterns (max 8 lines of example code), asks guiding questions, and reviews via 6 Gates. **You write all production code.**
 
-```bash
-claude mcp add context7 --transport http https://mcp.context7.com/mcp
-```
+**The core rules:**
+- AI never writes production code for you
+- Documentation is checked before every technical answer
+- You must explain your code to complete a task
+- Confusion is expected — growth requires struggle
 
-### Octocode — GitHub Code Search
+---
 
-Search how production apps implement patterns. Learn from real code, not just theory.
+## The 6 Gates
 
-```bash
-claude mcp add octocode
-```
+Before completing any task, your code passes through 6 quality checkpoints:
 
-| MCP          | Purpose                                                      |
-| ------------ | ------------------------------------------------------------ |
-| **Context7** | "According to the React 19 docs..." — Official documentation |
-| **Octocode** | "Here's how Vercel implements this..." — Production patterns |
+| Gate | Focus | Question Asked |
+|------|-------|----------------|
+| 1. Ownership | Understanding | "Walk me through what this code does, line by line." |
+| 2. Security | OWASP Top 10 | "Where does user input enter? How is it validated?" |
+| 3. Error Handling | Resilience | "What happens if the network fails? What does the user see?" |
+| 4. Performance | Scalability | "What happens with 10,000 items? How many DB queries?" |
+| 5. Fundamentals | Readability | "Would a new developer understand this code?" |
+| 6. Testing | Quality | "What tests prove this feature works?" |
 
-> **Without MCPs:** OwnYourCode still works, but operates at reduced effectiveness. The mentor can't verify answers against official docs or show real-world examples.
+**Gate 1 (Ownership) can block completion.** If you can't explain your code, you don't understand it.
+
+---
+
+## The Learning Flywheel
+
+Your learnings compound over time. Unlike normal AI chats that forget everything, OwnYourCode remembers.
+
+**The cycle:**
+- `/advise` — Before starting, get lessons from past work
+- **Work on task** — With mentored guidance
+- `/done` — Pass the 6 Gates
+- `/retro` — Capture what you learned
+
+**What persists:**
+- **Patterns** — Solutions that worked
+- **Failures** — Mistakes you won't repeat
+- **STAR Stories** — Interview-ready accomplishments
+- **Resume Bullets** — Career value from every task
+
+Each cycle makes the next one smarter. Your failures become warnings. Your patterns become shortcuts.
 
 ---
 
 ## Commands
 
-| Command                      | Purpose                                                 |
-| ---------------------------- | ------------------------------------------------------- |
-| `/own:init`          | Define your mission, stack, and roadmap                 |
-| `/own:feature`       | Plan a feature with spec-driven development             |
-| `/own:advise`        | Pre-work intelligence from your learning history        |
-| `/own:guide`         | Get implementation guidance (patterns, not code)        |
-| `/own:test`          | Guide through writing tests (you write, AI guides)      |
-| `/own:docs`          | Guide through writing documentation                     |
-| `/own:stuck`         | Debug with Protocol D (systematic debugging)            |
-| `/own:done`          | Complete with 6 Gates + code review + career extraction |
-| `/own:retro` | Capture learnings for the flywheel                      |
-| `/own:status`        | Check progress + learning stats                         |
+| Command | Purpose |
+|---------|---------|
+| `/own:init` | Define your mission, stack, and roadmap |
+| `/own:feature` | Plan a feature with spec-driven development |
+| `/own:advise` | Pre-work intelligence from your learning history |
+| `/own:guide` | Get implementation guidance (patterns, not code) |
+| `/own:test` | Guide through writing tests (you write, AI guides) |
+| `/own:docs` | Guide through writing documentation |
+| `/own:stuck` | Debug with Protocol D |
+| `/own:done` | Complete with 6 Gates + code review + career extraction |
+| `/own:retro` | Capture learnings for the flywheel |
+| `/own:status` | Check progress + learning stats |
 
 ---
 
 ## Protocol D (Debugging)
 
-When you're stuck, OwnYourCode doesn't solve it for you:
+When you're stuck, OwnYourCode guides you through systematic debugging:
 
-```
-╔══════════════════════════════════════════════════════════════╗
-║                       PROTOCOL D                              ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  1. READ       "Read the error out loud. What is it saying?" ║
-║       │                                                      ║
-║       ▼                                                      ║
-║  2. ISOLATE    "Where exactly is the failure?"               ║
-║       │                                                      ║
-║       ▼                                                      ║
-║  3. DOCS       "What does the documentation say?"            ║
-║       │                                                      ║
-║       ▼                                                      ║
-║  4. HYPOTHESIZE "What do YOU think the fix is?"              ║
-║       │                                                      ║
-║       ▼                                                      ║
-║  5. VERIFY     "Try it. Did it work? Why?"                   ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
+1. **READ** — "Read the error out loud. What is it saying?"
+2. **ISOLATE** — "Where exactly is the failure?"
+3. **DOCS** — "What does the documentation say?"
+4. **HYPOTHESIZE** — "What do YOU think the fix is?"
+5. **VERIFY** — "Try it. Did it work? Why?"
 
-This is how seniors debug. Now it's how YOU debug.
-```
+This is how seniors debug. Now it's how you debug.
 
 ---
 
-## Career Value Extraction
+## MCP Setup (Recommended)
 
-Every completed task produces interview material:
+OwnYourCode uses MCPs for enhanced mentorship:
 
-### STAR Interview Stories
+**Context7 — Documentation Lookup**
+```bash
+claude mcp add context7 --transport http https://mcp.context7.com/mcp
+```
 
-- **S**ituation: What was the context?
-- **T**ask: What were YOU responsible for?
-- **A**ction: What did YOU do?
-- **R**esult: What was the outcome?
+**Octocode — GitHub Code Search**
+```bash
+claude mcp add octocode
+```
 
-### Resume Bullets
+| MCP | Purpose |
+|-----|---------|
+| Context7 | "According to the React 19 docs..." — Official documentation |
+| Octocode | "Here's how Vercel implements this..." — Production patterns |
 
-**Format:** Action Verb + What You Did + Impact
-
-- ❌ Bad: "Built a login form"
-- ✅ Good: "Engineered JWT authentication with refresh token rotation, reducing session vulnerability surface"
+Without MCPs, OwnYourCode still works but operates at reduced effectiveness.
 
 ---
 
@@ -477,94 +171,42 @@ Every completed task produces interview material:
 
 ```
 your-project/
-│
-├── .claude/                          ← Claude Code reads this
-│   ├── CLAUDE.md                     ← THE STRICTNESS (mentor rules)
+├── .claude/
+│   ├── CLAUDE.md                     ← Mentor rules
 │   ├── commands/ownyourcode/         ← 10 slash commands
-│   └── skills/                       ← Auto-invoked knowledge
-│       ├── fundamentals/             ← 11 core skills (silently applied)
-│       │   ├── frontend/
-│       │   ├── backend/
-│       │   ├── security/
-│       │   ├── performance/
-│       │   ├── error-handling/
-│       │   ├── engineering/
-│       │   ├── database/
-│       │   ├── testing/
-│       │   ├── seo/
-│       │   ├── accessibility/
-│       │   └── documentation/
+│   └── skills/
+│       ├── fundamentals/             ← 11 core skills
 │       ├── gates/                    ← 6 mentorship gates
 │       ├── career/                   ← STAR + resume extraction
-│       └── learned/                  ← Project-specific generated skills
+│       └── learned/                  ← Project-specific skills
 │
-├── ownyourcode/                       ← Project documentation
+├── ownyourcode/
 │   ├── product/                      ← Mission, stack, roadmap
-│   ├── specs/                        ← Feature specifications
+│   ├── specs/
 │   │   ├── active/                   ← Work in progress
-│   │   └── completed/                ← Archived (auto-moved by /done)
+│   │   └── completed/                ← Archived specs
 │   └── career/                       ← Your interview stories
 │
 ~/ownyourcode/                        ← GLOBAL (persists across projects)
-└── learning/                         ← The Learning Flywheel
-    ├── LEARNING_REGISTRY.md          ← Your growth tracker (all projects)
+└── learning/
+    ├── LEARNING_REGISTRY.md          ← Growth tracker
     ├── patterns/                     ← Reusable solutions
-    └── failures/                     ← Mistakes you learned from
+    └── failures/                     ← Lessons learned
 ```
 
 ---
 
-## FAQ
+## Philosophy
 
-### "Won't this slow me down?"
+**"Won't this slow me down?"**
 
-Yes. That's the point.
+Yes. That's the point. Building with someone else's hands means you can't build the next one alone. Building yourself, with guidance, takes longer — but now you can build anything.
 
-Building a house fast with someone else's hands means you can't build the next one alone. Building it yourself, with guidance, takes longer. But now you can build anything.
-
-### "What if I just want the AI to code it?"
-
-Then OwnYourCode will feel frustrating. It's designed to feel a bit uncomfortable — like a workout. Growth requires resistance.
-
-If you want AI to just write code, use a different tool. No judgment.
-
-### "Is this only for complete beginners?"
-
-No. OwnYourCode is for anyone who wants to **grow**, not just ship.
-
-If you're already senior and just want to ship fast, OwnYourCode isn't for you. But if you're a junior who wants skills that last — welcome.
-
-### "How is this different from Claude's Learning mode?"
-
-Learning Mode is a **suggestion**. OwnYourCode is a **system**.
-
-Learning Mode can be overridden by saying "just write the code." OwnYourCode can't. Learning Mode forgets between sessions. OwnYourCode's flywheel compounds your growth. Learning Mode has no checkpoints. OwnYourCode has 6 mandatory gates.
-
----
-
-## Uninstall
-
-**From a project:**
-
-```bash
-~/ownyourcode/scripts/project-uninstall.sh
-```
-
-**Remove completely:**
-
-```bash
-rm -rf ~/ownyourcode
-```
-
----
-
-## The Ultimate Test
+**The Ultimate Test**
 
 > _"If you took away the AI tomorrow, could you still code?"_
 
-**Without OwnYourCode:** Probably not.
-
-**With OwnYourCode:** **Yes.** Because you wrote every line. You understood every decision. You built real skills.
+With OwnYourCode: **Yes.** Because you wrote every line, understood every decision, and built real skills.
 
 ---
 
@@ -574,15 +216,11 @@ rm -rf ~/ownyourcode
 </p>
 
 <p align="center">
-  <em>The resistance is the workout. The struggle is the growth.</em>
-</p>
-
-<p align="center">
-  <a href="#installation">Get Started →</a>
+  <a href="#quick-start">Get Started</a>
 </p>
 
 ---
 
 <p align="center">
-  <sub>MIT License • v2.1</sub>
+  <sub>MIT License</sub>
 </p>
