@@ -155,7 +155,8 @@ if (Test-Path $srcCommands) {
     foreach ($file in $files) {
         Copy-Item $file.FullName -Destination $destCommands -Force
     }
-    Write-OK ("Commands installed (" + $files.Count + " commands)")
+    $cmdCount = $files.Count
+    Write-OK "Commands installed ($cmdCount commands)"
 } else {
     Write-Warn "Commands directory not found"
 }
@@ -182,7 +183,7 @@ foreach ($skill in $fundamentals) {
         $fundamentalCount++
     }
 }
-Write-OK ($fundamentalCount.ToString() + " Core Fundamental skills installed")
+Write-OK "Fundamental skills installed: $fundamentalCount"
 
 # Gates
 $gates = @("ownership", "security", "error", "performance", "fundamentals", "testing")
@@ -195,7 +196,7 @@ foreach ($gate in $gates) {
         $gateCount++
     }
 }
-Write-OK ($gateCount.ToString() + " Mentorship Gate skills installed")
+Write-OK "Gate skills installed: $gateCount"
 
 # Career
 $careerSkills = @("star-stories", "resume-bullets")
