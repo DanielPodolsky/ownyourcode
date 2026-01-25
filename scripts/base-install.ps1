@@ -100,50 +100,51 @@ New-Item -ItemType Directory -Force -Path $patternsDir | Out-Null
 New-Item -ItemType Directory -Force -Path $failuresDir | Out-Null
 
 if (-not (Test-Path $registryPath)) {
-    $registryContent = @'
-# Global Learning Registry
-
-> Automatically updated by `/retrospective`. Query with `/advise`.
-> This file tracks your growth as an engineer across ALL projects.
-> Location: ~/ownyourcode/learning/ (global, not project-specific)
-
----
-
-## Patterns (Reusable Solutions)
-
-Successful patterns you've discovered and can reuse:
-
-| Date | Domain | Pattern | Project | Location |
-|------|--------|---------|---------|----------|
-| | | *No patterns recorded yet* | | |
-
----
-
-## Failures (Anti-Patterns)
-
-Mistakes you've made and learned from (the most valuable learnings):
-
-| Date | Domain | Issue | Project | Location |
-|------|--------|-------|---------|----------|
-| | | *No failures documented yet* | | |
-
----
-
-## Competency Progression
-
-Track your growth over time:
-
-| Week | Level | Evidence |
-|------|-------|----------|
-| Start | ⭐ (learning) | Beginning OwnYourCode journey |
-
----
-
-## Detailed Entries
-
-*Entries will be added here chronologically as you complete `/retrospective` sessions.*
-'@
-    Set-Content -Path $registryPath -Value $registryContent
+    $nl = [Environment]::NewLine
+    $registryLines = @(
+        "# Global Learning Registry",
+        "",
+        "> Automatically updated by ``/retrospective``. Query with ``/advise``.",
+        "> This file tracks your growth as an engineer across ALL projects.",
+        "> Location: ~/ownyourcode/learning/ (global, not project-specific)",
+        "",
+        "---",
+        "",
+        "## Patterns (Reusable Solutions)",
+        "",
+        "Successful patterns you have discovered and can reuse:",
+        "",
+        "| Date | Domain | Pattern | Project | Location |",
+        "|------|--------|---------|---------|----------|",
+        "| | | *No patterns recorded yet* | | |",
+        "",
+        "---",
+        "",
+        "## Failures (Anti-Patterns)",
+        "",
+        "Mistakes you have made and learned from (the most valuable learnings):",
+        "",
+        "| Date | Domain | Issue | Project | Location |",
+        "|------|--------|-------|---------|----------|",
+        "| | | *No failures documented yet* | | |",
+        "",
+        "---",
+        "",
+        "## Competency Progression",
+        "",
+        "Track your growth over time:",
+        "",
+        "| Week | Level | Evidence |",
+        "|------|-------|----------|",
+        "| Start | (learning) | Beginning OwnYourCode journey |",
+        "",
+        "---",
+        "",
+        "## Detailed Entries",
+        "",
+        "*Entries will be added here chronologically as you complete ``/retrospective`` sessions.*"
+    )
+    Set-Content -Path $registryPath -Value ($registryLines -join $nl)
     Write-OK "Global learning registry created at ~/ownyourcode/learning/"
 } else {
     Write-OK "Global learning registry already exists"

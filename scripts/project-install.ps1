@@ -253,66 +253,66 @@ Write-Info "Creating product templates..."
 
 $productDir = Join-Path $PROJECT_DIR "ownyourcode/product"
 
-$missionContent = @'
-# Project Mission
+$nl = [Environment]::NewLine
+$missionLines = @(
+    "# Project Mission",
+    "",
+    "> Run ``/own:init`` to define your project vision.",
+    "",
+    "## The Problem",
+    "",
+    "<!-- What problem are you solving? Describe the PROBLEM, not features. -->",
+    "",
+    "## Who Is This For?",
+    "",
+    "<!-- Who will use this? -->",
+    "",
+    "## Definition of Done",
+    "",
+    "<!-- When is this project DONE? What must work? -->"
+)
+Set-Content -Path (Join-Path $productDir "mission.md") -Value ($missionLines -join $nl)
 
-> Run `/own:init` to define your project vision.
+$stackLines = @(
+    "# Technology Stack",
+    "",
+    "> Run ``/own:init`` to auto-detect and document your stack.",
+    "",
+    "## Frontend",
+    "",
+    "<!-- Technologies detected or chosen -->",
+    "",
+    "## Backend",
+    "",
+    "<!-- Technologies detected or chosen -->",
+    "",
+    "## Why These Choices?",
+    "",
+    "<!-- Document your reasoning -->"
+)
+Set-Content -Path (Join-Path $productDir "stack.md") -Value ($stackLines -join $nl)
 
-## The Problem
-
-<!-- What problem are you solving? Describe the PROBLEM, not features. -->
-
-## Who Is This For?
-
-<!-- Who will use this? -->
-
-## Definition of Done
-
-<!-- When is this project DONE? What must work? -->
-'@
-
-$stackContent = @'
-# Technology Stack
-
-> Run `/own:init` to auto-detect and document your stack.
-
-## Frontend
-
-<!-- Technologies detected or chosen -->
-
-## Backend
-
-<!-- Technologies detected or chosen -->
-
-## Why These Choices?
-
-<!-- Document your reasoning -->
-'@
-
-$roadmapContent = @'
-# Project Roadmap
-
-> Run `/own:init` to create your development roadmap.
-
-## Phase 1: Foundation
-
-- [ ] Project setup
-- [ ] Core structure
-
-## Phase 2: Core Features
-
-- [ ] Feature 1
-- [ ] Feature 2
-
-## Phase 3: Polish & Deploy
-
-- [ ] Testing
-- [ ] Deployment
-'@
-
-Set-Content -Path (Join-Path $productDir "mission.md") -Value $missionContent
-Set-Content -Path (Join-Path $productDir "stack.md") -Value $stackContent
-Set-Content -Path (Join-Path $productDir "roadmap.md") -Value $roadmapContent
+$roadmapLines = @(
+    "# Project Roadmap",
+    "",
+    "> Run ``/own:init`` to create your development roadmap.",
+    "",
+    "## Phase 1: Foundation",
+    "",
+    "- [ ] Project setup",
+    "- [ ] Core structure",
+    "",
+    "## Phase 2: Core Features",
+    "",
+    "- [ ] Feature 1",
+    "- [ ] Feature 2",
+    "",
+    "## Phase 3: Polish and Deploy",
+    "",
+    "- [ ] Testing",
+    "- [ ] Deployment"
+)
+Set-Content -Path (Join-Path $productDir "roadmap.md") -Value ($roadmapLines -join $nl)
 
 Write-OK "Product templates created"
 
