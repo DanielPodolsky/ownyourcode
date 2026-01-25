@@ -63,7 +63,7 @@ irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/ba
 
 ```powershell
 cd your-project
-~/ownyourcode/scripts/project-install.ps1
+irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/project-install.ps1 | iex
 ```
 
 ### Then Initialize

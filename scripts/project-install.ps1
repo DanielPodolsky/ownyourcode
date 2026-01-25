@@ -383,5 +383,5 @@ Write-Host "  OctoCode:  https://octocode.ai/#installation"
 Write-Host ""
 
 Write-Info "To remove OwnYourCode later:"
-Write-Host "  ~/ownyourcode/scripts/project-uninstall.ps1"
+Write-Host "  irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/project-uninstall.ps1 | iex"
 Write-Host ""
