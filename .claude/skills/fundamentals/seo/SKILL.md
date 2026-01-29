@@ -1,13 +1,6 @@
 ---
 name: seo-fundamentals
-description: |
-  TRIGGERS: "SEO check", "will this rank?", "meta tags", "search optimization", "Google",
-  "adding meta", "page title", "search ranking", "Next.js page", "building page",
-  "head section", "og:image", "social sharing", "sitemap", "robots.txt",
-  SEO, meta description, title tags, Open Graph, semantic HTML, sitemap, structured data.
-  USE WHEN: Junior is BUILDING pages, adding meta tags, or working on public-facing content.
-  PROVIDES: Meta tag standards, semantic HTML patterns, Open Graph setup, SEO best practices.
-  PROACTIVE: Triggers when junior mentions building pages or public-facing features.
+description: Reviews SEO including meta tags, semantic HTML, and Open Graph. Use when building public-facing pages, adding title/description tags, or optimizing for search engines.
 ---
 
 # SEO Fundamentals Review

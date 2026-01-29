@@ -1,13 +1,6 @@
 ---
 name: backend-fundamentals
-description: |
-  TRIGGERS: "review my API", "check my endpoint", "is this RESTful?", "backend review",
-  "building API", "creating endpoint", "adding route", "implementing service", "making controller",
-  "adding middleware", "handling request", "server-side", "Express route", "API design",
-  API, REST, Express, Node.js, routes, middleware, controllers, services, server logic.
-  USE WHEN: Junior is BUILDING APIs, structuring backend code, designing endpoints, or handling requests.
-  PROVIDES: REST conventions, middleware patterns, route organization, separation of concerns.
-  PROACTIVE: Triggers when junior mentions building backend features, not just reviewing.
+description: Reviews API design, REST conventions, and backend architecture. Use when junior builds API endpoints, Express routes, middleware, controllers, or asks "is this RESTful", "check my endpoint".
 ---
 
 # Backend Fundamentals Review

@@ -1,11 +1,6 @@
 ---
 name: testing-gate
-description: |
-  TRIGGERS: "do I need tests?", "test coverage check", "ready to merge", "pre-merge review",
-  test verification, coverage check, missing tests, test strategy.
-  USE WHEN: Code is ready to merge and needs test coverage verification.
-  PROVIDES: Test existence check, coverage assessment, testing encouragement.
-  GATE TYPE: WARNING - Encourages tests but doesn't block.
+description: Verifies test coverage and encourages testing habits. WARNING gate that checks for tests during /done flow without blocking.
 ---
 
 # Gate 6: Testing Verification

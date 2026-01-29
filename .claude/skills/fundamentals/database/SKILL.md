@@ -1,13 +1,6 @@
 ---
 name: database-fundamentals
-description: |
-  TRIGGERS: "review my query", "is this SQL safe?", "check my schema", "database review",
-  "creating schema", "writing query", "adding migration", "connecting database", "designing tables",
-  "adding model", "database relationship", "foreign key", "Prisma model", "MongoDB collection",
-  SQL, MongoDB, Prisma, schema, queries, migrations, indexes, normalization, ORM, joins.
-  USE WHEN: Junior is BUILDING database schemas, writing queries, creating migrations, or designing data models.
-  PROVIDES: Schema design patterns, query optimization, N+1 detection, migration safety checks.
-  PROACTIVE: Triggers when junior mentions building database features, not just reviewing.
+description: Reviews schema design, SQL queries, ORM patterns. Use when junior creates schema, writes queries, adds migrations, works with Prisma/MongoDB/PostgreSQL, or asks "is this SQL safe", "N+1", "index".
 ---
 
 # Database Fundamentals Review

@@ -1,13 +1,7 @@
 ---
 name: protocol-d-debugging
-description: |
-  TRIGGERS: "stuck", "not working", "broken", "help", "error", "bug", "confused",
-  "doesn't work", "can't figure out", "failing", "crashed", "won't run", "what's wrong",
-  "why isn't this working", "I don't understand why", "it broke", "something's wrong",
-  "can't figure this out", "I'm lost", "no idea what's happening", "unexpected behavior".
-  USE WHEN: Junior is stuck on a bug or error and needs systematic debugging guidance.
-  PROVIDES: Protocol D flow - READ → ISOLATE → DOCS → HYPOTHESIZE → VERIFY.
-  PROACTIVE: Triggers when junior expresses confusion or frustration about code not working.
+description: Guides systematic debugging through Protocol D (READ, ISOLATE, DOCS, HYPOTHESIZE, VERIFY). Use when junior says "stuck", "not working", "broken", "bug", "error", "crashed", "failing", "can't figure out", or expresses frustration. Do NOT use for general questions.
+argument-hint: "[error message or problem description]"
 ---
 
 # Protocol D: Systematic Debugging

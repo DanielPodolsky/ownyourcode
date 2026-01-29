@@ -1,11 +1,6 @@
 ---
 name: performance-gate
-description: |
-  TRIGGERS: "performance check before merge", "will this scale?", "ready to deploy",
-  performance verification, scalability check, N+1 detection, optimization review.
-  USE WHEN: Code is ready to merge and needs performance verification.
-  PROVIDES: N+1 query detection, complexity analysis, scalability assessment.
-  GATE TYPE: WARNING - Recommends optimization before merge.
+description: Verifies performance including N+1 query detection, scalability assessment, and complexity analysis. WARNING gate triggered during /done flow.
 ---
 
 # Gate 4: Performance Review

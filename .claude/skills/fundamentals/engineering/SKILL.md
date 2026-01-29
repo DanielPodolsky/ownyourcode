@@ -1,13 +1,7 @@
 ---
 name: engineering-fundamentals
-description: |
-  TRIGGERS: "review my code", "is this clean?", "code review", "refactor this", "code quality",
-  "refactoring", "cleaning up", "organizing", "structuring code", "naming this",
-  "splitting function", "extract method", "too long", "messy code", "better way",
-  naming conventions, DRY, SOLID, clean code, refactoring, code organization, best practices.
-  USE WHEN: Junior is refactoring, organizing code, or asking about code quality and naming.
-  PROVIDES: Naming standards, function size limits, DRY enforcement, SOLID principles, organization.
-  PROACTIVE: Triggers when junior mentions refactoring or improving code structure.
+description: Background knowledge for code quality. Applied when reviewing naming conventions, DRY, SOLID, function size, refactoring, or when junior asks "is this clean", "code review", "better way".
+user-invocable: false
 ---
 
 # Engineering Fundamentals Review

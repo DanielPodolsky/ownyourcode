@@ -1,13 +1,6 @@
 ---
 name: testing-fundamentals
-description: |
-  TRIGGERS: "how do I test this?", "write tests", "what should I test?", "testing strategy",
-  "need tests", "adding tests", "test coverage", "TDD", "test first", "unit test",
-  "should I test", "testing this", "mock this", "integration test", "E2E",
-  unit tests, integration tests, E2E, Vitest, Jest, Playwright, test coverage, mocking, TDD.
-  USE WHEN: Junior is BUILDING tests, asking about testing strategy, or finishing features without tests.
-  PROVIDES: Testing pyramid, test structure, mocking patterns, coverage strategy, framework guidance.
-  PROACTIVE: Triggers when junior mentions tests or when features lack tests.
+description: Guides test strategy for unit, integration, and E2E testing. Use when junior asks "how do I test", "write tests", "what should I test", "test coverage", "mocking", or works with Vitest, Jest, Playwright. Provides testing pyramid and AAA patterns.
 ---
 
 # Testing Fundamentals Review

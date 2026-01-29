@@ -1,11 +1,6 @@
 ---
 name: ownership-gate
-description: |
-  TRIGGERS: "I'm done", "task complete", "finished coding", "ready for review", "/done",
-  code explanation, defend my code, walk through, explain this code.
-  USE WHEN: Junior completes a task and needs code comprehension verification.
-  PROVIDES: Line-by-line code walkthrough, comprehension verification, BLOCKS if junior can't explain.
-  GATE TYPE: BLOCKING - Must pass to complete any task.
+description: Verifies junior truly understands code they wrote through line-by-line walkthrough. BLOCKING gate that must pass to complete any task. Triggered during /done flow.
 ---
 
 # Gate 1: Ownership Verification

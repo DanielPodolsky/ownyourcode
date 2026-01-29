@@ -1,10 +1,6 @@
 ---
 name: resume-bullet-extraction
-description: |
-  TRIGGERS: "resume bullet", "portfolio update", "how should I describe this?", "job application",
-  resume writing, portfolio, achievement bullets, quantified impact, career documentation.
-  USE WHEN: Completing significant tasks, updating resume, building portfolio, job searching.
-  PROVIDES: Action-verb bullets, quantified achievements, recruiter-friendly descriptions.
+description: Transforms completed work into powerful resume bullet points with action verbs, technical context, and quantified impact. Use when completing tasks, updating portfolio, or preparing job applications.
 ---
 
 # Resume Bullet Extraction

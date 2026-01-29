@@ -1,10 +1,6 @@
 ---
 name: star-story-extraction
-description: |
-  TRIGGERS: "interview prep", "STAR story", "behavioral interview", "how do I talk about this?",
-  interview stories, situation task action result, tell me about a time, problem solving story.
-  USE WHEN: Completing significant tasks, preparing for interviews, documenting achievements.
-  PROVIDES: STAR format stories, interview-ready narratives, behavioral interview preparation.
+description: Transforms completed work into STAR interview stories (Situation, Task, Action, Result). Use when completing tasks, preparing for behavioral interviews, or documenting achievements.
 ---
 
 # STAR Story Extraction

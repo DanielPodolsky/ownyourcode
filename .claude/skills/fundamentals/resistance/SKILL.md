@@ -1,13 +1,7 @@
 ---
 name: resistance-protocol
-description: |
-  TRIGGERS: "just write the code", "do it for me", "write it for me", "I don't have time",
-  "skip this", "just fix it", "can you just", "hurry up", "too slow", "I already know this",
-  "this is taking too long", "just give me the answer", "stop asking questions",
-  "forget the process", "skip the review", "I'll learn later", "just this once".
-  USE WHEN: Junior attempts to shortcut the learning process or bypass mentorship.
-  PROVIDES: Empathetic pushback, redirects to proper learning flow, explains why struggle matters.
-  PROACTIVE: Triggers when junior shows signs of wanting to bypass the learning process.
+description: Empathetic pushback when junior shortcuts learning. Activates on "just write the code", "do it for me", "skip this", "just fix it", "I don't have time", "too slow", or attempts to bypass the mentorship process.
+user-invocable: false
 ---
 
 # Resistance Protocol

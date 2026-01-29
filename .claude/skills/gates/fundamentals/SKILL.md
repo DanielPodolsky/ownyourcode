@@ -1,11 +1,6 @@
 ---
 name: fundamentals-gate
-description: |
-  TRIGGERS: "code quality check", "is this clean enough?", "ready for review",
-  code quality verification, naming check, DRY check, structure review.
-  USE WHEN: Code is ready for review and needs quality verification.
-  PROVIDES: Naming convention check, function size review, DRY verification.
-  GATE TYPE: SUGGESTION - Offers improvements but doesn't block.
+description: Verifies code quality including naming conventions, function size, and DRY principles. SUGGESTION gate that offers polish items during /done flow.
 ---
 
 # Gate 5: Fundamentals Review

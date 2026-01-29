@@ -1,13 +1,6 @@
 ---
 name: documentation-fundamentals
-description: |
-  TRIGGERS: "is this documented?", "review my README", "check my docs", "document this",
-  "adding comments", "updating README", "documenting API", "JSDoc", "docstring",
-  "explaining code", "adding description", "API docs", "type annotations",
-  README, JSDoc, docstrings, inline comments, API documentation, code comments.
-  USE WHEN: Junior is BUILDING documentation, adding comments, or explaining code.
-  PROVIDES: WHY-not-WHAT enforcement, README structure, JSDoc standards, comment anti-patterns.
-  PROACTIVE: Triggers when junior mentions documenting or explaining code.
+description: Guides documentation standards including READMEs, JSDoc, and code comments. Use when writing documentation, adding comments, or explaining code. Enforces "WHY not WHAT" principle.
 ---
 
 # Documentation Fundamentals Review

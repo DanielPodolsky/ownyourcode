@@ -1,13 +1,6 @@
 ---
 name: error-handling-fundamentals
-description: |
-  TRIGGERS: "how should I handle errors?", "what if this fails?", "error handling",
-  "calling API", "async operation", "try catch", "handling failure", "fetch request",
-  "making request", "promise", "await", "network call", "external service",
-  try/catch, error responses, async errors, exceptions, fallbacks, user feedback, logging.
-  USE WHEN: Junior is BUILDING async operations, API calls, or any code that can fail.
-  PROVIDES: Error handling patterns, graceful degradation, user-friendly messages, logging strategy.
-  PROACTIVE: Triggers when junior mentions building features that involve async or external calls.
+description: Guides error handling for async operations and API calls. Use when junior asks "what if this fails", "handle errors", "try catch", "network error", or builds features with fetch, promises, or external services.
 ---
 
 # Error Handling Fundamentals Review

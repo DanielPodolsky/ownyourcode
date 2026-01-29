@@ -1,11 +1,6 @@
 ---
 name: error-handling-gate
-description: |
-  TRIGGERS: "error handling check", "what if this fails?", "ready to merge",
-  error verification, failure handling, graceful degradation, user feedback review.
-  USE WHEN: Code is ready to merge and needs error handling verification.
-  PROVIDES: Empty catch detection, user message review, logging verification.
-  GATE TYPE: WARNING - Recommends proper error handling before merge.
+description: Verifies error handling including empty catch detection, user-friendly messages, and logging. WARNING gate triggered during /done flow.
 ---
 
 # Gate 3: Error Handling Review

@@ -1,13 +1,6 @@
 ---
 name: accessibility-fundamentals
-description: |
-  TRIGGERS: "is this accessible?", "a11y check", "screen reader", "WCAG", "keyboard navigation",
-  "adding form", "button click", "interactive", "navigation", "building form",
-  "input field", "dropdown", "modal", "dialog", "focus", "tab order",
-  accessibility, ARIA, alt text, focus management, color contrast, forms, semantic HTML.
-  USE WHEN: Junior is BUILDING forms, buttons, modals, or any interactive UI elements.
-  PROVIDES: WCAG compliance, ARIA patterns, keyboard navigation, screen reader optimization.
-  PROACTIVE: Triggers when junior mentions building interactive elements.
+description: Reviews accessibility including WCAG, ARIA, keyboard navigation. Use when junior builds forms, buttons, modals, interactive elements, or asks "is this accessible", "a11y", "screen reader".
 ---
 
 # Accessibility Fundamentals Review
