@@ -1,6 +1,6 @@
 # OwnYourCode Project Installation Script (Windows)
 # AI-Mentored Development for Juniors
-# Version 2.1 - Global Learning + Silent Skills
+# Version 2.2.1
 
 $ErrorActionPreference = "Stop"
 
@@ -18,7 +18,7 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 # Header
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║              OwnYourCode Installation v2.1                ║" -ForegroundColor Green
+Write-Host "║            OwnYourCode Installation v2.2.1                ║" -ForegroundColor Green
 Write-Host "║       AI-Mentored Spec-Driven Development Engine          ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
@@ -335,11 +335,11 @@ if (Test-Path $gitignorePath) {
 
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║            Installation Complete! v2.1                    ║" -ForegroundColor Green
+Write-Host "║          Installation Complete! v2.2.1                    ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
-Write-OK "OwnYourCode v2.1 installed successfully!"
+Write-OK "OwnYourCode v2.2.1 installed successfully!"
 Write-Host ""
 
 Write-Info "What was created:"
