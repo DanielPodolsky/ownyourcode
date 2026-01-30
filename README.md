@@ -1,96 +1,65 @@
 <h1 align="center">
-  <img width="986" height="256" alt="ascii-art-text" src="https://github.com/user-attachments/assets/e3919357-88be-4f5e-af3a-aa3ac440bd98" />
-
+  <img width="600" alt="OwnYourCode" src="https://github.com/user-attachments/assets/e3919357-88be-4f5e-af3a-aa3ac440bd98" />
 </h1>
 
 <p align="center">
-  <strong>AI-Mentored Development for Juniors</strong><br>
-  <em>Less dependency, more ownership.</em>
+  <strong>AI-Mentored Development</strong><br>
+  <em>AI guides, you build. You own the result.</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.1-blueviolet?style=for-the-badge" alt="Version 2.1">
-  <a href="#quick-start"><img src="https://img.shields.io/badge/install-curl%20%7C%20bash-brightgreen?style=for-the-badge" alt="Install"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License"></a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/commands-10-orange?style=flat-square" alt="10 Commands">
-  <img src="https://img.shields.io/badge/skills-11-green?style=flat-square" alt="11 Skills">
-  <img src="https://img.shields.io/badge/gates-6-red?style=flat-square" alt="6 Gates">
+  <sub>v2.1 · MIT License</sub>
 </p>
 
 ---
 
-## What is OwnYourCode?
+## The Problem
 
-AI coding tools optimize for **shipping**, not **learning**. Junior asks AI → AI writes code → Junior copy-pastes → "It works!" → No understanding gained → Dependency grows.
+AI coding tools optimize for **shipping**, not **learning**.
 
-OwnYourCode flips this. The AI becomes your **mentor**, not your coder. It guides, questions, and reviews — but **you** write every line.
+Junior asks AI → AI writes code → Junior copy-pastes → "It works!" → No understanding → Dependency grows.
 
-**The result:** Skills that last. Code you can defend in an interview. Independence, not dependency.
+**OwnYourCode flips this.** The AI becomes your mentor, not your coder. It guides, questions, and reviews — but you write every line.
 
-> See [CHANGELOG.md](CHANGELOG.md) for version history.
+**The result:** Code you understand. Code you can defend in an interview. Code you can debug at 3 AM without AI.
 
 ---
 
 ## Quick Start
 
-### macOS / Linux
-
-**Step 1: Install OwnYourCode**
+**macOS / Linux**
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.sh | bash
+cd your-project && ~/ownyourcode/scripts/project-install.sh
 ```
 
-**Step 2: Add to Your Project**
-
-```bash
-cd your-project
-~/ownyourcode/scripts/project-install.sh
-```
-
-### Windows (PowerShell)
-
-**Step 1: Install OwnYourCode**
+**Windows (PowerShell)**
 
 ```powershell
 irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.ps1 | iex
-```
-
-**Step 2: Add to Your Project**
-
-```powershell
 cd your-project
 irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/project-install.ps1 | iex
 ```
 
-### Then Initialize
-
-Open Claude Code in your project and run:
+**Initialize**
 
 ```
 /own:init
 ```
 
-That's it. Claude is now your mentor, not your coder.
-
 ---
 
-## How It Works
+## The 4 Protocols
 
-OwnYourCode operates in two phases:
+These are non-negotiable.
 
-1. **AI-Led Specification** — AI helps you think, plan, and break down features into tasks. You review and approve.
-
-2. **Mentored Implementation** — AI provides patterns (max 8 lines of example code), asks guiding questions, and reviews via 6 Gates. **You write all production code.**
-
-**The core rules:**
-- AI never writes production code for you
-- Documentation is checked before every technical answer
-- You must explain your code to complete a task
-- Confusion is expected — growth requires struggle
+| Protocol                    | Rule                                                                           | Why                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| **A. Active Typist**        | You write all code. AI provides patterns (max 8 lines), guidance, and reviews. | Muscle memory builds engineers. Copying builds nothing.                       |
+| **B. Socratic Teaching**    | AI asks questions instead of giving answers.                                   | Understanding > memorizing. If you know the WHY, you can solve any variation. |
+| **C. Evidence-Based**       | AI verifies with official docs before answering.                               | Technology changes fast. Seniors verify. Juniors guess.                       |
+| **D. Systematic Debugging** | READ → ISOLATE → DOCS → FIX. AI guides the process, not the answer.            | This is how seniors debug. Build the habit now.                               |
 
 ---
 
@@ -98,120 +67,70 @@ OwnYourCode operates in two phases:
 
 Before completing any task, your code passes through 6 quality checkpoints:
 
-| Gate | Focus | Question Asked |
-|------|-------|----------------|
-| 1. Ownership | Understanding | "Walk me through what this code does, line by line." |
-| 2. Security | OWASP Top 10 | "Where does user input enter? How is it validated?" |
-| 3. Error Handling | Resilience | "What happens if the network fails? What does the user see?" |
-| 4. Performance | Scalability | "What happens with 10,000 items? How many DB queries?" |
-| 5. Fundamentals | Readability | "Would a new developer understand this code?" |
-| 6. Testing | Quality | "What tests prove this feature works?" |
+| Gate              | Focus         | Question Asked                                               |
+| ----------------- | ------------- | ------------------------------------------------------------ |
+| 1. Ownership      | Understanding | "Walk me through what this code does, line by line."         |
+| 2. Security       | OWASP Top 10  | "Where does user input enter? How is it validated?"          |
+| 3. Error Handling | Resilience    | "What happens if the network fails? What does the user see?" |
+| 4. Performance    | Scalability   | "What happens with 10,000 items? How many DB queries?"       |
+| 5. Fundamentals   | Readability   | "Would a new developer understand this code?"                |
+| 6. Testing        | Quality       | "What tests prove this feature works?"                       |
 
-**Gate 1 (Ownership) can block completion.** If you can't explain your code, you don't understand it.
+**Gate 1 can block completion.** If you can't explain your code, you don't understand it.
 
 ---
 
 ## The Learning Flywheel
 
-Your learnings compound over time. Unlike normal AI chats that forget everything, OwnYourCode remembers.
+Your learnings compound. OwnYourCode captures patterns, failures, and career stories — then resurfaces them when relevant.
 
-**The cycle:**
-- `/own:feature` — Plan a new feature (creates spec, design, tasks)
-- `/own:advise` — Get relevant learnings before starting a task
-- `/own:guide` — Get implementation help as you code
-- `/own:done` — Pass 6 Gates, code review, extract STAR story
-- `/own:retro` — Capture what you learned
+```
+/own:feature → /own:advise → /own:guide → /own:done → /own:retro
+     ↑                                                      |
+     └──────────────────────────────────────────────────────┘
+```
 
-**What persists:**
+**What persists across projects:**
+
 - **Patterns** — Solutions that worked
 - **Failures** — Mistakes you won't repeat
 - **STAR Stories** — Interview-ready accomplishments
 - **Resume Bullets** — Career value from every task
 
-Each cycle makes the next one smarter. Your failures become warnings. Your patterns become shortcuts.
+Each cycle makes the next one smarter.
 
 ---
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/own:init` | Define your mission, stack, and roadmap |
-| `/own:feature` | Plan a feature with spec-driven development |
-| `/own:advise` | Pre-work intelligence from your learning history |
-| `/own:guide` | Get implementation guidance (patterns, not code) |
-| `/own:test` | Guide through writing tests (you write, AI guides) |
-| `/own:docs` | Guide through writing documentation |
-| `/own:stuck` | Debug with Protocol D |
-| `/own:done` | Complete with 6 Gates + code review + career extraction |
-| `/own:retro` | Capture learnings for the flywheel |
-| `/own:status` | Check progress + learning stats |
+| Command        | Purpose                                                 |
+| -------------- | ------------------------------------------------------- |
+| `/own:init`    | Define your mission, stack, and roadmap                 |
+| `/own:feature` | Plan a feature with spec-driven development             |
+| `/own:advise`  | Pre-work intelligence from your learning history        |
+| `/own:guide`   | Get implementation guidance (patterns, not code)        |
+| `/own:test`    | Guide through writing tests                             |
+| `/own:docs`    | Guide through writing documentation                     |
+| `/own:stuck`   | Debug with Protocol D                                   |
+| `/own:done`    | Complete with 6 Gates + code review + career extraction |
+| `/own:retro`   | Capture learnings for the flywheel                      |
+| `/own:status`  | Check progress + learning stats                         |
 
 ---
 
-## Protocol D (Debugging)
+## MCP Setup (Optional)
 
-When you're stuck, OwnYourCode guides you through systematic debugging:
+MCPs enhance mentorship with real-time documentation and production code examples.
 
-1. **READ** — "Read the error out loud. What is it saying?"
-2. **ISOLATE** — "Where exactly is the failure?"
-3. **DOCS** — "What does the documentation say?"
-4. **HYPOTHESIZE** — "What do YOU think the fix is?"
-5. **VERIFY** — "Try it. Did it work? Why?"
-
-This is how seniors debug. Now it's how you debug.
-
----
-
-## MCP Setup (Recommended)
-
-OwnYourCode uses MCPs for enhanced mentorship:
-
-**Context7 — Documentation Lookup**
 ```bash
+# Context7 — Official documentation lookup
 claude mcp add context7 --transport http https://mcp.context7.com/mcp
+
+# Octocode — GitHub code search
+# https://octocode.ai/#installation
 ```
 
-**Octocode — GitHub Code Search**
-```bash
-https://octocode.ai/#installation
-```
-
-| MCP | Purpose |
-|-----|---------|
-| Context7 | "According to the React 19 docs..." — Official documentation |
-| Octocode | "Here's how Vercel implements this..." — Production patterns |
-
-Without MCPs, OwnYourCode still works but operates at reduced effectiveness.
-
----
-
-## Architecture
-
-```
-your-project/
-├── .claude/
-│   ├── CLAUDE.md                     ← Mentor rules
-│   ├── commands/ownyourcode/         ← 10 slash commands
-│   └── skills/
-│       ├── fundamentals/             ← 11 core skills
-│       ├── gates/                    ← 6 mentorship gates
-│       ├── career/                   ← STAR + resume extraction
-│       └── learned/                  ← Project-specific skills
-│
-├── ownyourcode/
-│   ├── product/                      ← Mission, stack, roadmap
-│   ├── specs/
-│   │   ├── active/                   ← Work in progress
-│   │   └── completed/                ← Archived specs
-│   └── career/                       ← Your interview stories
-│
-~/ownyourcode/                        ← GLOBAL (persists across projects)
-└── learning/
-    ├── LEARNING_REGISTRY.md          ← Growth tracker
-    ├── patterns/                     ← Reusable solutions
-    └── failures/                     ← Lessons learned
-```
+Without MCPs, OwnYourCode still works but can't verify against latest docs.
 
 ---
 
@@ -219,20 +138,12 @@ your-project/
 
 **"Won't this slow me down?"**
 
-Yes. That's the point. Building with someone else's hands means you can't build the next one alone. Building yourself, with guidance, takes longer — but now you can build anything.
+Yes. That's the point.
+
+Building with someone else's hands means you can't build the next one alone. Building yourself, with guidance, takes longer — but now you can build anything.
 
 ---
 
 <p align="center">
-  <em>Less dependency, more ownership.</em>
-</p>
-
-<p align="center">
-  <a href="#quick-start">Get Started</a>
-</p>
-
----
-
-<p align="center">
-  <sub>MIT License</sub>
+  <sub>MIT License · <a href="guides/philosophy.md">Full Philosophy</a></sub>
 </p>
