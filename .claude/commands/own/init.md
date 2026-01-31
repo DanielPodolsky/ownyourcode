@@ -68,16 +68,23 @@ Before asking questions, analyze the project silently:
    - Backend: Express, FastAPI, Go, Rust, etc.
    - Database: PostgreSQL, MongoDB, Prisma, etc.
 
-3. **Detect package manager (for JS/TS projects):**
+3. **Extract EXACT versions from package.json (CRITICAL for existing JS/TS projects):**
+   - Read package.json `dependencies` and `devDependencies`
+   - Extract version numbers exactly as written (e.g., `"react": "^19.0.0"` → version is "19.0.0")
+   - **These versions are the SOURCE OF TRUTH** for existing projects
+   - Store each as: `{ name, version, source: "package.json" }`
+   - Do NOT guess or use default versions — use what's actually installed
+
+4. **Detect package manager (for JS/TS projects):**
    - `package-lock.json` → npm
    - `pnpm-lock.yaml` → pnpm
    - `bun.lockb` → bun
    - `yarn.lock` → yarn
    - No lock file → will ask in Phase 5
 
-4. **Use Octocode for reference:** If building something similar to popular projects, note them for inspiration.
+5. **Use Octocode for reference:** If building something similar to popular projects, note them for inspiration.
 
-5. **Store detection results** — do NOT ask about stack unless it's a new/empty project.
+6. **Store detection results** — do NOT ask about stack unless it's a new/empty project.
 
 ---
 
@@ -182,14 +189,28 @@ Options:
 4. yarn — Mature, Plug'n'Play for zero-installs, created by Meta
 ```
 
-**Version Verification (MANDATORY):**
-After stack is confirmed, use BOTH MCPs to verify latest versions:
+**Version Verification Protocol (ENFORCED):**
 
-1. Use Context7 to get official documentation for detected technologies
-2. Use OctoCode to verify what versions production repos are using
-3. If package.json shows outdated versions, warn:
+This is NOT optional. Every technology in stack.md MUST have a verified version with source attribution.
+
+**FOR EXISTING PROJECTS (has package.json):**
+1. Version source = package.json (these are THE SOURCE OF TRUTH)
+2. Use MCPs (Context7 + Octocode) to check if versions are outdated
+3. If outdated, show warning but DO NOT override package.json versions:
    > "Your package.json shows [X] version [old]. The latest stable is [new]. Consider upgrading."
-4. Document all versions in stack.md
+4. In stack.md, source = "package.json"
+
+**FOR NEW PROJECTS (empty/no package.json):**
+1. MUST query Context7 and/or Octocode for current stable versions
+2. If MCP succeeds → use those versions, source = "MCP verified (YYYY-MM-DD)"
+3. If MCP fails → do NOT use hardcoded versions like "React 18+" — instead:
+   - Version = "—" (dash)
+   - Source = "Verify at [official docs URL]"
+   - Example: `| Frontend | React | — | Verify at react.dev | UI framework |`
+4. NEVER show hardcoded version numbers. Either verify or be honest.
+
+**Finding Official Docs:**
+When MCP verification fails, use Context7 or web search to find the official documentation URL for the technology. The "Verify at" link should always point to official docs (e.g., "Verify at react.dev" not "Verify at some-blog.com").
 
 **Optional Octocode Research:**
 > "Let me check Octocode to find well-structured projects using [stack] for inspiration..."
@@ -262,12 +283,18 @@ When these things work, the project is COMPLETE:
 
 ## Detected/Chosen Stack
 
-| Layer | Technology | Version | Purpose |
-|-------|------------|---------|---------|
-| Frontend | [Detected] | [Verified] | [Auto-filled purpose] |
-| Backend | [Detected] | [Verified] | [Auto-filled purpose] |
-| Database | [Detected] | [Verified] | [Auto-filled purpose] |
-| Styling | [Detected] | [Verified] | [Auto-filled purpose] |
+| Layer | Technology | Version | Source | Purpose |
+|-------|------------|---------|--------|---------|
+| Frontend | [Name] | [Version or —] | [package.json / MCP verified (date) / Verify at URL] | [Purpose] |
+| Backend | [Name] | [Version or —] | [Source] | [Purpose] |
+| Database | [Name] | [Version or —] | [Source] | [Purpose] |
+| Styling | [Name] | [Version or —] | [Source] | [Purpose] |
+| Build | [Name] | [Version or —] | [Source] | [Purpose] |
+
+**Source Legend:**
+- `package.json` — Version from your installed dependencies (source of truth)
+- `MCP verified (YYYY-MM-DD)` — Confirmed via Context7/Octocode on this date
+- `Verify at [URL]` — Could not verify; check official docs for current version
 
 ## Package Manager
 
@@ -294,6 +321,12 @@ When these things work, the project is COMPLETE:
 |------|---------|
 | [Auto-detected entry point] | [Purpose] |
 | [Config files] | [Purpose] |
+
+## Version Freshness
+
+⚠️ **Generated**: [YYYY-MM-DD]
+
+Technology versions change frequently. If this document is more than 30 days old, re-run `/own:init` or check the official documentation for each technology listed above.
 ```
 
 #### roadmap.md
