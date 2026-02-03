@@ -14,8 +14,43 @@ NC='\033[0m'
 
 # Paths
 PROJECT_DIR=$(pwd)
-CLAUDE_MD="$PROJECT_DIR/.claude/CLAUDE.md"
-BACKUP="$PROJECT_DIR/.claude/CLAUDE.md.pre-ownyourcode"
+MANIFEST="$PROJECT_DIR/.claude/ownyourcode-manifest.json"
+
+# Detect CLAUDE.md location from manifest (or fallback to legacy locations)
+if [ -f "$MANIFEST" ]; then
+    # Read from manifest
+    CLAUDE_MD_REL=$(grep -o '"claude_md_location": *"[^"]*"' "$MANIFEST" 2>/dev/null | cut -d'"' -f4)
+
+    # Check if backup_path is null (fresh install) or a path (merged install)
+    if grep -q '"backup_path": *null' "$MANIFEST" 2>/dev/null; then
+        FRESH_INSTALL=true
+        BACKUP=""
+    else
+        FRESH_INSTALL=false
+        BACKUP_REL=$(grep -o '"backup_path": *"[^"]*"' "$MANIFEST" 2>/dev/null | cut -d'"' -f4)
+    fi
+
+    # Convert relative to absolute
+    if [ "$CLAUDE_MD_REL" = "./CLAUDE.md" ]; then
+        CLAUDE_MD="$PROJECT_DIR/CLAUDE.md"
+        [ "$FRESH_INSTALL" = false ] && BACKUP="$PROJECT_DIR/CLAUDE.md.pre-ownyourcode"
+    else
+        CLAUDE_MD="$PROJECT_DIR/.claude/CLAUDE.md"
+        [ "$FRESH_INSTALL" = false ] && BACKUP="$PROJECT_DIR/.claude/CLAUDE.md.pre-ownyourcode"
+    fi
+    HAS_MANIFEST=true
+else
+    # Legacy fallback - check both locations
+    if [ -f "$PROJECT_DIR/CLAUDE.md" ] && grep -q "OWNYOURCODE:" "$PROJECT_DIR/CLAUDE.md" 2>/dev/null; then
+        CLAUDE_MD="$PROJECT_DIR/CLAUDE.md"
+        BACKUP="$PROJECT_DIR/CLAUDE.md.pre-ownyourcode"
+    else
+        CLAUDE_MD="$PROJECT_DIR/.claude/CLAUDE.md"
+        BACKUP="$PROJECT_DIR/.claude/CLAUDE.md.pre-ownyourcode"
+    fi
+    HAS_MANIFEST=false
+    FRESH_INSTALL=false  # Can't determine, use safe fallback
+fi
 
 # Helpers
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
@@ -48,7 +83,11 @@ echo ""
 echo "  Will remove:"
 echo "    - ownyourcode/ folder"
 echo "    - .claude/commands/own/"
+echo "    - .claude/skills/ (OwnYourCode skills only)"
 echo "    - OwnYourCode section from CLAUDE.md"
+if [ "$HAS_MANIFEST" = true ]; then
+    echo "    - .claude/ownyourcode-manifest.json"
+fi
 echo ""
 
 read -p "Continue? (y/N): " confirm
@@ -63,17 +102,20 @@ echo ""
 # STEP 2: Handle CLAUDE.md
 # ============================================================================
 
-info "Restoring CLAUDE.md..."
+info "Handling CLAUDE.md..."
 
 if [ -f "$CLAUDE_MD" ]; then
-    if [ -f "$BACKUP" ]; then
-        # Restore from backup
+    if [ "$HAS_MANIFEST" = true ] && [ "$FRESH_INSTALL" = true ]; then
+        # Fresh install - we created it, delete entirely
+        rm "$CLAUDE_MD"
+        success "Removed CLAUDE.md (was created by OwnYourCode)"
+    elif [ -f "$BACKUP" ]; then
+        # Merged install with backup - restore original
         cp "$BACKUP" "$CLAUDE_MD"
         rm "$BACKUP"
         success "Restored original CLAUDE.md from backup"
     elif grep -q "OWNYOURCODE:" "$CLAUDE_MD" 2>/dev/null; then
-        # Remove OwnYourCode section using markers
-        # Create temp file without OwnYourCode section
+        # Legacy fallback - remove OwnYourCode section using markers
         sed '/# ═.*OWNYOURCODE/,/# ═.*END OWNYOURCODE/d' "$CLAUDE_MD" > "$CLAUDE_MD.tmp"
 
         # Remove trailing blank lines
@@ -107,19 +149,57 @@ else
     info "No commands folder found"
 fi
 
-# Clean up empty directories
+# Clean up empty commands directory
 if [ -d "$PROJECT_DIR/.claude/commands" ] && [ -z "$(ls -A "$PROJECT_DIR/.claude/commands")" ]; then
     rmdir "$PROJECT_DIR/.claude/commands"
     info "Removed empty .claude/commands/"
 fi
 
+# ============================================================================
+# STEP 4: Remove OwnYourCode skills (preserve user skills)
+# ============================================================================
+
+info "Removing OwnYourCode skills..."
+
+# Known OwnYourCode skill folders (these are ours, safe to remove)
+OYC_SKILL_FOLDERS="fundamentals gates career learned"
+
+if [ -d "$PROJECT_DIR/.claude/skills" ]; then
+    for folder in $OYC_SKILL_FOLDERS; do
+        if [ -d "$PROJECT_DIR/.claude/skills/$folder" ]; then
+            rm -rf "$PROJECT_DIR/.claude/skills/$folder"
+        fi
+    done
+    success "Removed OwnYourCode skills (user skills preserved)"
+
+    # Clean up empty skills directory
+    if [ -z "$(ls -A "$PROJECT_DIR/.claude/skills")" ]; then
+        rmdir "$PROJECT_DIR/.claude/skills"
+        info "Removed empty .claude/skills/"
+    else
+        info "Preserved user skills in .claude/skills/"
+    fi
+else
+    info "No skills folder found"
+fi
+
+# ============================================================================
+# STEP 5: Remove manifest
+# ============================================================================
+
+if [ -f "$MANIFEST" ]; then
+    rm "$MANIFEST"
+    success "Removed manifest"
+fi
+
+# Clean up empty .claude directory
 if [ -d "$PROJECT_DIR/.claude" ] && [ -z "$(ls -A "$PROJECT_DIR/.claude")" ]; then
     rmdir "$PROJECT_DIR/.claude"
     info "Removed empty .claude/"
 fi
 
 # ============================================================================
-# STEP 4: Remove ownyourcode folder
+# STEP 6: Remove ownyourcode folder
 # ============================================================================
 
 info "Removing ownyourcode folder..."

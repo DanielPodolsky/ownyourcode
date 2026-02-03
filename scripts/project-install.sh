@@ -100,10 +100,27 @@ success "Directories created"
 # STEP 3: Handle CLAUDE.md (Smart Merge)
 # ============================================================================
 
-CLAUDE_MD="$PROJECT_DIR/.claude/CLAUDE.md"
+# Check BOTH locations - prefer root per Claude Code best practices
+ROOT_CLAUDE_MD="$PROJECT_DIR/CLAUDE.md"
+DOTCLAUDE_MD="$PROJECT_DIR/.claude/CLAUDE.md"
 TEMPLATE="$BASE_DIR/core/CLAUDE.md.template"
 
 info "Configuring CLAUDE.md..."
+
+# Detect existing CLAUDE.md location
+if [ -f "$ROOT_CLAUDE_MD" ]; then
+    CLAUDE_MD="$ROOT_CLAUDE_MD"
+    CLAUDE_MD_REL="./CLAUDE.md"
+    info "Found existing CLAUDE.md at project root"
+elif [ -f "$DOTCLAUDE_MD" ]; then
+    CLAUDE_MD="$DOTCLAUDE_MD"
+    CLAUDE_MD_REL="./.claude/CLAUDE.md"
+    info "Found existing CLAUDE.md in .claude folder"
+else
+    # No existing - create at root (best practice)
+    CLAUDE_MD="$ROOT_CLAUDE_MD"
+    CLAUDE_MD_REL="./CLAUDE.md"
+fi
 
 if [ -f "$CLAUDE_MD" ]; then
     # Check if OwnYourCode already installed
@@ -122,11 +139,12 @@ if [ -f "$CLAUDE_MD" ]; then
         fi
     else
         # Existing CLAUDE.md without OwnYourCode - Smart merge
-        info "Found existing CLAUDE.md - merging..."
+        info "Merging OwnYourCode section..."
 
-        # Backup original
-        cp "$CLAUDE_MD" "$PROJECT_DIR/.claude/CLAUDE.md.pre-ownyourcode"
-        success "Backed up to CLAUDE.md.pre-ownyourcode"
+        # Backup original (next to the file)
+        BACKUP_PATH="${CLAUDE_MD}.pre-ownyourcode"
+        cp "$CLAUDE_MD" "$BACKUP_PATH"
+        success "Backed up to $(basename "$BACKUP_PATH")"
 
         # Append OwnYourCode section
         echo "" >> "$CLAUDE_MD"
@@ -135,10 +153,9 @@ if [ -f "$CLAUDE_MD" ]; then
         success "OwnYourCode section merged into CLAUDE.md"
     fi
 else
-    # No existing CLAUDE.md - create fresh
-    mkdir -p "$PROJECT_DIR/.claude"
+    # No existing CLAUDE.md - create at root (best practice)
     cp "$TEMPLATE" "$CLAUDE_MD"
-    success "Created CLAUDE.md with THE STRICTNESS"
+    success "Created CLAUDE.md at project root"
 fi
 
 # ============================================================================
@@ -295,6 +312,71 @@ if [ -f "$PROJECT_DIR/.gitignore" ]; then
 fi
 
 # ============================================================================
+# STEP 10: Generate manifest (for clean uninstall)
+# ============================================================================
+
+info "Generating manifest..."
+
+MANIFEST="$PROJECT_DIR/.claude/ownyourcode-manifest.json"
+mkdir -p "$PROJECT_DIR/.claude"
+
+# Format backup path for JSON (null if not set, quoted string if set)
+if [ -n "$BACKUP_PATH" ]; then
+    # Convert absolute path to relative
+    BACKUP_REL="${CLAUDE_MD_REL}.pre-ownyourcode"
+    BACKUP_JSON="\"$BACKUP_REL\""
+else
+    BACKUP_JSON="null"
+fi
+
+cat > "$MANIFEST" << EOF
+{
+  "version": "2.2.3",
+  "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "claude_md_location": "$CLAUDE_MD_REL",
+  "backup_path": $BACKUP_JSON,
+  "skills": [
+    "fundamentals/frontend",
+    "fundamentals/backend",
+    "fundamentals/security",
+    "fundamentals/performance",
+    "fundamentals/error-handling",
+    "fundamentals/engineering",
+    "fundamentals/database",
+    "fundamentals/testing",
+    "fundamentals/seo",
+    "fundamentals/accessibility",
+    "fundamentals/documentation",
+    "fundamentals/debugging",
+    "fundamentals/resistance",
+    "gates/ownership",
+    "gates/security",
+    "gates/error",
+    "gates/performance",
+    "gates/fundamentals",
+    "gates/testing",
+    "career/star-stories",
+    "career/resume-bullets",
+    "learned"
+  ],
+  "commands": [
+    "own/advise.md",
+    "own/docs.md",
+    "own/done.md",
+    "own/feature.md",
+    "own/guide.md",
+    "own/init.md",
+    "own/retro.md",
+    "own/status.md",
+    "own/stuck.md",
+    "own/test.md"
+  ]
+}
+EOF
+
+success "Manifest created at .claude/ownyourcode-manifest.json"
+
+# ============================================================================
 # COMPLETE
 # ============================================================================
 
@@ -309,6 +391,8 @@ echo ""
 
 info "What was created:"
 echo ""
+echo "  📄 $CLAUDE_MD_REL           — THE STRICTNESS (mentor behavior)"
+echo ""
 echo "  📁 ownyourcode/              — Your project docs (commit this)"
 echo "     ├── product/             — Mission, stack, roadmap"
 echo "     ├── specs/               — Feature specifications"
@@ -316,7 +400,6 @@ echo "     ├── career/              — Interview stories & bullets"
 echo "     └── guides/              — Setup guides"
 echo ""
 echo "  📁 .claude/                 — Claude Code configuration"
-echo "     ├── CLAUDE.md            — THE STRICTNESS (mentor behavior)"
 echo "     ├── commands/            — 10 slash commands"
 echo "     └── skills/              — Auto-invoked mentorship skills"
 echo "         ├── fundamentals/    — 13 Core review skills"

@@ -94,10 +94,29 @@ Write-OK "Directories created"
 # STEP 3: Handle CLAUDE.md (Smart Merge)
 # ============================================================================
 
-$CLAUDE_MD = Join-Path $PROJECT_DIR ".claude/CLAUDE.md"
+# Check BOTH locations - prefer root per Claude Code best practices
+$ROOT_CLAUDE_MD = Join-Path $PROJECT_DIR "CLAUDE.md"
+$DOTCLAUDE_MD = Join-Path $PROJECT_DIR ".claude/CLAUDE.md"
 $TEMPLATE = Join-Path $BASE_DIR "core/CLAUDE.md.template"
 
 Write-Info "Configuring CLAUDE.md..."
+
+# Detect existing CLAUDE.md location
+if (Test-Path $ROOT_CLAUDE_MD) {
+    $CLAUDE_MD = $ROOT_CLAUDE_MD
+    $CLAUDE_MD_REL = "./CLAUDE.md"
+    Write-Info "Found existing CLAUDE.md at project root"
+} elseif (Test-Path $DOTCLAUDE_MD) {
+    $CLAUDE_MD = $DOTCLAUDE_MD
+    $CLAUDE_MD_REL = "./.claude/CLAUDE.md"
+    Write-Info "Found existing CLAUDE.md in .claude folder"
+} else {
+    # No existing - create at root (best practice)
+    $CLAUDE_MD = $ROOT_CLAUDE_MD
+    $CLAUDE_MD_REL = "./CLAUDE.md"
+}
+
+$BACKUP_PATH = $null
 
 if (Test-Path $CLAUDE_MD) {
     $content = Get-Content $CLAUDE_MD -Raw
@@ -117,12 +136,12 @@ if (Test-Path $CLAUDE_MD) {
         }
     } else {
         # Existing CLAUDE.md without OwnYourCode - merge
-        Write-Info "Found existing CLAUDE.md - merging..."
+        Write-Info "Merging OwnYourCode section..."
 
-        # Backup
-        $backupPath = Join-Path $PROJECT_DIR ".claude/CLAUDE.md.pre-ownyourcode"
-        Copy-Item $CLAUDE_MD $backupPath
-        Write-OK "Backed up to CLAUDE.md.pre-ownyourcode"
+        # Backup (next to the file)
+        $BACKUP_PATH = "$CLAUDE_MD.pre-ownyourcode"
+        Copy-Item $CLAUDE_MD $BACKUP_PATH
+        Write-OK "Backed up to $(Split-Path -Leaf $BACKUP_PATH)"
 
         # Append template
         if (Test-Path $TEMPLATE) {
@@ -132,12 +151,10 @@ if (Test-Path $CLAUDE_MD) {
         }
     }
 } else {
-    # No existing CLAUDE.md - create fresh
+    # No existing CLAUDE.md - create at root (best practice)
     if (Test-Path $TEMPLATE) {
-        $claudeDir = Join-Path $PROJECT_DIR ".claude"
-        New-Item -ItemType Directory -Force -Path $claudeDir | Out-Null
         Copy-Item $TEMPLATE $CLAUDE_MD
-        Write-OK "Created CLAUDE.md with THE STRICTNESS"
+        Write-OK "Created CLAUDE.md at project root"
     }
 }
 
@@ -330,6 +347,72 @@ if (Test-Path $gitignorePath) {
 }
 
 # ============================================================================
+# STEP 10: Generate manifest (for clean uninstall)
+# ============================================================================
+
+Write-Info "Generating manifest..."
+
+$MANIFEST = Join-Path $PROJECT_DIR ".claude/ownyourcode-manifest.json"
+
+# Format backup path for JSON
+if ($BACKUP_PATH) {
+    $BACKUP_REL = "$CLAUDE_MD_REL.pre-ownyourcode"
+    $backupJson = "`"$BACKUP_REL`""
+} else {
+    $backupJson = "null"
+}
+
+$timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+$manifestContent = @"
+{
+  "version": "2.2.3",
+  "installed_at": "$timestamp",
+  "claude_md_location": "$CLAUDE_MD_REL",
+  "backup_path": $backupJson,
+  "skills": [
+    "fundamentals/frontend",
+    "fundamentals/backend",
+    "fundamentals/security",
+    "fundamentals/performance",
+    "fundamentals/error-handling",
+    "fundamentals/engineering",
+    "fundamentals/database",
+    "fundamentals/testing",
+    "fundamentals/seo",
+    "fundamentals/accessibility",
+    "fundamentals/documentation",
+    "fundamentals/debugging",
+    "fundamentals/resistance",
+    "gates/ownership",
+    "gates/security",
+    "gates/error",
+    "gates/performance",
+    "gates/fundamentals",
+    "gates/testing",
+    "career/star-stories",
+    "career/resume-bullets",
+    "learned"
+  ],
+  "commands": [
+    "own/advise.md",
+    "own/docs.md",
+    "own/done.md",
+    "own/feature.md",
+    "own/guide.md",
+    "own/init.md",
+    "own/retro.md",
+    "own/status.md",
+    "own/stuck.md",
+    "own/test.md"
+  ]
+}
+"@
+
+Set-Content -Path $MANIFEST -Value $manifestContent
+Write-OK "Manifest created at .claude/ownyourcode-manifest.json"
+
+# ============================================================================
 # COMPLETE
 # ============================================================================
 
@@ -344,6 +427,8 @@ Write-Host ""
 
 Write-Info "What was created:"
 Write-Host ""
+Write-Host "  📄 $CLAUDE_MD_REL           — THE STRICTNESS [mentor behavior]"
+Write-Host ""
 Write-Host "  📁 ownyourcode/              — Your project docs [commit this]"
 Write-Host "     ├── product/             — Mission, stack, roadmap"
 Write-Host "     ├── specs/               — Feature specifications"
@@ -351,7 +436,6 @@ Write-Host "     ├── career/              — Interview stories & bullets"
 Write-Host "     └── guides/              — Setup guides"
 Write-Host ""
 Write-Host "  📁 .claude/                 — Claude Code configuration"
-Write-Host "     ├── CLAUDE.md            — THE STRICTNESS [mentor behavior]"
 Write-Host "     ├── commands/            — Slash commands"
 Write-Host "     └── skills/              — Auto-invoked mentorship skills"
 Write-Host "         ├── fundamentals/    — Core review skills"
