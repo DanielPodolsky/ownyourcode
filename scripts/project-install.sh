@@ -2,7 +2,7 @@
 
 # OwnYourCode Project Installation Script
 # AI-Mentored Development for Juniors
-# Version 2.2.3
+# Version 2.2.4
 
 set -e
 
@@ -27,7 +27,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Header
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║            OwnYourCode Installation v2.2.3                 ║${NC}"
+echo -e "${GREEN}║            OwnYourCode Installation v2.2.4                 ║${NC}"
 echo -e "${GREEN}║       AI-Mentored Spec-Driven Development Engine          ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
@@ -331,7 +331,7 @@ fi
 
 cat > "$MANIFEST" << EOF
 {
-  "version": "2.2.3",
+  "version": "2.2.4",
   "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "claude_md_location": "$CLAUDE_MD_REL",
   "backup_path": $BACKUP_JSON,
@@ -382,11 +382,11 @@ success "Manifest created at .claude/ownyourcode-manifest.json"
 
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║          Installation Complete! v2.2.3                    ║${NC}"
+echo -e "${GREEN}║          Installation Complete! v2.2.4                    ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-success "OwnYourCode v2.2.3 installed successfully!"
+success "OwnYourCode v2.2.4 installed successfully!"
 echo ""
 
 info "What was created:"

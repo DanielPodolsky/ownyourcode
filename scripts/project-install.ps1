@@ -1,6 +1,6 @@
 # OwnYourCode Project Installation Script (Windows)
 # AI-Mentored Development for Juniors
-# Version 2.2.3
+# Version 2.2.4
 
 $ErrorActionPreference = "Stop"
 
@@ -18,7 +18,7 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 # Header
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║            OwnYourCode Installation v2.2.3                ║" -ForegroundColor Green
+Write-Host "║            OwnYourCode Installation v2.2.4                ║" -ForegroundColor Green
 Write-Host "║       AI-Mentored Spec-Driven Development Engine          ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
@@ -366,7 +366,7 @@ $timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 $manifestContent = @"
 {
-  "version": "2.2.3",
+  "version": "2.2.4",
   "installed_at": "$timestamp",
   "claude_md_location": "$CLAUDE_MD_REL",
   "backup_path": $backupJson,
@@ -418,11 +418,11 @@ Write-OK "Manifest created at .claude/ownyourcode-manifest.json"
 
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║          Installation Complete! v2.2.3                    ║" -ForegroundColor Green
+Write-Host "║          Installation Complete! v2.2.4                    ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
-Write-OK "OwnYourCode v2.2.3 installed successfully!"
+Write-OK "OwnYourCode v2.2.4 installed successfully!"
 Write-Host ""
 
 Write-Info "What was created:"
