@@ -1,7 +1,7 @@
 ---
 name: init
 description: Initialize OwnYourCode project with mission, stack, and roadmap
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__octocode__githubSearchRepositories, mcp__octocode__githubViewRepoStructure
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__octocode__githubSearchRepositories, mcp__octocode__githubViewRepoStructure, mcp__octocode__packageSearch
 ---
 
 # /own:init
@@ -13,9 +13,31 @@ Initialize a OwnYourCode project by defining the mission, detecting the stack, a
 This command works for both **new projects** (empty directory) and **existing projects** (mid-development).
 
 **Output:**
+
 - `ownyourcode/product/mission.md` — Project purpose and vision
 - `ownyourcode/product/stack.md` — Technology decisions and rationale
 - `ownyourcode/product/roadmap.md` — Phased development plan
+
+**CRITICAL: You Are UPDATING, Not Creating**
+
+The installation script already created `ownyourcode/` with placeholder files:
+
+```
+<install-location>/
+├── CLAUDE.md              ← Created/modified during install
+├── ownyourcode/           ← Created during install (sibling to CLAUDE.md)
+│   └── product/
+│       ├── mission.md     ← Placeholder waiting to be filled
+│       ├── stack.md       ← Placeholder waiting to be filled
+│       └── roadmap.md     ← Placeholder waiting to be filled
+```
+
+**Rules:**
+
+1. Your job is to **UPDATE** the existing placeholder files — never create new ones
+2. `ownyourcode/` is always a **sibling to CLAUDE.md** (same directory level)
+3. If `ownyourcode/product/` doesn't exist, the installation is incomplete — inform the user
+4. If you detect a project in a subdirectory (e.g., `shelfie/package.json`), still update the `ownyourcode/` at the installation root (sibling to CLAUDE.md), not inside the subdirectory
 
 ---
 
@@ -32,7 +54,7 @@ These questions force THINKING, not feature-listing. Most juniors skip straight 
 Before anything else, verify MCPs are available:
 
 1. **Check for Context7:** Try to use `mcp__context7__resolve-library-id` silently
-2. **Check for Octocode:** Try to use `mcp__octocode__githubSearchRepositories` silently
+2. **Check for Octocode:** Try to use `mcp__octocode__githubSearchRepositories` and `mcp__octocode__packageSearch` silently
 
 **If MCPs NOT available:** Show this message:
 
@@ -42,7 +64,7 @@ Before anything else, verify MCPs are available:
 OwnYourCode uses these MCPs to provide accurate, up-to-date guidance:
 
 📖 Context7 — Official documentation lookup
-🔍 Octocode — GitHub best practices search
+🔍 Octocode — Package versions & GitHub best practices
 
 To install (takes 30 seconds each):
   claude mcp add --transport http context7 https://mcp.context7.com/mcp
@@ -97,6 +119,7 @@ Before asking questions, analyze the project silently:
 > Don't describe features. Describe the PROBLEM.
 >
 > Example:
+>
 > - Bad: 'A medication reminder app'
 > - Good: 'People forget to take their medications on time, which leads to health issues'
 >
@@ -128,6 +151,7 @@ Options:
 ```
 
 **Why this matters:** Changes the mentorship approach:
+
 - Portfolio → Focus on interview stories, defensible decisions
 - Client → Focus on handoff, documentation
 - Product → Focus on user needs, scalability
@@ -152,6 +176,7 @@ Options:
 
 **If technologies were detected:**
 Show what was detected. For the package manager, provide brief education:
+
 > "You're using [package manager]. [Educational snippet about it]."
 
 **Package Manager Education (as of 2026):**
@@ -194,6 +219,7 @@ Options:
 This is NOT optional. Every technology in stack.md MUST have a verified version with source attribution.
 
 **FOR EXISTING PROJECTS (has package.json):**
+
 1. Version source = package.json (these are THE SOURCE OF TRUTH)
 2. Use MCPs (Context7 + Octocode) to check if versions are outdated
 3. If outdated, show warning but DO NOT override package.json versions:
@@ -201,18 +227,59 @@ This is NOT optional. Every technology in stack.md MUST have a verified version 
 4. In stack.md, source = "package.json"
 
 **FOR NEW PROJECTS (empty/no package.json):**
-1. MUST query Context7 and/or Octocode for current stable versions
+
+1. MUST use `mcp__octocode__packageSearch` to get current stable versions
 2. If MCP succeeds → use those versions, source = "MCP verified (YYYY-MM-DD)"
 3. If MCP fails → do NOT use hardcoded versions like "React 18+" — instead:
    - Version = "—" (dash)
    - Source = "Verify at [official docs URL]"
    - Example: `| Frontend | React | — | Verify at react.dev | UI framework |`
 4. NEVER show hardcoded version numbers. Either verify or be honest.
+5. NEVER use Claude's internal knowledge for version numbers — always use packageSearch.
+
+**Version Fetching with packageSearch (REQUIRED for new projects):**
+
+For each npm package in the chosen stack, call packageSearch to get the latest stable version:
+
+```
+mcp__octocode__packageSearch:
+  ecosystem: "npm"
+  name: [package-name]
+```
+
+**Common package names:**
+| Technology | Package Name |
+|------------|--------------|
+| React | `react` |
+| Next.js | `next` |
+| Express | `express` |
+| Tailwind CSS | `tailwindcss` |
+| TypeScript | `typescript` |
+| Vite | `vite` |
+| Vue | `vue` |
+| Nuxt | `nuxt` |
+
+**Extract from response:**
+
+- `version` → latest stable version (e.g., "16.1.6")
+- `lastPublished` → use date portion for "MCP verified (YYYY-MM-DD)"
+
+**Example workflow:**
+
+1. User selects "React/Next.js with TypeScript"
+2. Call packageSearch for: `react`, `next`, `typescript`
+3. Populate stack.md with returned versions:
+   ```
+   | Frontend | React | 19.2.4 | MCP verified (2026-01-26) | UI framework |
+   | Framework | Next.js | 16.1.6 | MCP verified (2026-01-27) | React framework |
+   | Language | TypeScript | 5.7.3 | MCP verified (2026-01-15) | Type safety |
+   ```
 
 **Finding Official Docs:**
 When MCP verification fails, use Context7 or web search to find the official documentation URL for the technology. The "Verify at" link should always point to official docs (e.g., "Verify at react.dev" not "Verify at some-blog.com").
 
 **Optional Octocode Research:**
+
 > "Let me check Octocode to find well-structured projects using [stack] for inspiration..."
 
 Use `githubSearchRepositories` to find reference projects.
@@ -283,15 +350,16 @@ When these things work, the project is COMPLETE:
 
 ## Detected/Chosen Stack
 
-| Layer | Technology | Version | Source | Purpose |
-|-------|------------|---------|--------|---------|
-| Frontend | [Name] | [Version or —] | [package.json / MCP verified (date) / Verify at URL] | [Purpose] |
-| Backend | [Name] | [Version or —] | [Source] | [Purpose] |
-| Database | [Name] | [Version or —] | [Source] | [Purpose] |
-| Styling | [Name] | [Version or —] | [Source] | [Purpose] |
-| Build | [Name] | [Version or —] | [Source] | [Purpose] |
+| Layer    | Technology | Version        | Source                                               | Purpose   |
+| -------- | ---------- | -------------- | ---------------------------------------------------- | --------- |
+| Frontend | [Name]     | [Version or —] | [package.json / MCP verified (date) / Verify at URL] | [Purpose] |
+| Backend  | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
+| Database | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
+| Styling  | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
+| Build    | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
 
 **Source Legend:**
+
 - `package.json` — Version from your installed dependencies (source of truth)
 - `MCP verified (YYYY-MM-DD)` — Confirmed via Context7/Octocode on this date
 - `Verify at [URL]` — Could not verify; check official docs for current version
@@ -317,10 +385,10 @@ When these things work, the project is COMPLETE:
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
+| File                        | Purpose   |
+| --------------------------- | --------- |
 | [Auto-detected entry point] | [Purpose] |
-| [Config files] | [Purpose] |
+| [Config files]              | [Purpose] |
 
 ## Version Freshness
 
@@ -418,6 +486,7 @@ Phase 1 and generate specs for you to review.
 **END COMMAND HERE.**
 
 Do NOT:
+
 - Suggest implementation steps
 - Start discussing the first task
 - Continue with unsolicited guidance
@@ -441,10 +510,13 @@ they can ask — but don't proactively continue. Let them take the next step.
 ## If They Give Weak Answers
 
 **If problem sounds like features:**
+
 > "That sounds like a feature description. Let's dig deeper — what's the underlying PROBLEM that makes this feature necessary? Why would someone need this?"
 
 **If definition of done is vague:**
+
 > "That's a bit broad. Can you be more specific? What's ONE thing that absolutely must work? Let's start there."
 
 **If they say 'I don't know':**
+
 > "That's okay — let's think through it together. What frustrated you enough to start this project? Or what would make you proud to show this to an employer?"
