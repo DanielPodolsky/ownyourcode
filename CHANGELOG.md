@@ -4,6 +4,32 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ---
 
+## [2.2.5] - 2026-02-05
+
+### Fixed
+
+**Version Fetching in /own:init**
+- Added `mcp__octocode__packageSearch` to allowed-tools for real-time npm version fetching
+- Added explicit version fetching protocol with package names table and workflow example
+- Prevents Claude from using outdated internal knowledge for version numbers
+
+**Directory Location in /own:init**
+- Added "CRITICAL: You Are UPDATING, Not Creating" section
+- Clarifies that `ownyourcode/` already exists from installation (sibling to CLAUDE.md)
+- Prevents creating duplicate `ownyourcode/` directories when running from project subdirectories
+
+---
+
+## [2.2.4] - 2026-02-03
+
+### Fixed
+
+**Installation Scripts**
+- Prevent CLAUDE.md duplication when re-running install
+- Ensure clean uninstall removes all OwnYourCode files properly
+
+---
+
 ## [2.2.3] - 2026-01-31
 
 ### Fixed
