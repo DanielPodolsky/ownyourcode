@@ -78,10 +78,19 @@ irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/pr
 
 Before completing any task, your code passes through 6 quality checkpoints:
 
+<div align="center">
+
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#aaa'}}}%%
-flowchart LR
-    Start((" ")) -->|/own:done| Code(["YOUR CODE"]) --> G1["1. Ownership<br/>Walk me through<br/>this code"] --> G2["2. Security<br/>Is user input<br/>validated?"] --> G3["3. Errors<br/>What if this<br/>operation fails?"] --> G4["4. Performance<br/>What happens<br/>at 10,000 items?"] --> G5["5. Readability<br/>Would a new dev<br/>understand?"] --> G6["6. Testing<br/>What tests<br/>prove it works?"] --> Done(["COMPLETE"])
+flowchart TB
+    Start((" ")) -->|/own:done| Code(["YOUR CODE"])
+    Code --> G1["1. Ownership<br/>Walk me through this code"]
+    G1 --> G2["2. Security<br/>Is user input validated?"]
+    G2 --> G3["3. Errors<br/>What if this operation fails?"]
+    G3 --> G4["4. Performance<br/>What happens at<br/>10,000 items?"]
+    G4 --> G5["5. Readability<br/>Would a new dev<br/>understand?"]
+    G5 --> G6["6. Testing<br/>What tests prove it works?"]
+    G6 --> Done(["COMPLETE"])
     Done -.->|Next Feature| Start
 
     style Start fill:#aaa,stroke:#aaa
@@ -94,6 +103,8 @@ flowchart LR
     style G6 fill:#2d2d2d,color:#fff
     style Done fill:#2d5a3d,color:#fff
 ```
+
+</div>
 
 > **Gate 1 blocks completion.** Can't explain your code? Don't ship it.
 
