@@ -15,7 +15,7 @@
 
 ## The Problem
 
-AI coding tools optimize for **shipping**. You get code fast, but you don't understand it. You can't debug it. You can't defend it in an interview. You can't build on it without asking AI again.
+AI coding tools optimize for **shipping**. The risk: code that works but isn't truly yours. Hard to debug without context. Hard to extend without asking again. Hard to defend when it matters.
 
 **OwnYourCode flips this.** AI becomes your mentor, not your coder. It guides, questions, and reviews — but you write the code.
 
@@ -25,14 +25,16 @@ AI coding tools optimize for **shipping**. You get code fast, but you don't unde
 
 ## Who This Is For
 
-| Profile | What You Get |
-|---------|--------------|
-| **Junior Developer** | Deep learning. Forced design thinking. Build the senior mindset early. |
-| **Career Switcher** | Translate your domain expertise. Learn to code without crutches. |
-| **Interview Prep** | STAR stories extracted from real work. Resume bullets that aren't BS. |
-| **Experienced Dev** | Skip the hand-holding. Get quality checks and velocity. |
+> **Coming Soon:** Profile selection during `/own:init`. Currently in development.
 
-*Profiles adapt the experience. The core stays the same: you write, AI guides.*
+| Profile             | Design Thinking | Career Extraction | Unique Feature                                          |
+| ------------------- | --------------- | ----------------- | ------------------------------------------------------- |
+| **Junior**          | **Required**    | On request        | Builds senior mindset through forced design involvement |
+| **Career Switcher** | On request      | On request        | Analogies from your previous field to bridge concepts   |
+| **Interview Prep**  | On request      | **Required**      | STAR stories and resume bullets from every task         |
+| **Experienced**     | On request      | On request        | Streamlined workflow, skip explanations you don't need  |
+
+_Profiles adapt the experience. The core stays the same: you write, AI guides._
 
 ---
 
@@ -65,18 +67,35 @@ irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/pr
 
 ### The 4 Protocols
 
-| Protocol | Rule |
-|----------|------|
-| **Active Typist** | You write all code. AI provides patterns (max 8 lines), guidance, and reviews. |
-| **Socratic Teaching** | AI asks questions instead of giving answers. |
-| **Evidence-Based** | AI verifies with official docs before answering. |
-| **Systematic Debugging** | READ → ISOLATE → DOCS → FIX. |
+| Protocol                 | Rule                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| **Active Typist**        | You write all code. AI provides patterns (max 8 lines), guidance, and reviews. |
+| **Socratic Teaching**    | AI asks questions instead of giving answers.                                   |
+| **Evidence-Based**       | AI verifies with official docs before answering.                               |
+| **Systematic Debugging** | READ → ISOLATE → DOCS → FIX.                                                   |
 
 ### The 6 Gates
 
-Before completing any task, your code passes through quality checkpoints: Ownership, Security, Error Handling, Performance, Readability, Testing.
+Before completing any task, your code passes through 6 quality checkpoints:
 
-Gate 1 can block completion. If you can't explain your code, you don't understand it.
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#aaa'}}}%%
+flowchart LR
+    Start((" ")) -->|/own:done| Code(["YOUR CODE"]) --> G1["1. Ownership<br/>Walk me through<br/>this code"] --> G2["2. Security<br/>Is user input<br/>validated?"] --> G3["3. Errors<br/>What if this<br/>operation fails?"] --> G4["4. Performance<br/>What happens<br/>at 10,000 items?"] --> G5["5. Readability<br/>Would a new dev<br/>understand?"] --> G6["6. Testing<br/>What tests<br/>prove it works?"] --> Done(["COMPLETE"])
+    Done -.->|Next Feature| Start
+
+    style Start fill:#aaa,stroke:#aaa
+    style Code fill:#2d2d2d,color:#fff
+    style G1 fill:#8b3a3a,color:#fff
+    style G2 fill:#2d2d2d,color:#fff
+    style G3 fill:#2d2d2d,color:#fff
+    style G4 fill:#2d2d2d,color:#fff
+    style G5 fill:#2d2d2d,color:#fff
+    style G6 fill:#2d2d2d,color:#fff
+    style Done fill:#2d5a3d,color:#fff
+```
+
+> **Gate 1 blocks completion.** Can't explain your code? Don't ship it.
 
 ### The Flywheel
 
@@ -86,30 +105,30 @@ Learnings compound across projects. Patterns that worked. Mistakes you won't rep
 
 ## Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/own:init` | Set your profile, stack, and goals |
-| `/own:feature` | Plan with spec-driven development |
-| `/own:guide` | Get implementation guidance |
-| `/own:stuck` | Debug systematically |
-| `/own:done` | Complete with gates + code review |
-| `/own:retro` | Capture learnings |
+| Command        | Purpose                            |
+| -------------- | ---------------------------------- |
+| `/own:init`    | Set your profile, stack, and goals |
+| `/own:feature` | Plan with spec-driven development  |
+| `/own:guide`   | Get implementation guidance        |
+| `/own:stuck`   | Debug systematically               |
+| `/own:done`    | Complete with gates + code review  |
+| `/own:retro`   | Capture learnings                  |
 
 ---
 
-## MCP Setup (Optional)
+## MCP Setup (Recommended)
 
-MCPs provide real-time documentation and code examples.
+MCPs provide real-time documentation and production code examples.
 
 ```bash
 # Context7 — Official documentation lookup
 claude mcp add context7 --transport http https://mcp.context7.com/mcp
 
 # Octocode — GitHub code search
-# https://octocode.ai/#installation
+https://octocode.ai/#installation
 ```
 
-Without MCPs, OwnYourCode still works but can't verify against latest docs.
+Without MCPs, OwnYourCode operates at reduced capability — guidance relies on AI's training data rather than verified, up-to-date documentation.
 
 ---
 
