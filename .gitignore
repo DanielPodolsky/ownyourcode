@@ -27,3 +27,4 @@ remotion/
 
 # Personal agents
 .claude/agents/
+.claude/agent-memory/
