@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, Bash
 
 # /own:status
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Get a comprehensive status report on project progress and learning growth.
 
 ## Overview
@@ -13,9 +15,14 @@ Get a comprehensive status report on project progress and learning growth.
 This command provides:
 1. **Roadmap Progress** — Where you are in the project
 2. **Active Specs** — Current work in progress
-3. **Learning Stats** — Skills and patterns documented (NEW)
+3. **Learning Stats** — Skills and patterns documented
 4. **Recent Activity** — Last commits and changes
-5. **Career Stats** — Interview stories and resume bullets collected
+5. **Career Stats** — Interview stories and resume bullets collected (if enabled)
+
+**Profile-Aware Behavior:**
+Check `.claude/ownyourcode-manifest.json` for `profile.settings.career_focus`:
+- If `"full-extraction"` or `"tips-only"` → Show Career Stats section
+- If `"none"` → **Hide Career Stats section entirely**
 
 ---
 
@@ -137,6 +144,10 @@ Lines Removed: 89
 
 #### Career Stats
 
+**⚠️ Profile Check:** Read `.claude/ownyourcode-manifest.json` → `profile.settings.career_focus`
+- If `"none"` → **SKIP THIS SECTION ENTIRELY**
+- If `"full-extraction"` or `"tips-only"` → Show section below
+
 ```markdown
 ## Career Portfolio
 
@@ -204,6 +215,10 @@ The more you document, the smarter /own:advise becomes!
 
 ### Step 4: Visual Status
 
+**Profile-Aware Visual:**
+- Read `profile.settings.career_focus` from manifest
+- If `"none"` → Omit CAREER STATS section from visual
+
 Create a visual summary:
 
 ```
@@ -211,6 +226,7 @@ Create a visual summary:
 │                      PROJECT STATUS                          │
 ├─────────────────────────────────────────────────────────────┤
 │  Project: [Name]                                             │
+│  Profile: [Junior / Career Switcher / Interview Prep / etc.] │
 │  Created: [Date]                                             │
 ├─────────────────────────────────────────────────────────────┤
 │  ROADMAP                                                     │
@@ -233,7 +249,7 @@ Create a visual summary:
 │  Level: ⭐⭐⭐ Intermediate                                    │
 │  Goal: ⭐⭐⭐⭐⭐ in 30 days                                     │
 ├─────────────────────────────────────────────────────────────┤
-│  CAREER STATS                                                │
+│  CAREER STATS  ← (hide if career_focus = "none")             │
 │  ──────────────────────────────────────────                  │
 │  Interview Stories: 3                                        │
 │  Resume Bullets: 3                                           │

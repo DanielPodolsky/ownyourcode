@@ -4,6 +4,60 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ---
 
+## [2.3.0] - 2026-02-10
+
+### The "Profiles" Release
+
+OwnYourCode now adapts its pedagogy based on who you are. The 6 Gates, code reviews, and quality standards remain the same—but HOW we teach changes based on your profile.
+
+### Added
+
+#### Profile System
+- **4 Developer Profiles:** Junior, Career Switcher, Interview Prep, Experienced
+- **Profile Selection:** Part of `/own:init` flow—choose your profile before project setup
+- **Profile Templates:** `profiles/*.md` define behavior for each profile type
+
+#### Profile Settings
+- **Career Focus:** `full-extraction` (STAR stories + resume bullets), `tips-only` (insights during teaching), `none` (pure learning)
+- **Design Involvement:** Collaborative spec creation vs. AI generates / developer reviews
+- **Analogies:** Optional domain-specific analogies (e.g., "explain like cooking", "use Star Wars references")
+- **Background:** For juniors—brand new vs. has coded before
+
+#### Junior Profile Enhancements
+- **Mandatory Design Involvement:** Juniors MUST participate in creating mission.md, stack.md, roadmap.md, spec.md, design.md, tasks.md
+- **Collaborative Thinking Flow:** AI asks concrete technology questions, junior thinks through trade-offs
+- **Momentum-Driven Socratic Questioning:** Questions build up to create productive struggle
+- **MCP-Grounded Guidance:** Context7 + Octocode inform questions with current best practices
+
+#### Experienced Profile
+- **Efficiency Mode:** Skip fundamentals, peer-level collaboration
+- **Workflow Preferences:** Pair programming, async review, or minimal intervention
+- **Adapted Gates:** Ownership gate focuses on "right approach?" not "can you explain?"
+
+### Changed
+
+#### Manifest Structure
+- Added `profile` section with `type`, `configured_at`, and `settings`
+- Settings include: `background`, `career_focus`, `design_involvement`, `analogies`, `previous_field`, `target_companies`, `timeline`, `focus_areas`, `workflow_preference`
+
+#### CLAUDE.md.template
+- Added profile injection points for dynamic behavior
+- Role phrasing adapts per profile
+- Career extraction section now profile-aware
+
+#### Commands Updated
+- `/own:init`: Profile selection added at beginning (Phase -1)
+- `/own:done`: Phases 5-6 (career extraction) conditional on `career_focus` setting
+- `/own:feature`: Collaborative vs. standard spec generation based on profile
+- `/own:status`: Career Stats section hidden when `career_focus=none`
+
+### Philosophy
+
+> "OwnYourCode teaches everyone the same WHAT (6 Gates, quality standards, code reviews).
+> The Profiles system changes HOW we teach based on who you are."
+
+---
+
 ## [2.2.5] - 2026-02-05
 
 ### Fixed

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # OwnYourCode Project Installation Script
-# AI-Mentored Development for Juniors
-# Version 2.2.5
+# AI-Mentored Development for All Developers
+# Version 2.3.0 - Profiles Support
 
 set -e
 
@@ -14,7 +14,9 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Paths
-BASE_DIR="$HOME/ownyourcode"
+# Use the directory where this script lives (go up one level from scripts/)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASE_DIR="$(dirname "$SCRIPT_DIR")"
 PROJECT_DIR=$(pwd)
 PROJECT_NAME=$(basename "$PROJECT_DIR")
 
@@ -27,15 +29,17 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Header
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║            OwnYourCode Installation v2.2.5                 ║${NC}"
-echo -e "${GREEN}║       AI-Mentored Spec-Driven Development Engine          ║${NC}"
+echo -e "${GREEN}║            OwnYourCode Installation v2.3.0                 ║${NC}"
+echo -e "${GREEN}║    AI-Mentored Development with Profile Support            ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Check base exists
+# Check base exists (should always exist since we derive it from script location)
 if [ ! -d "$BASE_DIR" ]; then
-    error "OwnYourCode base not found at $BASE_DIR. Run the base installer first."
+    error "OwnYourCode base not found at $BASE_DIR. Script location issue."
 fi
+
+info "Using OwnYourCode from: $BASE_DIR"
 
 info "Installing OwnYourCode into: $PROJECT_DIR"
 echo ""
@@ -211,6 +215,20 @@ fi
 echo "# Auto-generated skills go here (from /own:retro)" > "$PROJECT_DIR/.claude/skills/learned/.gitkeep"
 
 # ============================================================================
+# STEP 5.5: Copy profile templates (NEW in v2.3.0)
+# ============================================================================
+
+info "Installing profile templates..."
+
+if [ -d "$BASE_DIR/profiles" ]; then
+    mkdir -p "$PROJECT_DIR/ownyourcode/profiles"
+    cp "$BASE_DIR/profiles/"*.md "$PROJECT_DIR/ownyourcode/profiles/" 2>/dev/null || true
+    success "Profile templates installed (default, junior, career-switcher, interview-prep, experienced)"
+else
+    warn "Profile templates not found at $BASE_DIR/profiles"
+fi
+
+# ============================================================================
 # STEP 6: Learning Registry Note (v2.1 - Global Learning)
 # ============================================================================
 
@@ -312,7 +330,7 @@ if [ -f "$PROJECT_DIR/.gitignore" ]; then
 fi
 
 # ============================================================================
-# STEP 10: Generate manifest (for clean uninstall)
+# STEP 10: Generate manifest (for clean uninstall + profile storage)
 # ============================================================================
 
 info "Generating manifest..."
@@ -331,10 +349,31 @@ fi
 
 cat > "$MANIFEST" << EOF
 {
-  "version": "2.2.5",
+  "version": "2.3.0",
   "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "claude_md_location": "$CLAUDE_MD_REL",
   "backup_path": $BACKUP_JSON,
+  "profile": {
+    "type": null,
+    "configured_at": null,
+    "settings": {
+      "background": null,
+      "career_focus": null,
+      "design_involvement": null,
+      "analogies": {
+        "enabled": false,
+        "source": null
+      },
+      "previous_field": null,
+      "focus_area": null,
+      "position_title": null,
+      "target_company": null,
+      "teaching_style": null,
+      "feedback_style": null,
+      "pacing": null,
+      "personal_touch": null
+    }
+  },
   "skills": [
     "fundamentals/frontend",
     "fundamentals/backend",
@@ -366,6 +405,7 @@ cat > "$MANIFEST" << EOF
     "own/feature.md",
     "own/guide.md",
     "own/init.md",
+    "own/profile.md",
     "own/retro.md",
     "own/status.md",
     "own/stuck.md",
@@ -382,11 +422,11 @@ success "Manifest created at .claude/ownyourcode-manifest.json"
 
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║          Installation Complete! v2.2.5                    ║${NC}"
+echo -e "${GREEN}║          Installation Complete! v2.3.0                    ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-success "OwnYourCode v2.2.5 installed successfully!"
+success "OwnYourCode v2.3.0 installed successfully!"
 echo ""
 
 info "What was created:"
@@ -397,6 +437,7 @@ echo "  📁 ownyourcode/              — Your project docs (commit this)"
 echo "     ├── product/             — Mission, stack, roadmap"
 echo "     ├── specs/               — Feature specifications"
 echo "     ├── career/              — Interview stories & bullets"
+echo "     ├── profiles/            — Profile templates (junior, experienced, etc.)"
 echo "     └── guides/              — Setup guides"
 echo ""
 echo "  📁 .claude/                 — Claude Code configuration"
@@ -416,6 +457,10 @@ echo ""
 info "Next steps:"
 echo "  1. Open Claude Code in this project"
 echo "  2. Run: /own:init"
+echo ""
+echo -e "${YELLOW}  ⚠️  Profile setup is part of /own:init${NC}"
+echo "     Choose your profile (Junior, Career Switcher, Interview Prep, Experienced)"
+echo "     This customizes HOW OwnYourCode teaches you"
 echo ""
 info "The workflow:"
 echo "  /own:feature  →  Plan a new feature (creates spec, design, tasks)"

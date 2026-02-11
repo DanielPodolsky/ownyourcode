@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, WebFetch, AskUserQuestion, mcp__context7__resol
 
 # /own:guide
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Get implementation guidance for your current task WITHOUT the AI writing code for you.
 
 ## The Active Typist Rule

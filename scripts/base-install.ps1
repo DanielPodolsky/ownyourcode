@@ -1,5 +1,6 @@
 # OwnYourCode Base Installation Script (Windows)
-# AI-Mentored Development for Juniors
+# AI-Mentored Development for All Developers
+# Version 2.3.0 - Profiles Support
 #
 # Usage: irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.ps1 | iex
 
@@ -19,8 +20,8 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 # Header
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║            OwnYourCode Installation                   ║" -ForegroundColor Green
-Write-Host "║      AI-Mentored Development for Juniors              ║" -ForegroundColor Green
+Write-Host "║         OwnYourCode Installation v2.3.0               ║" -ForegroundColor Green
+Write-Host "║   AI-Mentored Development with Profile Support        ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
