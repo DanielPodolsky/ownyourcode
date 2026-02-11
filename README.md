@@ -29,12 +29,13 @@ AI coding tools optimize for **shipping**. The risk: code that works but isn't t
 
 | Profile             | Design Thinking | Career Extraction | Unique Feature                                          |
 | ------------------- | --------------- | ----------------- | ------------------------------------------------------- |
-| **Junior**          | **Required**    | On request        | Builds senior mindset through forced design involvement |
-| **Career Switcher** | On request      | On request        | Analogies from your previous field to bridge concepts   |
-| **Interview Prep**  | On request      | **Default ON**    | STAR stories and resume bullets from every task         |
-| **Experienced**     | On request      | On request        | Streamlined workflow, skip explanations you don't need  |
+| **Junior**          | **Required**    | On request        | No shortcuts: you design first, then build |
+| **Career Switcher** | On request      | On request        | Concepts explained through what you already know — your past is a learning advantage |
+| **Interview Prep**  | On request      | **Default ON**    | Every task becomes interview ammunition — S.T.A.R story and resume bullet extraction |
+| **Experienced**     | On request      | On request        | You have the experience, get direct feedback and peer-level collaboration |
+| **Custom**          | On request      | On request        | Mix and match to fit how you learn |
 
-_Profiles adapt HOW we teach. The core (6 Gates, code reviews, quality) stays the same._
+_Profiles adapt HOW we teach. The core (6 Gates, code reviews, quality) stays the same. Change anytime with `/own:profile`._
 
 ---
 
@@ -116,14 +117,26 @@ Learnings compound across projects. Patterns that worked. Mistakes you won't rep
 
 ## Commands
 
+### Core Workflow
+
 | Command        | Purpose                            |
 | -------------- | ---------------------------------- |
 | `/own:init`    | Set your profile, stack, and goals |
 | `/own:feature` | Plan with spec-driven development  |
+| `/own:advise`  | Query past learnings before starting |
 | `/own:guide`   | Get implementation guidance        |
 | `/own:stuck`   | Debug systematically               |
 | `/own:done`    | Complete with gates + code review  |
 | `/own:retro`   | Capture learnings                  |
+
+### Utilities
+
+| Command        | Purpose                            |
+| -------------- | ---------------------------------- |
+| `/own:status`  | Check progress, tasks, and career stats |
+| `/own:profile` | View or change your profile        |
+| `/own:test`    | Guide through writing tests        |
+| `/own:docs`    | Guide through writing documentation |
 
 ---
 
