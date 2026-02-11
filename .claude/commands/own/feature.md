@@ -6,14 +6,16 @@ allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, mcp__context7__re
 
 # /own:feature
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Create a feature specification using **Spec-Driven Development (SDD)**.
 
 ## Overview
 
 This command follows the SDD workflow:
 1. **AI generates** spec.md, design.md, tasks.md based on minimal input
-2. **Junior reviews** the generated specs
-3. **Junior adds** any missing edge cases or requirements
+2. **Developer reviews** the generated specs
+3. **Developer adds** any missing edge cases or requirements
 4. **Then** implementation begins with mentorship
 
 **Output:**
@@ -23,6 +25,12 @@ This command follows the SDD workflow:
 
 **Naming convention:** `phase-1-foundation`, `phase-2-core-features`, `phase-3-polish`
 This gives clear visibility of which phase you're working on.
+
+**Profile-Aware Behavior:**
+Check `.claude/ownyourcode-manifest.json` for profile settings:
+- **Junior profile** → Collaborative spec creation (mandatory design involvement)
+- **Other profiles with `design_involvement=true`** → Collaborative spec creation
+- **Profiles with `design_involvement=false`** → AI generates, developer reviews
 
 ---
 
@@ -183,17 +191,67 @@ Spec impact:
 
 ### Phase 3: AI Generates Specs (The SDD Part)
 
+**⚠️ Profile Check First:**
+Read `.claude/ownyourcode-manifest.json` to determine spec generation mode:
+- If `profile.type = "junior"` → Use **Collaborative Mode** (below)
+- If `profile.settings.design_involvement = true` → Use **Collaborative Mode**
+- Otherwise → Use **Standard Mode** (AI generates, developer reviews)
+
 **Read the project context:**
 1. Check `ownyourcode/product/mission.md` for project goals
 2. Check `ownyourcode/product/stack.md` for technology constraints
 3. Scan existing code structure to understand patterns
 
-**Generate all three files based on:**
+**Standard Mode (design_involvement=false):**
+Generate all three files based on:
 - User's input from Phase 1
 - MCP research from Phase 2
 - Project context
 - Technology stack
 - Best practices from documentation AND production examples
+
+**Collaborative Mode (Junior or design_involvement=true):**
+
+Instead of generating silently, involve the developer in design thinking.
+
+**IMPORTANT: Use FREE-TEXT questions, NOT AskUserQuestion with options.**
+The goal is to make them THINK, not pick from a list. All questions below should be asked as free-text prompts that require them to articulate their thoughts:
+
+#### Step 1: Component Breakdown
+> "What components do you think this feature needs?"
+> "How would you break this down into parts?"
+
+Let them propose. Guide with questions:
+> "What about [component they missed]?"
+> "Where would [specific logic] live?"
+
+#### Step 2: Data Flow Thinking
+> "When the user clicks [trigger], what happens? Walk me through the flow."
+> "Where does the data come from? Where does it go?"
+
+Push for specifics:
+> "What state needs to update?"
+> "What API calls are needed?"
+
+#### Step 3: Edge Case Discovery
+> "What could go wrong here?"
+> "What if the network fails? What if the user does something unexpected?"
+
+Use MCPs to add edge cases they missed:
+> "Looking at how production apps handle this, they also consider [edge case]."
+
+#### Step 4: Collaborative Refinement
+- Build on their ideas with MCP-grounded best practices
+- Fill gaps they missed, but credit their thinking
+- Use their terminology and structure as the foundation
+
+#### Step 5: Generate with Attribution
+When generating final specs:
+- Structure reflects their proposed breakdown
+- Add professional polish and completeness
+- Include sections for edge cases they discovered
+
+Present as: "These specs reflect YOUR thinking, refined through our discussion"
 
 ---
 

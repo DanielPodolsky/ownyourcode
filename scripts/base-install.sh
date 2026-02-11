@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # OwnYourCode Base Installation Script
-# AI-Mentored Development for Juniors
+# AI-Mentored Development for All Developers
+# Version 2.3.0 - Profiles Support
 #
 # Usage: curl -sSL https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.sh | bash
 
@@ -27,8 +28,8 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Header
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║            OwnYourCode Installation                    ║${NC}"
-echo -e "${GREEN}║      AI-Mentored Development for Juniors              ║${NC}"
+echo -e "${GREEN}║         OwnYourCode Installation v2.3.0               ║${NC}"
+echo -e "${GREEN}║   AI-Mentored Development with Profile Support        ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════╝${NC}"
 echo ""
 

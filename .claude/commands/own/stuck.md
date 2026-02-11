@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, WebFetch, AskUserQuestion, mcp__context7__resol
 
 # /own:stuck
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Guide the user through systematic debugging using Protocol D.
 
 ## Protocol D: The Stuck Framework

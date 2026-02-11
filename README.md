@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <sub>v2.2.5 · MIT License</sub>
+  <sub>v2.3.0 · MIT License</sub>
 </p>
 
 ---
@@ -25,16 +25,16 @@ AI coding tools optimize for **shipping**. The risk: code that works but isn't t
 
 ## Who This Is For
 
-> **Coming Soon:** Profile selection during `/own:init`. Currently in development.
+**Profile selection is part of `/own:init`.** Choose your profile and OwnYourCode adapts its teaching style.
 
 | Profile             | Design Thinking | Career Extraction | Unique Feature                                          |
 | ------------------- | --------------- | ----------------- | ------------------------------------------------------- |
 | **Junior**          | **Required**    | On request        | Builds senior mindset through forced design involvement |
 | **Career Switcher** | On request      | On request        | Analogies from your previous field to bridge concepts   |
-| **Interview Prep**  | On request      | **Required**      | STAR stories and resume bullets from every task         |
+| **Interview Prep**  | On request      | **Default ON**    | STAR stories and resume bullets from every task         |
 | **Experienced**     | On request      | On request        | Streamlined workflow, skip explanations you don't need  |
 
-_Profiles adapt the experience. The core stays the same: you write, AI guides._
+_Profiles adapt HOW we teach. The core (6 Gates, code reviews, quality) stays the same._
 
 ---
 

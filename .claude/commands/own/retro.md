@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, mcp__octocode__gi
 
 # /own:retro
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Extract learnings from completed work and persist them for future reference.
 
 ## Overview

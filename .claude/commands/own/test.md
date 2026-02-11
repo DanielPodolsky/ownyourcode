@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash, mcp__contex
 
 # /own:test
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Guide the junior through writing tests for their feature. **They write the tests, you guide what to test.**
 
 ## The Testing Philosophy

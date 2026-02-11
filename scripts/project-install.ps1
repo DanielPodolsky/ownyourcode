@@ -1,6 +1,6 @@
 # OwnYourCode Project Installation Script (Windows)
-# AI-Mentored Development for Juniors
-# Version 2.2.5
+# AI-Mentored Development for All Developers
+# Version 2.3.0 - Profiles Support
 
 $ErrorActionPreference = "Stop"
 
@@ -18,8 +18,8 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 # Header
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║            OwnYourCode Installation v2.2.5                ║" -ForegroundColor Green
-Write-Host "║       AI-Mentored Spec-Driven Development Engine          ║" -ForegroundColor Green
+Write-Host "║            OwnYourCode Installation v2.3.0                ║" -ForegroundColor Green
+Write-Host "║    AI-Mentored Development with Profile Support           ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
@@ -28,6 +28,7 @@ if (-not (Test-Path $BASE_DIR)) {
     Write-Err "OwnYourCode base not found at $BASE_DIR. Run the base installer first."
 }
 
+Write-Info "Using OwnYourCode from: $BASE_DIR"
 Write-Info "Installing OwnYourCode into: $PROJECT_DIR"
 Write-Host ""
 
@@ -58,6 +59,7 @@ $directories = @(
     "ownyourcode/specs/completed",
     "ownyourcode/career/stories",
     "ownyourcode/guides",
+    "ownyourcode/profiles",
     ".claude/commands/own",
     ".claude/skills/fundamentals/frontend",
     ".claude/skills/fundamentals/backend",
@@ -173,7 +175,7 @@ if (Test-Path $srcCommands) {
         Copy-Item $file.FullName -Destination $destCommands -Force
     }
     $cmdCount = $files.Count
-    Write-OK "Commands installed: $cmdCount"
+    Write-OK "Commands installed ($cmdCount commands including test/docs)"
 } else {
     Write-Warn "Commands directory not found"
 }
@@ -229,6 +231,25 @@ Write-OK "Career extraction skills installed"
 # Create .gitkeep for learned
 $gitkeepPath = Join-Path $PROJECT_DIR ".claude/skills/learned/.gitkeep"
 Set-Content -Path $gitkeepPath -Value "# Auto-generated skills go here - from /own:retro"
+
+# ============================================================================
+# STEP 5.5: Copy profile templates (NEW in v2.3.0)
+# ============================================================================
+
+Write-Info "Installing profile templates..."
+
+$srcProfiles = Join-Path $BASE_DIR "profiles"
+$destProfiles = Join-Path $PROJECT_DIR "ownyourcode/profiles"
+
+if (Test-Path $srcProfiles) {
+    $profileFiles = Get-ChildItem -Path $srcProfiles -Filter "*.md" -ErrorAction SilentlyContinue
+    foreach ($file in $profileFiles) {
+        Copy-Item $file.FullName -Destination $destProfiles -Force
+    }
+    Write-OK "Profile templates installed (default, junior, career-switcher, interview-prep, experienced)"
+} else {
+    Write-Warn "Profile templates not found at $srcProfiles"
+}
 
 # ============================================================================
 # STEP 6: Learning Registry Note
@@ -347,7 +368,7 @@ if (Test-Path $gitignorePath) {
 }
 
 # ============================================================================
-# STEP 10: Generate manifest (for clean uninstall)
+# STEP 10: Generate manifest (for clean uninstall + profile storage)
 # ============================================================================
 
 Write-Info "Generating manifest..."
@@ -366,10 +387,31 @@ $timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 $manifestContent = @"
 {
-  "version": "2.2.5",
+  "version": "2.3.0",
   "installed_at": "$timestamp",
   "claude_md_location": "$CLAUDE_MD_REL",
   "backup_path": $backupJson,
+  "profile": {
+    "type": null,
+    "configured_at": null,
+    "settings": {
+      "background": null,
+      "career_focus": null,
+      "design_involvement": null,
+      "analogies": {
+        "enabled": false,
+        "source": null
+      },
+      "previous_field": null,
+      "focus_area": null,
+      "position_title": null,
+      "target_company": null,
+      "teaching_style": null,
+      "feedback_style": null,
+      "pacing": null,
+      "personal_touch": null
+    }
+  },
   "skills": [
     "fundamentals/frontend",
     "fundamentals/backend",
@@ -401,6 +443,7 @@ $manifestContent = @"
     "own/feature.md",
     "own/guide.md",
     "own/init.md",
+    "own/profile.md",
     "own/retro.md",
     "own/status.md",
     "own/stuck.md",
@@ -418,40 +461,45 @@ Write-OK "Manifest created at .claude/ownyourcode-manifest.json"
 
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║          Installation Complete! v2.2.5                    ║" -ForegroundColor Green
+Write-Host "║          Installation Complete! v2.3.0                    ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 
-Write-OK "OwnYourCode v2.2.5 installed successfully!"
+Write-OK "OwnYourCode v2.3.0 installed successfully!"
 Write-Host ""
 
 Write-Info "What was created:"
 Write-Host ""
-Write-Host "  📄 $CLAUDE_MD_REL           — THE STRICTNESS [mentor behavior]"
+Write-Host "  $CLAUDE_MD_REL           - THE STRICTNESS [mentor behavior]"
 Write-Host ""
-Write-Host "  📁 ownyourcode/              — Your project docs [commit this]"
-Write-Host "     ├── product/             — Mission, stack, roadmap"
-Write-Host "     ├── specs/               — Feature specifications"
-Write-Host "     ├── career/              — Interview stories & bullets"
-Write-Host "     └── guides/              — Setup guides"
+Write-Host "  ownyourcode/              - Your project docs [commit this]"
+Write-Host "     product/               - Mission, stack, roadmap"
+Write-Host "     specs/                 - Feature specifications"
+Write-Host "     career/                - Interview stories & bullets"
+Write-Host "     profiles/              - Profile templates (junior, experienced, etc.)"
+Write-Host "     guides/                - Setup guides"
 Write-Host ""
-Write-Host "  📁 .claude/                 — Claude Code configuration"
-Write-Host "     ├── commands/            — Slash commands"
-Write-Host "     └── skills/              — Auto-invoked mentorship skills"
-Write-Host "         ├── fundamentals/    — Core review skills"
-Write-Host "         ├── gates/           — Mentorship gates"
-Write-Host "         ├── career/          — STAR & resume extraction"
-Write-Host "         └── learned/         — Auto-generated from /own:retro"
+Write-Host "  .claude/                  - Claude Code configuration"
+Write-Host "     commands/              - 11 slash commands"
+Write-Host "     skills/                - Auto-invoked mentorship skills"
+Write-Host "        fundamentals/       - 13 Core review skills"
+Write-Host "        gates/              - 6 Mentorship gates"
+Write-Host "        career/             - STAR & resume extraction"
+Write-Host "        learned/            - Auto-generated from /own:retro"
 Write-Host ""
-Write-Host "  📁 ~/ownyourcode/learning/  — GLOBAL Learning Flywheel"
-Write-Host "     ├── LEARNING_REGISTRY.md — Your growth tracker [all projects]"
-Write-Host "     ├── patterns/            — Reusable solutions"
-Write-Host "     └── failures/            — Documented anti-patterns"
+Write-Host "  ~/ownyourcode/learning/   - GLOBAL Learning Flywheel"
+Write-Host "     LEARNING_REGISTRY.md   - Your growth tracker [all projects]"
+Write-Host "     patterns/              - Reusable solutions"
+Write-Host "     failures/              - Documented anti-patterns"
 Write-Host ""
 
 Write-Info "Next steps:"
 Write-Host "  1. Open Claude Code in this project"
 Write-Host "  2. Run: /own:init"
+Write-Host ""
+Write-Host "  Profile setup is part of /own:init" -ForegroundColor Yellow
+Write-Host "     Choose your profile (Junior, Career Switcher, Interview Prep, Experienced)"
+Write-Host "     This customizes HOW OwnYourCode teaches you"
 Write-Host ""
 Write-Info "The workflow:"
 Write-Host "  /own:feature  ->  Plan a new feature [creates spec, design, tasks]"
@@ -467,5 +515,5 @@ Write-Host "  OctoCode:  https://octocode.ai/#installation"
 Write-Host ""
 
 Write-Info "To remove OwnYourCode later:"
-Write-Host "  irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/project-uninstall.ps1 | iex"
+Write-Host "  ~/ownyourcode/scripts/project-uninstall.ps1"
 Write-Host ""

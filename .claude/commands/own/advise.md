@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, AskUserQuestion, mcp__context7__resolve-library
 
 # /own:advise
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Query past learnings and leverage research tools before starting a new task.
 
 ## Overview

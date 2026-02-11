@@ -6,6 +6,8 @@ allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Bash
 
 # /own:done
 
+> ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
+
 Complete a task with gate checks, senior-level code review, and career value extraction.
 
 ## Overview
@@ -14,8 +16,14 @@ This command is run when the user finishes a task or feature. It performs:
 1. **Gate Checks** — 6 Mentorship Gates verification
 2. **Code Review** — FAANG-level feedback on their code
 3. **Task Completion** — Update spec and roadmap
-4. **Interview Story** — Extract STAR format story
-5. **Resume Bullet** — Draft action-impact bullet
+4. **Interview Story** — Extract STAR format story (if career_focus allows)
+5. **Resume Bullet** — Draft action-impact bullet (if career_focus allows)
+
+**Profile-Aware Behavior:**
+- Check `.claude/ownyourcode-manifest.json` for `profile.settings.career_focus`
+- If `career_focus = "full-extraction"` → Run all phases including 5 and 6
+- If `career_focus = "tips-only"` → Skip Phases 5 and 6
+- If `career_focus = "none"` → Skip Phases 5 and 6, hide CAREER VALUE in summary
 
 ---
 
@@ -310,6 +318,10 @@ If ALL tasks in the feature are complete:
 
 ### Phase 5: Interview Story (STAR Method)
 
+**⚠️ Profile Check:** Read `.claude/ownyourcode-manifest.json` → `profile.settings.career_focus`
+- If `"tips-only"` or `"none"` → **SKIP THIS PHASE**
+- If `"full-extraction"` or not set → Continue below
+
 *Reference: `.claude/skills/career/star-stories/SKILL.md`*
 
 **Explain STAR first:**
@@ -346,6 +358,10 @@ Save the story to `ownyourcode/career/stories/[date]-[feature].md`
 ---
 
 ### Phase 6: Resume Bullet
+
+**⚠️ Profile Check:** Read `.claude/ownyourcode-manifest.json` → `profile.settings.career_focus`
+- If `"tips-only"` or `"none"` → **SKIP THIS PHASE**
+- If `"full-extraction"` or not set → Continue below
 
 *Reference: `.claude/skills/career/resume-bullets/SKILL.md`*
 
@@ -426,6 +442,12 @@ After completing all phases:
 
 ### Phase 9: Summary
 
+**Profile-Aware Summary:**
+- Check `profile.settings.career_focus` from manifest
+- If `"none"` → Hide CAREER VALUE section entirely
+- If `"tips-only"` → Hide CAREER VALUE section
+- If `"full-extraction"` or not set → Show full summary below
+
 ```
 ┌─────────────────────────────────────────┐
 │           TASK COMPLETED!               │
@@ -447,8 +469,8 @@ After completing all phases:
 │ Warnings:    2 (addressed)              │
 │ Suggestions: 3                          │
 │                                         │
-│ CAREER VALUE                            │
-│ ─────────────                           │
+│ CAREER VALUE  ← (hide if career_focus   │
+│ ─────────────    is "none" or "tips")   │
 │ Interview Story: ✅ Saved               │
 │ Resume Bullet:   ✅ Drafted             │
 │                                         │
