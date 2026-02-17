@@ -80,31 +80,7 @@ irm https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/pr
 Before completing any task, your code passes through 6 quality checkpoints:
 
 <div align="center">
-
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#aaa'}}}%%
-flowchart TB
-    Start((" ")) -->|/own:done| Code(["YOUR CODE"])
-    Code --> G1["1. Ownership<br/>Walk me through this code"]
-    G1 --> G2["2. Security<br/>Is user input validated?"]
-    G2 --> G3["3. Errors<br/>What if this operation fails?"]
-    G3 --> G4["4. Performance<br/>What happens at<br/>10,000 items?"]
-    G4 --> G5["5. Readability<br/>Would a new dev<br/>understand?"]
-    G5 --> G6["6. Testing<br/>What tests prove it works?"]
-    G6 --> Done(["COMPLETE"])
-    Done -.->|Next Feature| Start
-
-    style Start fill:#aaa,stroke:#aaa
-    style Code fill:#2d2d2d,color:#fff
-    style G1 fill:#8b3a3a,color:#fff
-    style G2 fill:#2d2d2d,color:#fff
-    style G3 fill:#2d2d2d,color:#fff
-    style G4 fill:#2d2d2d,color:#fff
-    style G5 fill:#2d2d2d,color:#fff
-    style G6 fill:#2d2d2d,color:#fff
-    style Done fill:#2d5a3d,color:#fff
-```
-
+  <img width="1109" height="866" alt="image" src="https://github.com/user-attachments/assets/b7ad9f99-f6e3-4703-afd0-0ff0ef51ef31" />
 </div>
 
 > **Gate 1 blocks completion.** Can't explain your code? Don't ship it.
@@ -112,6 +88,10 @@ flowchart TB
 ### The Flywheel
 
 Learnings compound across projects. Patterns that worked. Mistakes you won't repeat. Career value extracted from every task.
+
+<div align="center">
+  <img width="1213" height="933" alt="image" src="https://github.com/user-attachments/assets/37e657c6-ac33-40eb-9ba2-a5257f38f861" />
+</div>
 
 ---
 
