@@ -10,6 +10,7 @@ All notable changes to OwnYourCode will be documented in this file.
 
 #### Repository Infrastructure
 - **Claude PR Review Gate:** Every PR targeting `main` is now automatically reviewed by Claude against the OwnYourCode standards (P/S/T/X/D rule set across Philosophy, Structure, Tooling, Security, and Documentation), the 4 Protocols, and the universal-audience product mission. The reviewer's system prompt lives in `.github/CLAUDE_REVIEWER.md` and is isolated from the workflow YAML for fast iteration. Reviewer enforces an explicit `VERDICT:` contract (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`) so branch protection can gate merges on the verdict.
+- **`@claude` Tag Responder:** Any write-access user can now mention `@claude` in a PR/issue comment, an inline review comment, or a formal PR review to summon Claude for in-thread Q&A with full context (latest PR diff, full comment thread, PR/issue description). Complementary to the auto-review gate — different concern, different workflow file (`.github/workflows/claude-tag.yml`), no system prompt (uses the action's default conversational tag mode). Tool surface is read-and-comment only (no `Edit`/`Write`/shell-wildcards) and the trigger is gated by the action's built-in write-access check.
 
 ## [2.3.0] - 2026-02-10
 
