@@ -4,6 +4,13 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+#### Repository Infrastructure
+- **Claude PR Review Gate:** Every PR targeting `main` is now automatically reviewed by Claude against the OwnYourCode standards (P/S/T/X/D rule set across Philosophy, Structure, Tooling, Security, and Documentation), the 4 Protocols, and the universal-audience product mission. The reviewer's system prompt lives in `.github/CLAUDE_REVIEWER.md` and is isolated from the workflow YAML for fast iteration. Reviewer enforces an explicit `VERDICT:` contract (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`) so branch protection can gate merges on the verdict.
+
 ## [2.3.0] - 2026-02-10
 
 ### The "Profiles" Release
