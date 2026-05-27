@@ -11,7 +11,7 @@ on:
   pull_request_review:
     types: [submitted]
   issues:
-    types: [opened, assigned, labeled]
+    types: [opened]
 
 concurrency:
   group: claude-tag-${{ github.event.issue.number || github.event.pull_request.number }}-${{ github.event.comment.id || github.event.review.id || github.run_id }}
