@@ -1,0 +1,72 @@
+name: Claude PR Review (OwnYourCode Gatekeeper)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Claude reviews this PR
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Load reviewer system prompt
+        id: load_prompt
+        run: |
+          {
+            echo 'SYSTEM_PROMPT<<PROMPT_EOF'
+            cat .github/CLAUDE_REVIEWER.md
+            echo PROMPT_EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          track_progress: true
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            PR TITLE: ${{ github.event.pull_request.title }}
+            PR AUTHOR: ${{ github.event.pull_request.user.login }}
+            BASE BRANCH: ${{ github.event.pull_request.base.ref }}
+            HEAD BRANCH: ${{ github.event.pull_request.head.ref }}
+
+            ${{ steps.load_prompt.outputs.SYSTEM_PROMPT }}
+
+            ---
+
+            The PR branch is already checked out in the current working directory.
+
+            Workflow for this review:
+            1. Read `.github/CLAUDE_REVIEWER.md` again if you need to re-anchor on the standards.
+            2. Run `gh pr diff ${{ github.event.pull_request.number }}` to see the changes.
+            3. Read any files you need full context on (don't review code blindly from the diff alone).
+            4. Use `mcp__github_inline_comment__create_inline_comment` for line-specific findings.
+            5. Use `gh pr comment` for the top-level summary review (verdict + reasoning).
+            6. End your top-level comment with one of these explicit verdicts on its own line:
+               - `VERDICT: APPROVE` — ship it
+               - `VERDICT: REQUEST_CHANGES` — blocks merge, must be fixed
+               - `VERDICT: COMMENT` — observations only, no blocker
+
+            Do not submit review text as chat messages — only as GitHub comments.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr checks:*),Read,Glob,Grep"
