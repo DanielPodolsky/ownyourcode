@@ -1,0 +1,3 @@
+# Solo-maintainer setup — auto-requests review notifications on security-sensitive paths.
+# Not enforced as merge-blocking; informational ownership signal until co-maintainers are added.
+/.github/ @DanielPodolsky
