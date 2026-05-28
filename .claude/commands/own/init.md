@@ -775,19 +775,62 @@ Options:
 
 **If "Yes":**
 
-Plugin installs in Claude Code happen via the **`/plugin install` slash command**, not a shell command. You cannot run `/plugin install` from inside a slash-command flow — the user must invoke it themselves. Tell the user:
+Plugin installs in Claude Code happen via the **`/plugin install` slash command**, not a shell command, and slash commands cannot directly invoke other slash commands. The user must type the install command themselves — but `/own:init` does NOT have to restart. Instead, pause via a second `AskUserQuestion` and resume when the user confirms.
+
+Tell the user (plain message, then immediately use AskUserQuestion):
 
 ```
-To install the plugin, run this in your Claude Code session:
+Got it. In a separate message, run:
 
   /plugin install frontend-design@claude-plugins-official
 
-Then re-run /own:init to continue setup.
+I'll wait here. When the install finishes, come back to this message
+and pick the appropriate option below.
 ```
 
-**STOP execution.** When the user re-runs `/own:init`, the plugin detection in Step 2 will succeed and the install prompt will not re-appear.
+Then use AskUserQuestion (this is the "pause"):
 
-(Rationale: a slash command cannot invoke another slash command directly. The handoff is intentional — it gives the user explicit consent and visibility into what's being installed.)
+```
+Question: "Plugin install status?"
+
+Options:
+1. Done — I installed the plugin, continue
+2. Install failed or canceled — use fallback CSS instead
+```
+
+**If "Done":**
+
+Re-run the detection from Step 2:
+
+```bash
+ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null
+```
+
+- **Detection succeeds:** Set `plugin_available = true`. Continue to Step 4. The user keeps all the profile / MCP work they already did.
+- **Detection fails:** The install didn't register (most commonly because the user hit a permission prompt and dismissed it, or typed the command wrong). Tell the user:
+  ```
+  I can't see the plugin yet. This usually means:
+    - The install needed confirmation that wasn't accepted, OR
+    - The command name had a typo, OR
+    - Claude Code's plugin cache hasn't refreshed yet (try once more).
+
+  What do you want to do?
+  ```
+
+  Use AskUserQuestion again:
+  ```
+  Options:
+  1. Try installing again — I'll re-check after
+  2. Skip and use fallback CSS instead
+  ```
+
+  Loop on "try again" up to 2 retries (3 total attempts). After 3 failed checks, force the skip path to avoid an infinite loop.
+
+**If "Install failed or canceled":**
+
+Set `plugin_available = false`. Note `theme.fallback_mode = true` in the manifest. Continue to Step 4 — the user keeps all their progress and the fallback CSS will be used.
+
+(Rationale: `AskUserQuestion` holds the slash-command flow in place. The user types `/plugin install ...` in a separate message between the prompt and their answer, and `/own:init` resumes from the pause when they pick an option. No restart, no work lost.)
 
 **If "Skip" (or install failed):**
 
