@@ -252,6 +252,25 @@ cp "$BASE_DIR/guides/"*.md "$PROJECT_DIR/ownyourcode/guides/" 2>/dev/null || tru
 success "Guides copied"
 
 # ============================================================================
+# STEP 7.5: Copy HTML templates (v2.4.0+)
+# ============================================================================
+# These templates power the HTML-canonical SDD workflow. They are read at
+# runtime by /own:init (Phase 0.5), /own:feature, and /own:theme.
+# Safe on older source repos: missing templates are silently skipped.
+
+info "Copying HTML templates..."
+
+mkdir -p "$PROJECT_DIR/ownyourcode/templates/html"
+# Recursive so future subdirectories (e.g., presets/) are copied automatically.
+# Mirrors the -Recurse semantics of the PowerShell variant for cross-platform parity.
+if [ -d "$BASE_DIR/core/templates/html" ]; then
+    cp -R "$BASE_DIR/core/templates/html/." "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
+    success "HTML templates copied"
+else
+    info "No HTML templates to copy (older source repo)"
+fi
+
+# ============================================================================
 # STEP 8: Create product templates
 # ============================================================================
 

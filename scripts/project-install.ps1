@@ -284,6 +284,29 @@ if (Test-Path $srcGuides) {
 }
 
 # ============================================================================
+# STEP 7.5: Copy HTML templates (v2.4.0+)
+# ============================================================================
+# These templates power the HTML-canonical SDD workflow. They are read at
+# runtime by /own:init (Phase 0.5), /own:feature, and /own:theme.
+# Safe on older source repos: missing templates are silently skipped.
+
+Write-Info "Copying HTML templates..."
+
+$srcHtml  = Join-Path $BASE_DIR "core/templates/html"
+$destHtml = Join-Path $PROJECT_DIR "ownyourcode/templates/html"
+
+if (Test-Path $srcHtml) {
+    New-Item -ItemType Directory -Force -Path $destHtml | Out-Null
+    $htmlFiles = Get-ChildItem -Path $srcHtml -Include "*.template","*.css" -Recurse -ErrorAction SilentlyContinue
+    foreach ($file in $htmlFiles) {
+        Copy-Item $file.FullName -Destination $destHtml -Force
+    }
+    Write-OK "HTML templates copied"
+} else {
+    Write-Info "No HTML templates to copy (older source repo)"
+}
+
+# ============================================================================
 # STEP 8: Create product templates
 # ============================================================================
 

@@ -115,6 +115,7 @@ Learnings compound across projects. Patterns that worked. Mistakes you won't rep
 | -------------- | ---------------------------------- |
 | `/own:status`  | Check progress, tasks, and career stats |
 | `/own:profile` | View or change your profile        |
+| `/own:theme`   | Manage HTML theme styling (v2.4.0+) |
 | `/own:test`    | Guide through writing tests        |
 | `/own:docs`    | Guide through writing documentation |
 
