@@ -261,9 +261,14 @@ success "Guides copied"
 info "Copying HTML templates..."
 
 mkdir -p "$PROJECT_DIR/ownyourcode/templates/html"
-cp "$BASE_DIR/core/templates/html/"*.template "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
-cp "$BASE_DIR/core/templates/html/"*.css       "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
-success "HTML templates copied"
+# Recursive so future subdirectories (e.g., presets/) are copied automatically.
+# Mirrors the -Recurse semantics of the PowerShell variant for cross-platform parity.
+if [ -d "$BASE_DIR/core/templates/html" ]; then
+    cp -R "$BASE_DIR/core/templates/html/." "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
+    success "HTML templates copied"
+else
+    info "No HTML templates to copy (older source repo)"
+fi
 
 # ============================================================================
 # STEP 8: Create product templates
