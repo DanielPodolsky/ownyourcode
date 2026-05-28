@@ -51,8 +51,11 @@ Check if the user invoked with `--revert`:
 Run these checks silently:
 
 1. **Verify install:** `ownyourcode/.theme/` directory exists.
-   - If not, this project isn't yet on v2.4.0+ HTML mode. Tell the user:
-     > "Your project is still using Markdown SDD files. To use themed HTML output, run `/own:migrate` first."
+   - If not, this project doesn't have a theme set up yet. Tell the user:
+     > "Your project doesn't have an HTML theme configured.
+     >
+     > - If this is a new project on v2.4.0+, run `/own:init` to set up the theme.
+     > - If you have an existing Markdown project to convert, `/own:migrate` will land in a future v2.4.0 PR — until then, you can manually create `ownyourcode/.theme/` by running `/own:init` in a clean copy."
    - **STOP execution.**
 
 2. **Read current state:** Read `ownyourcode/.theme/theme-prompt.md` (first 8 lines for preview).
@@ -234,11 +237,25 @@ Options:
 2. No — I'll check it later
 ```
 
-If yes:
+If yes, open the file using the platform-appropriate command. Detect the OS and branch:
+
 ```bash
-open ownyourcode/product/mission.html  # macOS
-# (cross-platform: xdg-open on Linux, start on Windows)
+# Detect platform and open mission.html in the default browser.
+case "$(uname -s)" in
+  Darwin*)  open ownyourcode/product/mission.html ;;
+  Linux*)   xdg-open ownyourcode/product/mission.html ;;
+  CYGWIN*|MINGW*|MSYS*) start ownyourcode/product/mission.html ;;
+  *)        echo "Open this file manually: ownyourcode/product/mission.html" ;;
+esac
 ```
+
+On Windows PowerShell sessions (where `uname` may be absent), use:
+
+```powershell
+Start-Process "ownyourcode/product/mission.html"
+```
+
+If no preview tool is available on the host, surface the path so the user can open it themselves rather than silently no-op.
 
 Update manifest: `theme.last_updated = [ISO timestamp]`.
 
