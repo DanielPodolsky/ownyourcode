@@ -739,188 +739,83 @@ To install (takes 30 seconds each):
 Set up the visual theme that all generated HTML files will use. This phase
 runs ONCE per project (idempotent: detects existing `.theme/` and skips).
 
-**🚨 EXECUTION CONTRACT (read before proceeding):**
-
-Every bash command in this phase **MUST be executed** via the Bash tool. The
-detection results are required inputs to the branching decisions below — they
-cannot be assumed, inferred from context, or skipped. "Run silently" elsewhere
-in OwnYourCode means *do not narrate the command to the user* — it does NOT
-mean *skip the command*.
-
-Any user-facing message you produce (especially around plugin availability
-and `fallback_mode`) **MUST reflect the actual bash detection result**, not an
-assumption. The manifest's `theme.fallback_mode` value and the message you
-show the user MUST agree — if one says "fallback," the other cannot say
-"premium styling."
+**Design note:** This phase deliberately does NOT check for or attempt to
+install the `frontend-design` plugin. Runtime testing during PR 1 demonstrated
+that programmatic plugin detection inside a slash-command flow is unreliable
+(stale cache directories from previous uninstalls, agent assumptions, no
+in-flow Skill invocation). Instead, this phase always seeds the bundled
+fallback CSS — which the PR reviewer praised as production-quality — and
+surfaces an optional upgrade path in the user-facing summary. Users who
+want premium styling install the plugin themselves and run `/own:theme`
+to regenerate.
 
 #### Step 1: Detect existing theme
 
-**Execute this bash command via the Bash tool:**
+**Execute this bash command via the Bash tool. Decide based on the literal stdout:**
 
 ```bash
 test -d ownyourcode/.theme && echo "exists" || echo "missing"
 ```
 
-**Decide based on the literal stdout of the command above:**
-
 - Output is `exists` → Skip the entire Phase 0.5. Continue to Phase 1.
 - Output is `missing` → Continue to Step 2.
 
-Do NOT assume the directory's state. Run the command, read the output, branch.
+#### Step 2: Create `.theme/` directory and seed files from the bundle
 
-#### Step 2: Check frontend-design plugin
-
-**Execute this bash command via the Bash tool. The output determines
-`plugin_available` — there is no alternative source of truth:**
-
-```bash
-ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null && echo "plugin:found" || echo "plugin:missing"
-```
-
-**Decide based on the literal stdout:**
-
-- Output contains `plugin:found` → Set `plugin_available = true`. Skip Step 3, continue to Step 4.
-- Output is exactly `plugin:missing` (no `plugin:found` line) → Set `plugin_available = false`. Continue to Step 3.
-
-Do NOT assume the plugin is installed. Do NOT skip the bash command. The user
-may have explicitly uninstalled the plugin to test the install flow, and
-assuming "probably installed" would silently bypass Step 3 (the install prompt).
-The `&& echo "plugin:found" || echo "plugin:missing"` pattern produces an
-unambiguous marker so the decision is reliable.
-
-#### Step 3: Offer to install the plugin
-
-Use AskUserQuestion:
-
-```
-Question: "OwnYourCode uses Anthropic's frontend-design plugin to generate
-           premium HTML styling for your spec files. Want me to install it?
-           (Free, official Anthropic plugin, takes ~5 seconds.)"
-
-Options:
-1. Yes, install it — Best output quality, recommended
-2. Skip — Use the bundled fallback styling instead
-```
-
-**If "Yes":**
-
-Plugin installs in Claude Code happen via the **`/plugin install` slash command**, not a shell command, and slash commands cannot directly invoke other slash commands. The user must type the install command themselves — but `/own:init` does NOT have to restart. Instead, pause via a second `AskUserQuestion` and resume when the user confirms.
-
-Tell the user (plain message, then immediately use AskUserQuestion):
-
-```
-Got it. In a separate message, run:
-
-  /plugin install frontend-design@claude-plugins-official
-
-I'll wait here. When the install finishes, come back to this message
-and pick the appropriate option below.
-```
-
-Then use AskUserQuestion (this is the "pause"):
-
-```
-Question: "Plugin install status?"
-
-Options:
-1. Done — I installed the plugin, continue
-2. Install failed or canceled — use fallback CSS instead
-```
-
-**If "Done":**
-
-Re-run the detection from Step 2:
-
-```bash
-ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null
-```
-
-- **Detection succeeds:** Set `plugin_available = true`. Continue to Step 4. The user keeps all the profile / MCP work they already did.
-- **Detection fails:** The install didn't register (most commonly because the user hit a permission prompt and dismissed it, or typed the command wrong). Tell the user:
-  ```
-  I can't see the plugin yet. This usually means:
-    - The install needed confirmation that wasn't accepted, OR
-    - The command name had a typo, OR
-    - Claude Code's plugin cache hasn't refreshed yet (try once more).
-
-  What do you want to do?
-  ```
-
-  Use AskUserQuestion again:
-  ```
-  Options:
-  1. Try installing again — I'll re-check after
-  2. Skip and use fallback CSS instead
-  ```
-
-  Loop on "try again" up to 2 retries (3 total attempts). After 3 failed checks, force the skip path to avoid an infinite loop.
-
-**If "Install failed or canceled":**
-
-Set `plugin_available = false`. Note `theme.fallback_mode = true` in the manifest. Continue to Step 4 — the user keeps all their progress and the fallback CSS will be used.
-
-(Rationale: `AskUserQuestion` holds the slash-command flow in place. The user types `/plugin install ...` in a separate message between the prompt and their answer, and `/own:init` resumes from the pause when they pick an option. No restart, no work lost.)
-
-**If "Skip" (or install failed):**
-
-Set `plugin_available = false`. Note this in the manifest as `theme.fallback_mode = true`. Continue without error — the fallback CSS will be used.
-
-#### Step 4: Create the `.theme/` directory and seed files
+Execute these bash commands via the Bash tool:
 
 ```bash
 mkdir -p ownyourcode/.theme/.history
-```
-
-Copy the default theme prompt from the install:
-
-```bash
-cp ownyourcode/templates/html/theme-prompt.md.template \
-   ownyourcode/.theme/theme-prompt.md
+cp ownyourcode/templates/html/theme-prompt.md.template ownyourcode/.theme/theme-prompt.md
+cp ownyourcode/templates/html/theme-fallback.css ownyourcode/.theme/theme.css
 ```
 
 (The HTML templates were copied into the user's project during install — see `scripts/project-install.sh` STEP 7.5. They live at `ownyourcode/templates/html/` relative to the project root.)
 
-#### Step 5: Generate `theme.css`
+#### Step 3: Update manifest
 
-**If `plugin_available = true`:**
-
-Invoke the `frontend-design` skill with the contents of `theme-prompt.md` as input. Constrain output to CSS only:
-
-> "Generate a single CSS file matching this design prompt. Style only the semantic classes used by OwnYourCode HTML templates (refer to `core/templates/html/theme-fallback.css` for the complete selector list). Do NOT generate HTML, JS, or any other files. Honor `prefers-color-scheme` if the prompt mentions dark mode."
-
-Write the output to `ownyourcode/.theme/theme.css`.
-
-**If `plugin_available = false`:**
-
-```bash
-cp ownyourcode/templates/html/theme-fallback.css \
-   ownyourcode/.theme/theme.css
-```
-
-#### Step 6: Update manifest
-
-Record in `.claude/ownyourcode-manifest.json`:
+Add this block to `.claude/ownyourcode-manifest.json`:
 
 ```json
 {
   "theme": {
-    "fallback_mode": false,
+    "fallback_mode": true,
     "last_updated": "[ISO timestamp]",
     "prompt_source": "default"
   }
 }
 ```
 
-(`fallback_mode: true` if plugin unavailable; `prompt_source: "default"` for the bundled prompt, `"custom"` after the user runs `/own:theme`.)
+- `fallback_mode` is `true` until the user regenerates `theme.css` via `/own:theme` with the `frontend-design` plugin installed.
+- `prompt_source` is `"default"` for the bundled prompt; it becomes `"custom"` if the user supplies their own prompt through `/own:theme`.
 
-#### Step 7: Inform the user
+#### Step 4: Inform the user with the optional upgrade hint
+
+Show this message exactly:
 
 ```
 🎨 Theme set up: ownyourcode/.theme/
-   ├── theme-prompt.md  (default — change with /own:theme)
-   └── theme.css        ([generated by frontend-design | from fallback])
+   ├── theme-prompt.md  (default Apple Documentation aesthetic)
+   └── theme.css        (bundled fallback CSS — production-quality default)
 
-All HTML files generated by /own:feature will use this theme.
+All HTML files generated by /own:feature will reference this theme.
+
+────────────────────────────────────────────────────────────────────
+✨ Make it even better (optional, recommended for portfolio work)
+────────────────────────────────────────────────────────────────────
+
+OwnYourCode ships with a hand-authored fallback CSS that already looks
+great. For *fully custom* styling generated from your theme prompt — with
+Anthropic's official design framework — install the `frontend-design`
+plugin yourself in a separate message:
+
+  /plugin install frontend-design@claude-plugins-official
+
+Then run `/own:theme` to regenerate `theme.css` based on your prompt.
+You can change the prompt and re-roll the design anytime.
+
+Skip this for now if you're just trying things out — the bundled fallback
+is ready to use.
 ```
 
 Continue silently to Phase 1.
