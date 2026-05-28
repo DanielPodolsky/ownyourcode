@@ -775,13 +775,19 @@ Options:
 
 **If "Yes":**
 
-```bash
-# Use Claude Code's plugin install mechanism.
-# Note: this may require user-side confirmation; surface any output.
-claude plugin install frontend-design@claude-plugins-official 2>&1
+Plugin installs in Claude Code happen via the **`/plugin install` slash command**, not a shell command. You cannot run `/plugin install` from inside a slash-command flow — the user must invoke it themselves. Tell the user:
+
+```
+To install the plugin, run this in your Claude Code session:
+
+  /plugin install frontend-design@claude-plugins-official
+
+Then re-run /own:init to continue setup.
 ```
 
-After install, re-check availability. If install succeeded, set `plugin_available = true`.
+**STOP execution.** When the user re-runs `/own:init`, the plugin detection in Step 2 will succeed and the install prompt will not re-appear.
+
+(Rationale: a slash command cannot invoke another slash command directly. The handoff is intentional — it gives the user explicit consent and visibility into what's being installed.)
 
 **If "Skip" (or install failed):**
 
