@@ -24,10 +24,6 @@
 
 # Default OwnYourCode Theme — "Apple Documentation"
 
-# TODO(daniel): Review this draft. Rewrite in your own voice if it doesn't match
-# your vision for OwnYourCode's default aesthetic. The taste here defines what
-# every user sees on first /own:init.
-
 Generate a premium, calm, technical-document aesthetic inspired by Apple
 Developer Documentation (developer.apple.com).
 
