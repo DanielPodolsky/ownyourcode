@@ -8,6 +8,15 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ### Added
 
+#### v2.4.0 — HTML SDD Migration (Foundation — PR 1 of 5)
+- **HTML Template Bundle:** Six `.html.template` files in `core/templates/html/` defining the semantic structure of the v2.4.0 HTML-canonical SDD workflow (`mission`, `stack`, `roadmap`, `spec`, `design`, `tasks`). Each template encodes a `data-*` mutation contract so Claude's existing `Edit` tool — not an external HTML parser — performs all state mutations and progress counts (Option D design from #9).
+- **Default Theme Assets:** `theme-prompt.md.template` shipping an Apple Documentation aesthetic as the default prompt consumed by the `frontend-design` plugin, plus a hand-authored `theme-fallback.css` covering every semantic class and `data-*` selector for users without the plugin. Light + dark mode parity via `prefers-color-scheme`.
+- **`/own:theme` Command:** New slash command for managing the visual styling of HTML SDD files. Four user actions (change prompt / pick preset / regenerate / view) plus `/own:theme --revert` for restoring any timestamped backup. Every write is backup-first via `ownyourcode/.theme/.history/[ISO-timestamp]/`.
+- **`/own:init` Phase 0.5:** New idempotent phase inserted between the MCP Check and Detection phases that detects the `frontend-design` plugin, offers auto-install with explicit user permission, seeds `ownyourcode/.theme/`, and generates the project's initial `theme.css`. Soft-dependency model — declining the install falls back to bundled CSS, never blocks.
+- **Install Script Updates:** New STEP 7.5 in both `project-install.sh` and `project-install.ps1` copies the HTML template bundle from the OwnYourCode source repo to `ownyourcode/templates/html/` inside each user's project.
+
+> Note: PR 1 ships **infrastructure only**. `/own:init` Phase 6 and `/own:feature` still write Markdown until PR 2 and PR 3 activate HTML output. Existing projects see zero behavior change.
+
 #### Repository Infrastructure
 - **Claude PR Review Gate:** Every PR targeting `main` is now automatically reviewed by Claude against the OwnYourCode standards (P/S/T/X/D rule set across Philosophy, Structure, Tooling, Security, and Documentation), the 4 Protocols, and the universal-audience product mission. The reviewer's system prompt lives in `.github/CLAUDE_REVIEWER.md` and is isolated from the workflow YAML for fast iteration. Reviewer enforces an explicit `VERDICT:` contract (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`) so branch protection can gate merges on the verdict.
 - **`@claude` Tag Responder:** Any write-access user can now mention `@claude` in a PR/issue comment, an inline review comment, or a formal PR review to summon Claude for in-thread Q&A with full context (latest PR diff, full comment thread, PR/issue description). Complementary to the auto-review gate — different concern, different workflow file (`.github/workflows/claude-tag.yml`), no system prompt (uses the action's default conversational tag mode). Tool surface is read-and-comment only (no `Edit`/`Write`/shell-wildcards) and the trigger is gated by the action's built-in write-access check.
