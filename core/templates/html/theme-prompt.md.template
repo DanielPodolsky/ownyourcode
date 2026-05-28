@@ -1,0 +1,62 @@
+<!--
+  ════════════════════════════════════════════════════════════════════
+  OwnYourCode — Default Theme Prompt
+  ════════════════════════════════════════════════════════════════════
+  Purpose: This file is the DEFAULT theme prompt bundled with OwnYourCode.
+           It is consumed by the `frontend-design` plugin during /own:theme
+           to generate ownyourcode/.theme/theme.css.
+
+  How it's used:
+    • /own:init  → copies this file to user's ownyourcode/.theme/theme-prompt.md
+                   then invokes frontend-design to generate theme.css
+    • /own:theme → user can edit theme-prompt.md and re-run frontend-design
+                   (this default file is the fallback / reset baseline)
+
+  Editing this file:
+    • You are editing the SHIPPED default that every new project gets.
+    • Be opinionated. Have taste. Don't write "modern and clean" — that's
+      what AI-generated themes look like. Write a real aesthetic point of view.
+    • Constraints help frontend-design produce better output. Be specific
+      about colors, typography, spacing, vibe.
+    • Mention dark/light mode if you want both; mention prefers-color-scheme.
+  ════════════════════════════════════════════════════════════════════
+-->
+
+# Default OwnYourCode Theme — "Apple Documentation"
+
+# TODO(daniel): Review this draft. Rewrite in your own voice if it doesn't match
+# your vision for OwnYourCode's default aesthetic. The taste here defines what
+# every user sees on first /own:init.
+
+Generate a premium, calm, technical-document aesthetic inspired by Apple
+Developer Documentation (developer.apple.com).
+
+## Visual System
+
+- **Typography:** SF Pro Display (system-ui, -apple-system, "Segoe UI" fallback)
+  - Headings: weight 600, generous letter-spacing
+  - Body: weight 400, 1.6 line-height for readability
+  - Code: SF Mono (ui-monospace fallback)
+
+- **Color Modes:** Auto-detect via prefers-color-scheme
+  - Light mode: background #FAFAFA, text #1D1D1F, accent #0066CC
+  - Dark mode: background #1A1A1F, text #F5F5F7, accent #0A84FF
+  - Smooth transitions between modes (0.3s ease)
+
+- **Layout:**
+  - Generous whitespace — 4rem section spacing, 2rem paragraph spacing
+  - Max content width 720px (centered) for readability
+  - Soft 8px corners on cards, no harsh borders
+  - Subtle shadows — 0 1px 3px rgba(0,0,0,0.04) light / 0 1px 3px rgba(255,255,255,0.04) dark
+
+- **Components:**
+  - Task checkboxes: large, satisfying (24px), animated check on transition to data-status="completed"
+  - Code blocks: subtle tinted background, soft border
+  - Tables: zebra striping, no harsh grid lines
+  - Headings: weight contrast, no underlines
+  - Phase priority badges: small pills colored by data-priority (high/medium/low)
+
+## Vibe
+
+Calm, premium, opinionated. Not flashy. The reader should feel like they're
+reading a real product document, not a generated artifact.
