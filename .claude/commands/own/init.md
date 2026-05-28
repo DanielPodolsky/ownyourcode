@@ -739,25 +739,54 @@ To install (takes 30 seconds each):
 Set up the visual theme that all generated HTML files will use. This phase
 runs ONCE per project (idempotent: detects existing `.theme/` and skips).
 
+**🚨 EXECUTION CONTRACT (read before proceeding):**
+
+Every bash command in this phase **MUST be executed** via the Bash tool. The
+detection results are required inputs to the branching decisions below — they
+cannot be assumed, inferred from context, or skipped. "Run silently" elsewhere
+in OwnYourCode means *do not narrate the command to the user* — it does NOT
+mean *skip the command*.
+
+Any user-facing message you produce (especially around plugin availability
+and `fallback_mode`) **MUST reflect the actual bash detection result**, not an
+assumption. The manifest's `theme.fallback_mode` value and the message you
+show the user MUST agree — if one says "fallback," the other cannot say
+"premium styling."
+
 #### Step 1: Detect existing theme
+
+**Execute this bash command via the Bash tool:**
 
 ```bash
 test -d ownyourcode/.theme && echo "exists" || echo "missing"
 ```
 
-- **Exists:** Skip the entire Phase 0.5. Continue to Phase 1.
-- **Missing:** Continue to Step 2.
+**Decide based on the literal stdout of the command above:**
+
+- Output is `exists` → Skip the entire Phase 0.5. Continue to Phase 1.
+- Output is `missing` → Continue to Step 2.
+
+Do NOT assume the directory's state. Run the command, read the output, branch.
 
 #### Step 2: Check frontend-design plugin
 
-Run silently:
+**Execute this bash command via the Bash tool. The output determines
+`plugin_available` — there is no alternative source of truth:**
 
 ```bash
-ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null
+ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null && echo "plugin:found" || echo "plugin:missing"
 ```
 
-- **Found:** Set `plugin_available = true`. Skip Step 3.
-- **Not found:** Continue to Step 3.
+**Decide based on the literal stdout:**
+
+- Output contains `plugin:found` → Set `plugin_available = true`. Skip Step 3, continue to Step 4.
+- Output is exactly `plugin:missing` (no `plugin:found` line) → Set `plugin_available = false`. Continue to Step 3.
+
+Do NOT assume the plugin is installed. Do NOT skip the bash command. The user
+may have explicitly uninstalled the plugin to test the install flow, and
+assuming "probably installed" would silently bypass Step 3 (the install prompt).
+The `&& echo "plugin:found" || echo "plugin:missing"` pattern produces an
+unambiguous marker so the decision is reliable.
 
 #### Step 3: Offer to install the plugin
 
