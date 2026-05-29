@@ -65,7 +65,7 @@ fi
 info "Creating directories..."
 
 # OwnYourCode project directories
-mkdir -p "$PROJECT_DIR/ownyourcode/product"
+# Note: v2.5 drops product/ — mission/stack/roadmap now live in the dashboard.
 mkdir -p "$PROJECT_DIR/ownyourcode/specs/active"
 mkdir -p "$PROJECT_DIR/ownyourcode/specs/completed"
 mkdir -p "$PROJECT_DIR/ownyourcode/career/stories"
@@ -252,88 +252,38 @@ cp "$BASE_DIR/guides/"*.md "$PROJECT_DIR/ownyourcode/guides/" 2>/dev/null || tru
 success "Guides copied"
 
 # ============================================================================
-# STEP 7.5: Copy HTML templates (v2.4.0+)
+# STEP 7.5: Seed the dashboard (v2.5 — Dashboard SDD)
 # ============================================================================
-# These templates power the HTML-canonical SDD workflow. They are read at
-# runtime by /own:init (Phase 0.5), /own:feature, and /own:theme.
-# Safe on older source repos: missing templates are silently skipped.
+# v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
+# single dashboard: a stable view shell (dashboard.html) + a data file
+# (dashboard-data.js) that every /own:* command reads and writes. The schema
+# authority is DASHBOARD_CONTRACT.md (shipped into the project root).
+# Fallback-first: if the source templates are missing (older base install),
+# warn and skip rather than seeding a broken project.
 
-info "Copying HTML templates..."
+info "Seeding the project dashboard..."
 
-mkdir -p "$PROJECT_DIR/ownyourcode/templates/html"
-# Recursive so future subdirectories (e.g., presets/) are copied automatically.
-# Mirrors the -Recurse semantics of the PowerShell variant for cross-platform parity.
-if [ -d "$BASE_DIR/core/templates/html" ]; then
-    cp -R "$BASE_DIR/core/templates/html/." "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
-    success "HTML templates copied"
+DASH_SRC="$BASE_DIR/core/templates"
+if [ -f "$DASH_SRC/dashboard.html.template" ]; then
+    # Keep the source templates in-project so /own:init can regenerate the
+    # shell if it is ever missing (fallback-first, self-contained project).
+    mkdir -p "$PROJECT_DIR/ownyourcode/templates"
+    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/templates/"
+    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/templates/"
+
+    # Working files: the shell is used as-is (never templated); the data file
+    # starts as the empty scaffold until /own:init fills it from your answers.
+    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/dashboard.html"
+    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/dashboard-data.js"
+
+    # The schema contract ships to the project root for command + human reference.
+    cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/DASHBOARD_CONTRACT.md" 2>/dev/null || true
+
+    success "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
 else
-    info "No HTML templates to copy (older source repo)"
+    warn "Dashboard templates not found in source repo — skipping dashboard seed."
+    warn "Update your OwnYourCode base install to get the v2.5 dashboard."
 fi
-
-# ============================================================================
-# STEP 8: Create product templates
-# ============================================================================
-
-info "Creating product templates..."
-
-cat > "$PROJECT_DIR/ownyourcode/product/mission.md" << 'EOF'
-# Project Mission
-
-> Run `/own:init` to define your project vision.
-
-## The Problem
-
-<!-- What problem are you solving? Describe the PROBLEM, not features. -->
-
-## Who Is This For?
-
-<!-- Who will use this? -->
-
-## Definition of Done
-
-<!-- When is this project DONE? What must work? -->
-EOF
-
-cat > "$PROJECT_DIR/ownyourcode/product/stack.md" << 'EOF'
-# Technology Stack
-
-> Run `/own:init` to auto-detect and document your stack.
-
-## Frontend
-
-<!-- Technologies detected or chosen -->
-
-## Backend
-
-<!-- Technologies detected or chosen -->
-
-## Why These Choices?
-
-<!-- Document your reasoning -->
-EOF
-
-cat > "$PROJECT_DIR/ownyourcode/product/roadmap.md" << 'EOF'
-# Project Roadmap
-
-> Run `/own:init` to create your development roadmap.
-
-## Phase 1: Foundation
-
-- [ ] Project setup
-- [ ] Core structure
-
-## Phase 2: Core Features
-
-- [ ] Feature 1
-- [ ] Feature 2
-
-## Phase 3: Polish & Deploy
-
-- [ ] Testing
-- [ ] Deployment
-EOF
-
-success "Product templates created"
 
 # ============================================================================
 # STEP 9: Update .gitignore
@@ -453,7 +403,9 @@ echo ""
 echo "  📄 $CLAUDE_MD_REL           — THE STRICTNESS (mentor behavior)"
 echo ""
 echo "  📁 ownyourcode/              — Your project docs (commit this)"
-echo "     ├── product/             — Mission, stack, roadmap"
+echo "     ├── dashboard.html       — Your project cockpit (open in a browser)"
+echo "     ├── dashboard-data.js    — SDD state (the /own:* commands write this)"
+echo "     ├── DASHBOARD_CONTRACT.md — The window.PROJECT schema authority"
 echo "     ├── specs/               — Feature specifications"
 echo "     ├── career/              — Interview stories & bullets"
 echo "     ├── profiles/            — Profile templates (junior, experienced, etc.)"

@@ -54,7 +54,7 @@ if (Test-Path $ownyourcodeDir) {
 Write-Info "Creating directories..."
 
 $directories = @(
-    "ownyourcode/product",
+    # Note: v2.5 drops product/ — mission/stack/roadmap now live in the dashboard.
     "ownyourcode/specs/active",
     "ownyourcode/specs/completed",
     "ownyourcode/career/stories",
@@ -284,98 +284,44 @@ if (Test-Path $srcGuides) {
 }
 
 # ============================================================================
-# STEP 7.5: Copy HTML templates (v2.4.0+)
+# STEP 7.5: Seed the dashboard (v2.5 — Dashboard SDD)
 # ============================================================================
-# These templates power the HTML-canonical SDD workflow. They are read at
-# runtime by /own:init (Phase 0.5), /own:feature, and /own:theme.
-# Safe on older source repos: missing templates are silently skipped.
+# v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
+# single dashboard: a stable view shell (dashboard.html) + a data file
+# (dashboard-data.js) that every /own:* command reads and writes. The schema
+# authority is DASHBOARD_CONTRACT.md (shipped into the project root).
+# Fallback-first: if the source templates are missing (older base install),
+# warn and skip rather than seeding a broken project.
 
-Write-Info "Copying HTML templates..."
+Write-Info "Seeding the project dashboard..."
 
-$srcHtml  = Join-Path $BASE_DIR "core/templates/html"
-$destHtml = Join-Path $PROJECT_DIR "ownyourcode/templates/html"
+$dashSrc      = Join-Path $BASE_DIR "core/templates"
+$dashTemplate = Join-Path $dashSrc "dashboard.html.template"
 
-if (Test-Path $srcHtml) {
-    New-Item -ItemType Directory -Force -Path $destHtml | Out-Null
-    $htmlFiles = Get-ChildItem -Path $srcHtml -Include "*.template","*.css" -Recurse -ErrorAction SilentlyContinue
-    foreach ($file in $htmlFiles) {
-        Copy-Item $file.FullName -Destination $destHtml -Force
+if (Test-Path $dashTemplate) {
+    # Keep the source templates in-project so /own:init can regenerate the
+    # shell if it is ever missing (fallback-first, self-contained project).
+    $tplDir = Join-Path $PROJECT_DIR "ownyourcode/templates"
+    New-Item -ItemType Directory -Force -Path $tplDir | Out-Null
+    Copy-Item $dashTemplate -Destination $tplDir -Force
+    Copy-Item (Join-Path $dashSrc "dashboard-data.js.template") -Destination $tplDir -Force
+
+    # Working files: the shell is used as-is (never templated); the data file
+    # starts as the empty scaffold until /own:init fills it from your answers.
+    Copy-Item $dashTemplate -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard.html") -Force
+    Copy-Item (Join-Path $dashSrc "dashboard-data.js.template") -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard-data.js") -Force
+
+    # The schema contract ships to the project root for command + human reference.
+    $contractSrc = Join-Path $dashSrc "DASHBOARD_CONTRACT.md"
+    if (Test-Path $contractSrc) {
+        Copy-Item $contractSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/DASHBOARD_CONTRACT.md") -Force
     }
-    Write-OK "HTML templates copied"
+
+    Write-OK "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
 } else {
-    Write-Info "No HTML templates to copy (older source repo)"
+    Write-Warn "Dashboard templates not found in source repo — skipping dashboard seed."
+    Write-Warn "Update your OwnYourCode base install to get the v2.5 dashboard."
 }
-
-# ============================================================================
-# STEP 8: Create product templates
-# ============================================================================
-
-Write-Info "Creating product templates..."
-
-$productDir = Join-Path $PROJECT_DIR "ownyourcode/product"
-
-$nl = [Environment]::NewLine
-$missionLines = @(
-    "# Project Mission",
-    "",
-    "> Run ``/own:init`` to define your project vision.",
-    "",
-    "## The Problem",
-    "",
-    "<!-- What problem are you solving? Describe the PROBLEM, not features. -->",
-    "",
-    "## Who Is This For?",
-    "",
-    "<!-- Who will use this? -->",
-    "",
-    "## Definition of Done",
-    "",
-    "<!-- When is this project DONE? What must work? -->"
-)
-Set-Content -Path (Join-Path $productDir "mission.md") -Value ($missionLines -join $nl)
-
-$stackLines = @(
-    "# Technology Stack",
-    "",
-    "> Run ``/own:init`` to auto-detect and document your stack.",
-    "",
-    "## Frontend",
-    "",
-    "<!-- Technologies detected or chosen -->",
-    "",
-    "## Backend",
-    "",
-    "<!-- Technologies detected or chosen -->",
-    "",
-    "## Why These Choices?",
-    "",
-    "<!-- Document your reasoning -->"
-)
-Set-Content -Path (Join-Path $productDir "stack.md") -Value ($stackLines -join $nl)
-
-$roadmapLines = @(
-    "# Project Roadmap",
-    "",
-    "> Run ``/own:init`` to create your development roadmap.",
-    "",
-    "## Phase 1: Foundation",
-    "",
-    "- [ ] Project setup",
-    "- [ ] Core structure",
-    "",
-    "## Phase 2: Core Features",
-    "",
-    "- [ ] Feature 1",
-    "- [ ] Feature 2",
-    "",
-    "## Phase 3: Polish and Deploy",
-    "",
-    "- [ ] Testing",
-    "- [ ] Deployment"
-)
-Set-Content -Path (Join-Path $productDir "roadmap.md") -Value ($roadmapLines -join $nl)
-
-Write-OK "Product templates created"
 
 # ============================================================================
 # STEP 9: Update .gitignore
@@ -496,7 +442,9 @@ Write-Host ""
 Write-Host "  $CLAUDE_MD_REL           - THE STRICTNESS [mentor behavior]"
 Write-Host ""
 Write-Host "  ownyourcode/              - Your project docs [commit this]"
-Write-Host "     product/               - Mission, stack, roadmap"
+Write-Host "     dashboard.html         - Your project cockpit (open in a browser)"
+Write-Host "     dashboard-data.js      - SDD state (the /own:* commands write this)"
+Write-Host "     DASHBOARD_CONTRACT.md  - The window.PROJECT schema authority"
 Write-Host "     specs/                 - Feature specifications"
 Write-Host "     career/                - Interview stories & bullets"
 Write-Host "     profiles/              - Profile templates (junior, experienced, etc.)"

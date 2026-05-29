@@ -1,0 +1,33 @@
+/* ════════════════════════════════════════════════════════════════════
+   OwnYourCode — Dashboard DATA  (the single source the /own:* commands write)
+   ════════════════════════════════════════════════════════════════════
+   This file is the machine-readable state of the project's SDD workflow.
+   It is the ONLY file the commands rewrite to keep the dashboard in sync:
+
+     /own:init     → fills this file from your answers (mission + roadmap)
+     /own:feature  → adds a phase's spec / design / tasks here
+     /own:done     → flips task.done = true (and phase.status at boundary)
+     /own:status   → reads the counts here
+
+   dashboard.html is a stable VIEW that loads this via <script src> (which
+   works on file://, unlike fetch). Edit data here, refresh the dashboard.
+   Do not hand-edit dashboard.html for content — only styling lives there.
+
+   Schema authority: ownyourcode/DASHBOARD_CONTRACT.md. Keep this file valid
+   JavaScript — every command verifies it with `node --check` after writing.
+
+   ── This is the SCAFFOLD. Run /own:init to replace it with your project. ──
+   ════════════════════════════════════════════════════════════════════ */
+window.PROJECT = {
+  meta: {
+    name: "Your Project",
+    tagline: "run /own:init to begin",
+    audience: "myself",
+    mission: "This dashboard is empty. Run /own:init in Claude Code to define your project's mission, stack, and roadmap — then /own:feature to spec your first phase.",
+    generated: "—",
+    version: "2.5.0-dev",
+  },
+  dod: [],     // Definition-of-Done items: { text, done }
+  stack: [],   // 5-tuple rows: [layer, tech, version, source, purpose]
+  phases: [],  // roadmap phases — see DASHBOARD_CONTRACT §3.4 for the shape
+};
