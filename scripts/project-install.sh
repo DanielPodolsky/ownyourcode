@@ -279,6 +279,10 @@ if [ -f "$DASH_SRC/dashboard.html.template" ]; then
     # The schema contract ships to the project root for command + human reference.
     cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/DASHBOARD_CONTRACT.md" 2>/dev/null || true
 
+    # Seed the theme brief that /own:theme reads to restyle the dashboard.
+    mkdir -p "$PROJECT_DIR/ownyourcode/.theme/.history"
+    cp "$DASH_SRC/theme-prompt.md.template" "$PROJECT_DIR/ownyourcode/.theme/theme-prompt.md" 2>/dev/null || true
+
     success "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
 else
     warn "Dashboard templates not found in source repo — skipping dashboard seed."

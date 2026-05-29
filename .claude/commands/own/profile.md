@@ -114,7 +114,7 @@ Then:
 ✅ Profile switched to [New Profile]
 
 Your CLAUDE.md import path has been updated.
-Existing product files (mission.md, stack.md, roadmap.md) are unchanged.
+Your dashboard and project data (dashboard-data.js) are unchanged.
 ```
 
 ---
@@ -262,7 +262,7 @@ Use the same text generation logic from `/own:init` Custom Profile Questionnaire
 
 ## Important Notes
 
-1. **Non-destructive** — Changing profile doesn't affect product files (mission.md, etc.)
+1. **Non-destructive** — Changing profile doesn't affect your dashboard or project data
 2. **Immediate effect** — CLAUDE.md updates take effect in the current session
 3. **Junior design involvement** — Cannot be disabled for Junior profile (it's mandatory)
 4. **Interview Prep career focus** — Defaults to full-extraction but can be changed here

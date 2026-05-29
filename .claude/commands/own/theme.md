@@ -1,6 +1,6 @@
 ---
 name: theme
-description: View, change, or regenerate the visual theme of your OwnYourCode HTML files (v2.4.0+)
+description: Restyle your OwnYourCode dashboard — regenerate dashboard.html's inline <style> from a design brief (v2.5)
 allowed-tools: Read, Write, Edit, Bash, Glob, AskUserQuestion, Skill
 ---
 
@@ -8,32 +8,38 @@ allowed-tools: Read, Write, Edit, Bash, Glob, AskUserQuestion, Skill
 
 > ⚠️ **PLAN MODE WARNING:** Toggle plan mode off before running this command (`shift+tab`). OwnYourCode commands don't work correctly with plan mode.
 
-Manage the visual styling of your project's HTML files (mission, stack, roadmap, spec, design, tasks).
+Restyle your project **dashboard**. The dashboard is self-styled — its CSS lives
+inline in `dashboard.html`. This command re-cooks that inline `<style>` block
+(and the Google-Fonts `<link>`) from your design brief, using the
+`frontend-design` plugin when you have it, otherwise Claude's own design skills.
 
 ## Overview
 
-This command lets you:
-
-1. **View** the current theme prompt
-2. **Change** the theme by giving a custom design prompt
-3. **Pick** a bundled preset (apple-light, apple-dark, terminal, paper, brutalist)
-4. **Regenerate** the theme CSS using the existing prompt (re-roll the design)
-5. **Revert** to a previous theme via `/own:theme --revert`
-
-**The theme is a single CSS file.** All 6 HTML files reference it via `<link>`, so changing the theme is instant — no HTML files need regenerating.
+1. **View** the current design brief
+2. **Change** the brief (free-text design description) → regenerate
+3. **Regenerate** from the existing brief (re-roll the look)
+4. **Revert** to a previous design via `/own:theme --revert`
 
 ## Files affected
 
-- `ownyourcode/.theme/theme-prompt.md` — the active theme prompt
-- `ownyourcode/.theme/theme.css` — the generated CSS (overwritten on each run)
-- `ownyourcode/.theme/.history/[ISO-timestamp]/` — backup of previous theme prompt + CSS (created on every write)
-- `.claude/ownyourcode-manifest.json` — `theme.fallback_mode` flag, `theme.last_updated` timestamp
+- `ownyourcode/.theme/theme-prompt.md` — the active design brief (you edit this)
+- `ownyourcode/dashboard.html` — its `<style>` block + font `<link>` are regenerated
+- `ownyourcode/.theme/.history/[ISO-timestamp]/` — backup of the prior
+  `dashboard.html` + `theme-prompt.md` (created on every write; enables revert)
+- `.claude/ownyourcode-manifest.json` — `theme.system`, `theme.last_updated`
 
 ## Hard constraints
 
-- **Theme = visual styling ONLY.** This command must never alter the workflow, the SDD purpose of any HTML file, or any data-* contract used by other commands. If the user's custom prompt suggests workflow changes, reject those modifications and surface a warning.
-- **Backup-before-write is non-negotiable.** Always copy current `theme-prompt.md` and `theme.css` to `.history/[timestamp]/` BEFORE generating new ones. Enables revert.
-- **Frontend-design plugin is a soft dependency.** If unavailable, fall back to `theme-fallback.css` (shipped with the install) but never block the user.
+- **Visual only.** Restyle, never restructure. The dashboard's render JS expects
+  a fixed set of class names and the `window.PROJECT` contract — NEVER rename,
+  remove, or add classes, change the HTML structure, or touch the `<script>`
+  blocks. If a brief asks for layout/behavior/data changes, refuse those parts
+  and warn.
+- **Never touch `dashboard-data.js`.** That's project content, not styling.
+- **`file://` rules:** CSS stays inline (no external stylesheet `<link>`); web
+  fonts via `<link>` in `<head>` are fine (the page is always online).
+- **Backup-before-write is non-negotiable.** Copy the current `dashboard.html` +
+  `theme-prompt.md` to `.history/[timestamp]/` BEFORE regenerating.
 
 ---
 
@@ -41,223 +47,154 @@ This command lets you:
 
 ### Phase 0: Argument detection
 
-Check if the user invoked with `--revert`:
-
-- `/own:theme --revert` → jump to **Revert Flow** section below
+- `/own:theme --revert` → jump to **Revert Flow** below
 - `/own:theme` (no args) → continue to Phase 1
 
-### Phase 1: Pre-flight check
+### Phase 1: Pre-flight
 
-Run these checks silently:
-
-1. **Verify install:** `ownyourcode/.theme/` directory exists.
-   - If not, this project doesn't have a theme set up yet. Tell the user:
-     > "Your project doesn't have an HTML theme configured.
-     >
-     > - If this is a new project on v2.4.0+, run `/own:init` to set up the theme.
-     > - If you have an existing Markdown project to convert, `/own:migrate` will land in a future v2.4.0 PR — until then, you can manually create `ownyourcode/.theme/` by running `/own:init` in a clean copy."
-   - **STOP execution.**
-
-2. **Read current state:** Read `ownyourcode/.theme/theme-prompt.md` (first 8 lines for preview).
-
-3. **Detect frontend-design plugin:** Run silently:
+1. **Verify the dashboard exists:** confirm `ownyourcode/dashboard.html` and
+   `ownyourcode/.theme/theme-prompt.md` are present.
    ```bash
-   ls ~/.claude/plugins/cache/claude-plugins-official/frontend-design 2>/dev/null
+   ls ownyourcode/dashboard.html ownyourcode/.theme/theme-prompt.md
    ```
-   - Exists → `plugin_available = true`
-   - Missing → `plugin_available = false`. Note: fallback CSS will be used.
+   If either is missing, the project isn't initialized on v2.5 — tell the user to
+   run `/own:init` (or re-run the install) and **STOP**.
+
+2. **Read current state:** read `ownyourcode/.theme/theme-prompt.md`.
+
+3. **Detect `frontend-design` via the session skill list** (NOT the filesystem
+   cache — that path goes stale, a v2.4 runtime lesson). Check your own available
+   skills for `frontend-design` (appears as `frontend-design:frontend-design`).
+   - Present → `plugin_available = true`
+   - Absent → `plugin_available = false` (Claude will generate directly)
 
 ### Phase 2: Show current state + action menu
 
-Display:
-
 ```
-🎨 Current theme prompt (preview):
+🎨 Current design brief (preview):
 
    [first 8 lines of theme-prompt.md, indented]
    ...
 
-Plugin status: [✓ frontend-design installed | ⚠️ using fallback CSS]
-Last updated: [theme.last_updated from manifest]
+frontend-design: [✓ available | — not installed (Claude will design directly)]
 ```
 
-Then use `AskUserQuestion` to present the action menu:
+Then `AskUserQuestion`:
 
 ```
 Question: "What do you want to do?"
 
 Options:
-1. Change theme prompt — Provide your own design description (free text)
-2. Pick a preset — Choose from bundled presets (apple-light, apple-dark, etc.)
-3. Regenerate current — Re-roll the CSS using the existing prompt
-4. View full prompt — Read-only display of the current theme-prompt.md
+1. Change the design brief — describe a new look (free text), then regenerate
+2. Regenerate from current brief — re-roll the look, same brief
+3. View full brief — read-only display of theme-prompt.md
 ```
 
-Branch to the matching phase below.
+(Revert is via `/own:theme --revert`.)
 
-### Phase 3a: Change theme prompt (free text)
+### Phase 3a: Change the design brief (free text)
 
-Ask the user in chat (NOT AskUserQuestion — free text required):
+Ask in chat (free text, NOT AskUserQuestion):
 
-> "Describe how you want OwnYourCode to look.
+> "Describe how you want your dashboard to look. Be specific — name a direction,
+> exact colors, typography, dark/light, motion. Vague briefs ('modern and clean')
+> produce generic AI-looking output.
 >
-> Tip: be specific. Mention typography, exact colors, vibe, dark/light mode behavior. Vague prompts ('modern and clean') produce generic AI-looking output.
+> Keep the Technical-constraints section of the brief intact (file:// rules).
 >
-> Example:
->   'A warm paper-like document. Serif headings (Charter or Georgia). Soft cream background (#F8F4E8). No dark mode. Slim 1px borders in #D4CFC0. Inline tables with no zebra striping.'
->
-> Your prompt:"
+> Your brief:"
 
-Wait for the user's free-text response. Then:
+Then: **Phase 5 (backup)** → write the new brief to
+`ownyourcode/.theme/theme-prompt.md` → **Phase 6 (regenerate)** → **Phase 7**.
 
-1. Run **Phase 5: Backup-before-write**
-2. Write the new prompt to `ownyourcode/.theme/theme-prompt.md`
-3. Run **Phase 6: Regenerate CSS**
-4. Run **Phase 7: Confirm + preview**
+### Phase 3b: Regenerate from current brief
 
-### Phase 3b: Pick a preset
+No brief change. **Phase 5 (backup)** → **Phase 6 (regenerate)** → **Phase 7**.
 
-Use AskUserQuestion to list the bundled presets. (Presets are stored in `ownyourcode/templates/html/presets/[name].md` — load names by listing that directory.)
+### Phase 3c: View full brief
 
-```
-Question: "Pick a preset:"
-
-Options (load dynamically from ownyourcode/templates/html/presets/):
-1. apple-light — Light-mode Apple Documentation aesthetic
-2. apple-dark — Dark-mode Apple Documentation aesthetic
-3. terminal — Retro terminal aesthetic (mono, green-on-black)
-4. paper — Print-document aesthetic (serif, paper background)
-```
-
-(If presets don't yet exist in the install — v2.4.0 may ship without all presets — only show those that exist.)
-
-When the user picks one:
-
-1. Run **Phase 5: Backup-before-write**
-2. Copy `ownyourcode/templates/html/presets/[name].md` → `ownyourcode/.theme/theme-prompt.md`
-3. Run **Phase 6: Regenerate CSS**
-4. Run **Phase 7: Confirm + preview**
-
-### Phase 3c: Regenerate current
-
-No prompt change — use the existing `theme-prompt.md`. Useful for re-rolling when frontend-design produces a result the user doesn't love.
-
-1. Run **Phase 5: Backup-before-write**
-2. (No prompt copy — leave `theme-prompt.md` unchanged)
-3. Run **Phase 6: Regenerate CSS**
-4. Run **Phase 7: Confirm + preview**
-
-### Phase 3d: View full prompt
-
-Read-only display. Read `ownyourcode/.theme/theme-prompt.md` and show the entire content:
-
-```
-📄 Current theme prompt (ownyourcode/.theme/theme-prompt.md):
-
-[full file content, fenced as a code block]
-
-To change this prompt, re-run /own:theme and pick "Change theme prompt".
-```
-
-**STOP execution.** No backup, no regeneration.
+Read `ownyourcode/.theme/theme-prompt.md` and display it in full (fenced). No
+backup, no regeneration. **STOP.**
 
 ---
 
 ### Phase 5: Backup-before-write
 
-Generate a timestamp: `BACKUP_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")`.
-
-Create backup directory and copy current state:
-
 ```bash
+BACKUP_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
 BACKUP_DIR="ownyourcode/.theme/.history/${BACKUP_TS}"
 mkdir -p "$BACKUP_DIR"
-cp ownyourcode/.theme/theme-prompt.md "$BACKUP_DIR/theme-prompt.md" 2>/dev/null
-cp ownyourcode/.theme/theme.css       "$BACKUP_DIR/theme.css"       2>/dev/null
+cp ownyourcode/dashboard.html         "$BACKUP_DIR/dashboard.html"
+cp ownyourcode/.theme/theme-prompt.md "$BACKUP_DIR/theme-prompt.md"
 ```
 
-Tell the user (briefly): `"📦 Previous theme backed up to .theme/.history/${BACKUP_TS}/"`
+Tell the user: `"📦 Previous dashboard backed up to .theme/.history/${BACKUP_TS}/"`
 
-### Phase 6: Regenerate CSS
+### Phase 6: Regenerate the dashboard's styling
 
-**If `plugin_available = true`:**
+You are regenerating **only** the `<head>` font `<link>` and the `<style>`
+block of `ownyourcode/dashboard.html`. Everything else — the `<body>` markup and
+both `<script>` blocks (the data load + the render logic) — is UNTOUCHABLE.
 
-Invoke the `frontend-design` skill with the prompt:
+**The class contract is the current `<style>` itself.** Read the existing
+`<style>` block in `dashboard.html` to learn the complete set of selectors the
+render JS depends on (`.app`, `.hd`, `.sb`, `.nav`, `.tile`, `.bento`, `.kcard`,
+`.ring`, `.phase-numeral`, `.src`, `.bdg`, `.al-*`, etc.). The regenerated CSS
+MUST style that exact same selector set — same class names, same structural
+roles — only the visual treatment changes per the brief.
 
-```
-Skill: frontend-design (from plugin claude-plugins-official:frontend-design)
-Input: contents of ownyourcode/.theme/theme-prompt.md
-Output target: ownyourcode/.theme/theme.css
-Additional constraint to inject into the skill's prompt:
-  "Generate ONLY a CSS file. The CSS must style the following semantic
-   classes used by OwnYourCode HTML templates: [list selectors from
-   theme-fallback.css]. Do NOT generate HTML, JS, or any other files.
-   Honor prefers-color-scheme if the prompt mentions dark mode."
-```
+**Generation:**
+- Read the brief: `ownyourcode/.theme/theme-prompt.md`.
+- **If `plugin_available`:** apply the `frontend-design` skill's methodology to
+  drive the design from the brief. (If the Skill can be invoked for guidance,
+  use it; if not, apply its principles directly — either way Claude writes the
+  final CSS. This avoids depending on mid-flow skill output, a v2.4 lesson.)
+- **If not:** Claude designs directly from the brief using its own design skills
+  plus the brief's anti-AI-UI rules.
+- **Write** the new `<head>` font `<link>` + `<style>` into `dashboard.html`
+  using the `Edit` tool — replace ONLY those regions. Do not regenerate the file
+  from scratch (that risks dropping the render JS). Keep `prefers-reduced-motion`
+  handling and the `file://` inline-CSS rule.
 
-**If `plugin_available = false`:**
+### Phase 7: Verify render integrity + confirm
 
-Tell the user:
-
-> "⚠️ The `frontend-design` plugin isn't installed. Using the bundled fallback CSS, which approximates the prompt's aesthetic but isn't custom-generated.
->
-> To get a fully custom theme based on your prompt, install the plugin:
->   /plugin install frontend-design@claude-plugins-official
->
-> Then re-run /own:theme."
-
-Then copy `ownyourcode/templates/html/theme-fallback.css` → `ownyourcode/.theme/theme.css`.
-
-Update manifest: `theme.fallback_mode = true`.
-
-### Phase 7: Confirm + preview offer
-
-Display:
-
-```
-✅ Theme updated.
-
-   Prompt: ownyourcode/.theme/theme-prompt.md
-   CSS:    ownyourcode/.theme/theme.css
-   Backup: ownyourcode/.theme/.history/${BACKUP_TS}/
-
-All 6 HTML files now use the new theme (no regeneration needed —
-they reference theme.css via <link>).
-
-To revert: /own:theme --revert
-```
-
-Then ask:
-
-```
-Question: "Want to preview the new theme in your browser?"
-
-Options:
-1. Yes — open mission.html now
-2. No — I'll check it later
-```
-
-If yes, open the file using the platform-appropriate command. Detect the OS and branch:
+**Integrity check (mandatory)** — confirm the restyle didn't break the render
+contract. The file must still contain its render logic and structure:
 
 ```bash
-# Detect platform and open mission.html in the default browser.
+grep -c "window.PROJECT" ownyourcode/dashboard.html      # expect >= 1
+grep -c "function renderViews" ownyourcode/dashboard.html # expect 1
+grep -c "<style>" ownyourcode/dashboard.html              # expect 1
+```
+
+If any check fails, the regeneration damaged the file — **restore the backup**
+(`cp .theme/.history/${BACKUP_TS}/dashboard.html ownyourcode/dashboard.html`),
+tell the user, and stop. Never leave a broken dashboard.
+
+Then update the manifest (`theme.system` = a short slug for the brief, e.g.
+`"terminal-futurism"` or `"custom"`; `theme.last_updated` = ISO timestamp) and
+confirm:
+
+```
+✅ Dashboard restyled.
+
+   Brief:  ownyourcode/.theme/theme-prompt.md
+   Styled: ownyourcode/dashboard.html  (inline <style> regenerated)
+   Backup: ownyourcode/.theme/.history/${BACKUP_TS}/
+
+Refresh the dashboard tab to see it. To revert: /own:theme --revert
+```
+
+Offer to open it:
+
+```bash
 case "$(uname -s)" in
-  Darwin*)  open ownyourcode/product/mission.html ;;
-  Linux*)   xdg-open ownyourcode/product/mission.html ;;
-  CYGWIN*|MINGW*|MSYS*) start ownyourcode/product/mission.html ;;
-  *)        echo "Open this file manually: ownyourcode/product/mission.html" ;;
+  Darwin*) open ownyourcode/dashboard.html ;;
+  Linux*)  xdg-open ownyourcode/dashboard.html ;;
+  *)       echo "Open this file: ownyourcode/dashboard.html" ;;
 esac
 ```
-
-On Windows PowerShell sessions (where `uname` may be absent), use:
-
-```powershell
-Start-Process "ownyourcode/product/mission.html"
-```
-
-If no preview tool is available on the host, surface the path so the user can open it themselves rather than silently no-op.
-
-Update manifest: `theme.last_updated = [ISO timestamp]`.
+(On Windows PowerShell: `Start-Process "ownyourcode/dashboard.html"`.)
 
 **END.**
 
@@ -265,53 +202,38 @@ Update manifest: `theme.last_updated = [ISO timestamp]`.
 
 ## Revert Flow (`/own:theme --revert`)
 
-### Step 1: List available backups
+### Step 1: List backups
 
 ```bash
 ls -1t ownyourcode/.theme/.history/ 2>/dev/null
 ```
+If empty: `"No theme backups found. Nothing to revert to."` **STOP.**
 
-If empty:
-> "No theme backups found. Nothing to revert to."
+### Step 2: Present via AskUserQuestion
 
-**STOP.**
+Show up to 4 most-recent backups (newest first), each labeled with its timestamp
++ the first line of that backup's `theme-prompt.md` for context. If more than 4,
+add "Show more".
 
-### Step 2: Present backups via AskUserQuestion
-
-Show up to 4 most recent backups (newer first). Format each label as the ISO timestamp + first 30 chars of that backup's prompt for context:
-
-```
-Question: "Which theme do you want to restore?"
-
-Options:
-1. 2026-05-28T14-12-30Z — "A warm paper-like document. Serif…"
-2. 2026-05-27T22-08-15Z — "Default OwnYourCode Theme — Apple…"
-...
-```
-
-If more than 4 exist, add a "Show more" option that lists all in chat.
-
-### Step 3: Restore selected backup
-
-Copy backup files back to active location (and backup CURRENT state first, so user can undo a revert):
+### Step 3: Restore (backing up current first, so a revert is itself undoable)
 
 ```bash
 CURRENT_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
-mkdir -p "ownyourcode/.theme/.history/${CURRENT_TS}-pre-revert"
-cp ownyourcode/.theme/theme-prompt.md "ownyourcode/.theme/.history/${CURRENT_TS}-pre-revert/"
-cp ownyourcode/.theme/theme.css       "ownyourcode/.theme/.history/${CURRENT_TS}-pre-revert/"
+PRE="ownyourcode/.theme/.history/${CURRENT_TS}-pre-revert"
+mkdir -p "$PRE"
+cp ownyourcode/dashboard.html         "$PRE/dashboard.html"
+cp ownyourcode/.theme/theme-prompt.md "$PRE/theme-prompt.md"
 
-cp "ownyourcode/.theme/.history/${SELECTED_TS}/theme-prompt.md" ownyourcode/.theme/theme-prompt.md
-cp "ownyourcode/.theme/.history/${SELECTED_TS}/theme.css"       ownyourcode/.theme/theme.css
+cp "ownyourcode/.theme/.history/${SELECTED_TS}/dashboard.html"   ownyourcode/dashboard.html
+cp "ownyourcode/.theme/.history/${SELECTED_TS}/theme-prompt.md"  ownyourcode/.theme/theme-prompt.md
 ```
 
 ### Step 4: Confirm
 
 ```
-✅ Theme reverted to ${SELECTED_TS}.
-
-Your previous theme was backed up to .history/${CURRENT_TS}-pre-revert/
-in case you want to undo this revert.
+✅ Dashboard reverted to ${SELECTED_TS}.
+Your previous look was backed up to .history/${CURRENT_TS}-pre-revert/.
+Refresh the dashboard tab.
 ```
 
 **END.**
@@ -320,7 +242,11 @@ in case you want to undo this revert.
 
 ## Important Notes
 
-1. **Never edit theme.css by hand.** Edit `theme-prompt.md` and re-run `/own:theme`. Hand-edits will be overwritten next regenerate.
-2. **The theme prompt is a CSS spec, not a Markdown formatting choice.** It tells `frontend-design` how to generate CSS rules — be specific.
-3. **History grows.** `.theme/.history/` can accumulate. Future enhancement: `/own:theme --gc` to prune backups older than N days. Not in v2.4.0.
-4. **Custom prompts that try to change semantics (e.g., "hide the checkboxes") MUST be rejected.** The theme is visual only — never alter the data-* contracts. Surface a warning if a prompt seems to violate this.
+1. **Never hand-edit `dashboard.html`'s `<style>` outside this command** — edit
+   `theme-prompt.md` and regenerate, or your changes drift from the brief.
+2. **The brief is a design spec, not prose.** Specific colors, fonts, vibe,
+   motion — vague briefs produce generic output.
+3. **Briefs that try to change behavior/structure** ("hide the checkboxes",
+   "remove the Tasks tab") MUST be refused — restyle only.
+4. **History grows.** `.theme/.history/` accumulates; a future `/own:theme --gc`
+   could prune. Not in v2.5.

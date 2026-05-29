@@ -317,6 +317,14 @@ if (Test-Path $dashTemplate) {
         Copy-Item $contractSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/DASHBOARD_CONTRACT.md") -Force
     }
 
+    # Seed the theme brief that /own:theme reads to restyle the dashboard.
+    $themeDir = Join-Path $PROJECT_DIR "ownyourcode/.theme/.history"
+    New-Item -ItemType Directory -Force -Path $themeDir | Out-Null
+    $promptSrc = Join-Path $dashSrc "theme-prompt.md.template"
+    if (Test-Path $promptSrc) {
+        Copy-Item $promptSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/.theme/theme-prompt.md") -Force
+    }
+
     Write-OK "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
 } else {
     Write-Warn "Dashboard templates not found in source repo — skipping dashboard seed."
