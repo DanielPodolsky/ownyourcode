@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════
+  OwnYourCode — Project Dashboard  ·  "Blueprint Atelier"  (VIEW SHELL)
+  ════════════════════════════════════════════════════════════════════
+  This file is a STABLE view. It holds layout + styling + render logic
+  only. All project content lives in dashboard-data.js (window.PROJECT),
+  loaded below via <script src> — which works on file:// where fetch does
+  not. The /own:* commands rewrite dashboard-data.js, NOT this file, to
+  keep the dashboard in sync. Refresh the tab to see updates.
+
+  Authority: ownyourcode/DASHBOARD_CONTRACT.md defines the window.PROJECT
+  schema this shell renders. Do not hand-edit this file for content —
+  only /own:theme (or a deliberate design change) touches the styling.
+  ════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project Dashboard · OwnYourCode</title>
+
+<!-- Type system: Crimson Pro (editorial serif body) + IBM Plex Mono (technical
+     chrome). Loaded from the network — fine on file:// when online, which is
+     always (OwnYourCode runs through Claude). A system serif/mono fallback in
+     the tokens keeps the page legible if the fonts ever fail to load. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  /* ═══ Tokens ═══ */
+  :root {
+    --bg: #F4F5F7;            --canvas: #EEF0F3;        --tile: #FFFFFF;
+    --tile-2: #FAFBFC;        --sidebar: #F0F1F4;       --subtle: #F1F2F5;
+    --text: #1A1A1F;          --text-2: #56575C;        --text-3: #8A8B90;
+    --accent: #0066CC;        --accent-2: #0058B0;      --accent-soft: rgba(0,102,204,0.08);
+    --accent-line: rgba(0,102,204,0.16);
+    --border: #E2E3E8;        --border-2: #D2D4DA;      --hair: rgba(20,22,30,0.06);
+    --grid-line: rgba(20,40,90,0.03);
+    --ok: #2C9E4B;            --warn: #C77800;          --dang: #C0392B;
+    --sh-1: 0 1px 2px rgba(20,22,30,0.05);
+    --sh-2: 0 2px 8px rgba(20,22,30,0.07), 0 1px 2px rgba(20,22,30,0.05);
+    --sh-3: 0 12px 32px rgba(20,30,60,0.10), 0 3px 8px rgba(20,22,30,0.06);
+    /* Crimson Pro is the editorial body face; system serif degrades gracefully. */
+    --fs: "Crimson Pro", "Iowan Old Style", Georgia, Cambria, "Times New Roman", serif;
+    --fm: "IBM Plex Mono", ui-monospace, Menlo, "Cascadia Code", Consolas, monospace;
+    --r: 14px; --r-sm: 9px; --r-pill: 999px;
+    --e: cubic-bezier(0.32,0.72,0.32,1);
+    --spring: cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121317;          --canvas: #0E0F12;        --tile: #1C1D22;
+      --tile-2: #202128;       --sidebar: #15161A;      --subtle: #24252C;
+      --text: #F2F3F5;        --text-2: #A8A9B0;        --text-3: #76777E;
+      --accent: #0A84FF;      --accent-2: #4DA3FF;      --accent-soft: rgba(10,132,255,0.14);
+      --accent-line: rgba(10,132,255,0.28);
+      --border: #2C2D34;      --border-2: #3A3B43;      --hair: rgba(255,255,255,0.06);
+      --grid-line: rgba(120,160,255,0.04);
+      --ok: #41B265;          --warn: #D8922B;          --dang: #E05A4E;
+      --sh-1: 0 1px 2px rgba(0,0,0,0.4);
+      --sh-2: 0 2px 8px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.35);
+      --sh-3: 0 12px 32px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.4);
+    }
+  }
+
+  *,*::before,*::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; font-family: var(--fs); color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; line-height: 1.55; font-size: 16px; }
+  ::selection { background: var(--accent-soft); color: var(--accent-2); }
+
+  /* Micro-labels ride the mono face — reinforces the drafting-table feel and
+     keeps small uppercase text crisp where a serif would get delicate. */
+  .eye, .sb-label, .tile .k, .stat .lbl, .bdg, .mini .ei, .kcol h3, thead th,
+  .gst .gl, .dodcard h4 { font-family: var(--fm); }
+
+  /* ═══ App shell ═══ */
+  .app { display: grid; height: 100vh; grid-template-columns: 292px 1fr;
+    grid-template-rows: auto 1fr; grid-template-areas: "header header" "sidebar main"; }
+
+  /* ═══ Header ═══ */
+  .hd { grid-area: header; display: flex; align-items: center; gap: 1rem;
+    padding: 0.8rem 1.5rem; background: var(--tile); border-bottom: 1px solid var(--border); z-index: 10; }
+  .brand { display:flex; align-items:baseline; gap:0.6rem; }
+  .brand b { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+  .brand .tag { font-size: 0.85rem; color: var(--text-3); font-style: italic; }
+  .hd .sp { flex: 1; }
+  .pill { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.72rem; font-weight:650; font-family:var(--fm);
+    padding:0.34rem 0.72rem; border-radius:var(--r-pill); background: var(--accent-soft); color: var(--accent-2); }
+  .pill::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .hd .meta { font-size:0.72rem; color:var(--text-3); font-family:var(--fm); font-variant-numeric: tabular-nums; }
+  .hd .aud { font-size:0.66rem; font-family:var(--fm); color:var(--text-2); background:var(--subtle); border:1px solid var(--border);
+    border-radius:var(--r-pill); padding:0.26rem 0.6rem; letter-spacing:0.04em; }
+
+  /* ═══ Sidebar ═══ */
+  .sb { grid-area: sidebar; background: var(--sidebar); border-right: 1px solid var(--border);
+    overflow-y:auto; padding: 1.1rem 0.8rem 1.3rem; display:flex; flex-direction:column; gap:0.18rem; }
+  .sb-label { font-size:0.66rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3); padding:0.9rem 0.7rem 0.4rem; }
+  .nav { display:flex; align-items:center; gap:0.6rem; padding:0.52rem 0.7rem; border-radius:var(--r-sm);
+    font-size:0.95rem; color:var(--text-2); cursor:pointer; border:1px solid transparent; user-select:none;
+    transition: background .18s var(--e), color .18s var(--e); }
+  .nav:hover { background: var(--subtle); color: var(--text); }
+  .nav.on { background: var(--tile); color: var(--accent-2); font-weight:650; border-color: var(--border); box-shadow: var(--sh-1); }
+  .nav .d { width:9px; height:9px; border-radius:50%; flex-shrink:0; border:1.5px solid var(--text-3); }
+  .nav .d.specced { background:var(--accent); border-color:var(--accent); }
+  .nav .d.complete{ background:var(--ok); border-color:var(--ok); }
+  .nav .d.roadmap-only { background:transparent; border-color:var(--text-3); }
+  .nav .n { margin-left:auto; font-family:var(--fm); font-size:0.66rem; color:var(--text-3); font-variant-numeric:tabular-nums; }
+
+  .dodcard { margin-top:auto; padding:0.9rem; background:var(--tile); border:1px solid var(--border); border-radius:var(--r); box-shadow:var(--sh-1); }
+  .dodcard h4 { margin:0 0 0.6rem; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); font-weight:600; }
+  .dodln { display:flex; gap:0.5rem; font-size:0.85rem; color:var(--text-2); margin-bottom:0.38rem; align-items:flex-start; }
+  .dodln .b { width:13px; height:13px; border:1.5px solid var(--border-2); border-radius:4px; flex-shrink:0; margin-top:3px; }
+  .dodln.done .b { background:var(--accent); border-color:var(--accent); }
+  .dodln.done span { text-decoration:line-through; color:var(--text-3); }
+  .bar { height:6px; background:var(--subtle); border-radius:999px; overflow:hidden; margin-top:0.55rem; }
+  .bar>span { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition: width .6s var(--e); }
+  .bar-m { font-size:0.66rem; color:var(--text-3); margin-top:0.4rem; font-family:var(--fm); font-variant-numeric:tabular-nums; }
+
+  /* ═══ Main canvas (faint blueprint grid) ═══ */
+  .main { grid-area: main; overflow-y:auto; padding: 1.75rem 2rem 3rem; background: var(--canvas);
+    background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 30px 30px; }
+  .view { display:none; }
+  .view.on { display:block; }
+
+  .vhead { margin-bottom:1.4rem; }
+  .eye { font-size:0.7rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent);
+    display:flex; align-items:center; gap:0.5rem; margin-bottom:0.45rem; }
+  .eye::before { content:""; width:14px; height:2px; background:var(--accent); border-radius:2px; }
+  .vhead h1 { font-size:2.3rem; letter-spacing:-0.02em; margin:0 0 0.35rem; font-weight:800; line-height:1.1; }
+  .lead { font-size:1.1rem; color:var(--text-2); max-width:64ch; line-height:1.55; margin:0; }
+  .badges { display:flex; gap:0.5rem; align-items:center; margin-top:0.8rem; flex-wrap:wrap; }
+
+  /* Badges — neutral surface, color demoted to a single dot (premium, not pills) */
+  .bdg { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.66rem; font-weight:600;
+    letter-spacing:0.06em; text-transform:uppercase; padding:0.32rem 0.72rem; border-radius:var(--r-pill);
+    background:var(--subtle); color:var(--text-2); border:1px solid var(--border); }
+  .bdg::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--text-3); }
+  .bdg.high::before{background:var(--dang)} .bdg.medium::before{background:var(--warn)} .bdg.low::before{background:var(--ok)}
+  .bdg.specced::before{background:var(--accent)} .bdg.complete::before{background:var(--ok)} .bdg.roadmap-only::before{background:var(--text-3)}
+
+  /* ═══ Tabs ═══ */
+  .tabs { display:inline-flex; gap:0.2rem; padding:0.25rem; background:var(--subtle); border:1px solid var(--border); border-radius:var(--r-sm); margin:1.3rem 0; }
+  .tab { padding:0.5rem 1.1rem; font-size:0.95rem; font-weight:600; color:var(--text-2); cursor:pointer; border:none; background:none; border-radius:7px; font-family:var(--fs); transition: background .2s var(--e), color .2s var(--e); }
+  .tab:hover { color:var(--text); }
+  .tab.on { background:var(--tile); color:var(--accent-2); box-shadow:var(--sh-1); }
+  .tab .c { font-family:var(--fm); font-size:0.66rem; color:var(--text-3); margin-left:0.4rem; font-variant-numeric:tabular-nums; }
+  .panel { display:none; }
+  .panel.on { display:block; animation: rise .34s var(--e) both; }
+  @keyframes rise { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+
+  /* ═══ Bento grid ═══ */
+  .bento { display:grid; grid-template-columns:repeat(6,1fr); gap:0.85rem; margin-bottom:0.85rem; }
+  .c2{grid-column:span 2} .c3{grid-column:span 3} .c4{grid-column:span 4} .c6{grid-column:span 6}
+  .tile { background:var(--tile); border:1px solid var(--border); border-radius:var(--r); padding:1.15rem 1.25rem;
+    box-shadow:var(--sh-1); position:relative; animation: rise .4s var(--e) both; animation-delay: calc(var(--i,0) * 45ms);
+    transition: transform .22s var(--e), box-shadow .22s var(--e), border-color .22s var(--e); }
+  .tile:hover { transform: translateY(-2px); box-shadow: var(--sh-2); border-color: var(--border-2); }
+  .tile.hero { background:linear-gradient(180deg,var(--tile),var(--tile-2)); }
+  .tile.hero::before { content:""; position:absolute; left:1.25rem; right:1.25rem; top:0; height:2px;
+    background:linear-gradient(90deg,var(--accent),transparent); border-radius:0 0 2px 2px; }
+  .tile.hero::after { content:""; position:absolute; left:9px; top:9px; width:10px; height:10px;
+    border-left:1.5px solid var(--accent-line); border-top:1.5px solid var(--accent-line); border-radius:1px; }
+  .tile .k { font-size:0.66rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); margin:0 0 0.6rem; display:flex; align-items:center; gap:0.45rem; }
+  .tile p { margin:0; color:var(--text-2); font-size:1rem; line-height:1.55; }
+  .tile.hero p { color:var(--text); font-size:1.05rem; }
+
+  .stat { display:flex; flex-direction:column; gap:0.15rem; }
+  .stat .num { font-size:2.3rem; font-weight:800; letter-spacing:-0.03em; line-height:1; font-variant-numeric:tabular-nums; }
+  .stat .lbl { font-size:0.72rem; color:var(--text-3); font-weight:600; }
+  .stat.accent .num { color:var(--accent-2); }
+
+  .checklist { list-style:none; margin:0; padding:0; }
+  .checklist li { display:flex; gap:0.65rem; align-items:flex-start; padding:0.5rem 0; border-bottom:1px solid var(--hair); font-size:0.95rem; color:var(--text); }
+  .checklist li:last-child { border-bottom:none; }
+  .checklist .ix { font-family:var(--fm); font-size:0.7rem; color:var(--accent-2); flex-shrink:0; background:var(--accent-soft); border-radius:5px; padding:0.1rem 0.4rem; margin-top:2px; font-variant-numeric:tabular-nums; }
+
+  /* Edge cases — editorial entries, no colored bars. Hairline warms to accent on hover. */
+  .minis { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:0.7rem; }
+  .mini { background:var(--tile-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:0.95rem 1.05rem;
+    transition: transform .2s var(--e), box-shadow .2s var(--e), border-color .2s var(--e); }
+  .mini:hover { transform:translateY(-2px); box-shadow:var(--sh-2); border-color:var(--border-2); }
+  .mini .ei { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3); display:block; margin-bottom:0.4rem; }
+  .mini b { display:block; color:var(--text); font-weight:700; font-size:0.95rem; letter-spacing:-0.005em; margin-bottom:0.3rem; }
+  .mini b::after { content:""; display:block; width:16px; height:1.5px; background:var(--border-2); border-radius:1px; margin-top:0.45rem; transition: width .28s var(--e), background .28s var(--e); }
+  .mini:hover b::after { width:30px; background:var(--accent); }
+  .mini .tx { font-size:0.88rem; color:var(--text-2); line-height:1.5; display:block; }
+
+  /* Out-of-scope chips */
+  .chips { display:flex; flex-wrap:wrap; gap:0.5rem; }
+  .chip { font-size:0.85rem; color:var(--text-3); background:var(--subtle); border:1px dashed var(--border-2); border-radius:var(--r-pill); padding:0.32rem 0.72rem; text-decoration:line-through; text-decoration-color:var(--border-2); }
+
+  /* Trade-offs — muted markers (accent check / grey cross), no traffic-light */
+  .trades { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:0.85rem; }
+  .trade { background:var(--tile); border:1px solid var(--border); border-radius:var(--r); padding:1.1rem 1.2rem; box-shadow:var(--sh-1); transition: transform .22s var(--e), box-shadow .22s var(--e); }
+  .trade:hover { transform:translateY(-2px); box-shadow:var(--sh-2); }
+  .trade h4 { margin:0 0 0.7rem; font-size:1.05rem; letter-spacing:-0.01em; }
+  .trade .ln { font-size:0.9rem; padding-left:1.4rem; position:relative; margin-bottom:0.4rem; color:var(--text-2); line-height:1.5; }
+  .trade .ln.ch::before { content:"✓"; position:absolute; left:0; color:var(--accent); font-weight:700; }
+  .trade .ln.rj { color:var(--text-3); }
+  .trade .ln.rj::before { content:"✕"; position:absolute; left:0; color:var(--text-3); font-weight:600; }
+  .trade .ln b { color:var(--text); font-weight:700; }
+  .trade .ln.rj b { color:var(--text-2); }
+  .trade .why { font-size:0.9rem; color:var(--text-2); margin-top:0.6rem; padding-top:0.6rem; border-top:1px solid var(--hair); line-height:1.55; }
+
+  /* Component tiles — name (mono), responsibility, kind badge + file location */
+  .comps { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:0.7rem; }
+  .comp { background:var(--tile-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:0.85rem 0.95rem; }
+  .comp .mn { font-family:var(--fm); font-size:0.85rem; color:var(--accent-2); margin-bottom:0.3rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+  .comp .kind { font-size:0.58rem; font-family:var(--fm); letter-spacing:0.06em; text-transform:uppercase; padding:0.1rem 0.42rem; border-radius:var(--r-pill); border:1px solid var(--border-2); color:var(--text-3); }
+  .comp .kind.new { color:var(--accent-2); border-color:var(--accent-line); background:var(--accent-soft); }
+  .comp .kind.modified { color:var(--warn); border-color:var(--warn); background:transparent; }
+  .comp .rs { font-size:0.88rem; color:var(--text-2); line-height:1.45; margin-bottom:0.4rem; }
+  .comp .loc { font-family:var(--fm); font-size:0.7rem; color:var(--text-3); word-break:break-all; }
+
+  /* Source-attribution badge in the stack table */
+  .src { font-family:var(--fm); font-size:0.68rem; letter-spacing:0.02em; padding:0.14rem 0.5rem; border-radius:var(--r-pill); border:1px solid var(--border-2); color:var(--text-3); white-space:nowrap; }
+  .src.package-json { color:var(--ok); border-color:var(--ok); }
+  .src.mcp { color:var(--accent-2); border-color:var(--accent-line); background:var(--accent-soft); }
+  .src.verify { color:var(--warn); border-color:var(--warn); }
+  .src.manual { color:var(--text-3); }
+
+  /* Data-flow stepper */
+  .flow { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:stretch; }
+  .step { flex:1; min-width:160px; background:var(--tile-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:0.75rem 0.85rem; }
+  .step .sn { font-family:var(--fm); font-size:0.66rem; color:#fff; background:var(--accent); border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; margin-bottom:0.45rem; font-weight:700; }
+  .step .st { font-size:0.88rem; color:var(--text-2); line-height:1.45; }
+
+  /* ═══ Tasks kanban ═══ */
+  .tasktop { display:flex; align-items:center; gap:1.5rem; margin-bottom:1.2rem; flex-wrap:wrap; background:var(--tile); border:1px solid var(--border); border-radius:var(--r); padding:1.1rem 1.35rem; box-shadow:var(--sh-1); }
+  .ring { width:64px; height:64px; flex-shrink:0; }
+  .ring .bgc { fill:none; stroke:var(--subtle); stroke-width:3.2; }
+  .ring .fgc { fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round; transition: stroke-dasharray .7s var(--e); transform:rotate(-90deg); transform-origin:center; }
+  .ring-wrap { position:relative; }
+  .ring-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; font-family:var(--fm); font-variant-numeric:tabular-nums; }
+  .tasktop .summ b { font-size:1.6rem; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-0.02em; font-family:var(--fm); }
+  .tasktop .summ .s2 { font-size:0.88rem; color:var(--text-3); }
+  .grpstats { display:flex; gap:1.1rem; margin-left:auto; flex-wrap:wrap; }
+  .gst { text-align:center; }
+  .gst .gn { font-size:1.15rem; font-weight:600; font-family:var(--fm); font-variant-numeric:tabular-nums; }
+  .gst .gl { font-size:0.66rem; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; }
+
+  .kanban { display:grid; grid-template-columns:repeat(3,1fr); gap:0.85rem; align-items:start; }
+  .kcol { background:var(--subtle); border:1px solid var(--border); border-radius:var(--r); padding:0.7rem; }
+  .kcol h3 { margin:0 0 0.7rem; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-3); font-weight:600; display:flex; align-items:center; gap:0.5rem; padding:0.2rem 0.35rem; }
+  .kcol h3 .kc { margin-left:auto; font-family:var(--fm); background:var(--tile); border:1px solid var(--border); border-radius:var(--r-pill); padding:0.05rem 0.45rem; font-size:0.66rem; color:var(--text-2); }
+  .kcard { background:var(--tile); border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:0.55rem; box-shadow:var(--sh-1); overflow:hidden; transition: box-shadow .2s var(--e), border-color .2s var(--e); }
+  .kcard:hover { box-shadow:var(--sh-2); border-color:var(--border-2); }
+  .kcard .top { display:flex; gap:0.6rem; align-items:flex-start; padding:0.7rem 0.8rem; cursor:pointer; }
+  .ck { width:19px; height:19px; border:1.6px solid var(--border-2); border-radius:5px; flex-shrink:0; position:relative; margin-top:1px; transition: background .15s var(--e), border-color .15s var(--e); }
+  .kcard.done .ck { background:var(--accent); border-color:var(--accent); }
+  .kcard.done .ck::after { content:""; position:absolute; left:6px; top:2px; width:5px; height:10px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); animation: pop .26s var(--spring); }
+  @keyframes pop { 0%{transform:rotate(45deg) scale(0)} 60%{transform:rotate(45deg) scale(1.2)} 100%{transform:rotate(45deg) scale(1)} }
+  .kcard .id { font-family:var(--fm); font-size:0.68rem; color:var(--text-3); flex-shrink:0; margin-top:3px; font-variant-numeric:tabular-nums; }
+  .kcard .tx { font-size:0.9rem; color:var(--text); line-height:1.4; flex:1; }
+  .kcard.done .tx { text-decoration:line-through; color:var(--text-3); }
+  .kcard .cv { color:var(--text-3); font-size:0.7rem; flex-shrink:0; margin-top:3px; transition:transform .2s var(--e); }
+  .kcard.open .cv { transform:rotate(90deg); }
+  .kcard .det { display:none; padding:0 0.8rem 0.8rem 2.55rem; font-size:0.85rem; color:var(--text-2); line-height:1.5; }
+  .kcard.open .det { display:block; }
+
+  .note { padding:1.5rem; border:1px dashed var(--border-2); border-radius:var(--r); background:var(--tile-2); color:var(--text-2); font-size:1rem; }
+  .note code { background:var(--subtle); padding:0.1em 0.45em; border-radius:5px; font-family:var(--fm); font-size:0.85em; color:var(--accent-2); }
+
+  table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+  thead th { text-align:left; font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-3); font-weight:600; padding:0.55rem 0.7rem; border-bottom:1px solid var(--border-2); }
+  tbody td { padding:0.6rem 0.7rem; border-bottom:1px solid var(--hair); vertical-align:top; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody tr:hover td { background:var(--tile-2); }
+  .mono { font-family:var(--fm); font-size:0.85rem; }
+  .inl { background:var(--subtle); padding:0.1em 0.42em; border-radius:5px; font-family:var(--fm); font-size:0.85em; color:var(--accent-2); }
+
+  /* Active phase — calm but unmistakable */
+  .nav.active-phase { background:var(--accent-soft); color:var(--accent-2); font-weight:650; box-shadow: inset 3px 0 0 var(--accent); }
+  .nav.active-phase:hover { background:var(--accent-soft); }
+  .nav.active-phase .d { animation: ring 2.4s ease-out infinite; }
+  @keyframes ring { 0%{box-shadow:0 0 0 0 rgba(0,122,255,0.4)} 70%{box-shadow:0 0 0 6px rgba(0,122,255,0)} 100%{box-shadow:0 0 0 0 rgba(0,122,255,0)} }
+  .atag { margin-left:auto; font-size:0.58rem; font-weight:700; font-family:var(--fm); letter-spacing:0.07em; text-transform:uppercase; color:#fff; background:var(--accent); border-radius:var(--r-pill); padding:0.12rem 0.5rem; }
+  .bdg.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .bdg.active::before { background:#fff; animation: blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  /* User stories */
+  .stories { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:0.7rem; }
+  .story { background:var(--tile-2); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:var(--r-sm); padding:0.9rem 1rem; font-size:0.92rem; color:var(--text); line-height:1.65; }
+  .story .sa { font-size:0.62rem; font-weight:700; font-family:var(--fm); letter-spacing:0.08em; text-transform:uppercase; color:var(--accent-2); margin-right:0.35rem; }
+
+  /* Open-questions list */
+  .qlist { margin:0; padding:0; list-style:none; }
+  .qlist li { color:var(--text-2); font-size:0.92rem; margin-bottom:0.5rem; line-height:1.5; padding-left:1.4rem; position:relative; }
+  .qlist li::before { content:"?"; position:absolute; left:0; top:-1px; color:var(--accent); font-weight:800; font-family:var(--fm); }
+
+  /* Architecture SVG diagram */
+  .archwrap { padding:0.5rem 0.25rem 0.25rem; }
+  .archsvg { width:100%; height:auto; display:block; }
+  .al-lbl { font-family:var(--fm); font-size:10px; fill:var(--text-3); letter-spacing:0.03em; }
+  .al-box { fill:var(--tile-2); stroke:var(--border-2); stroke-width:1; }
+  .al-node { font-family:var(--fm); font-size:11px; fill:var(--text); }
+  .al-arrow { stroke:var(--accent); stroke-width:1.5; }
+  .al-head { fill:var(--accent); }
+  .archcap { font-size:0.88rem; color:var(--text-3); font-style:italic; margin-top:0.7rem; line-height:1.5; }
+
+  /* Flow connectors */
+  .farrow { align-self:center; color:var(--accent); font-size:1.2rem; font-weight:700; flex:0 0 auto; }
+
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.001ms!important; transition-duration:.001ms!important; } }
+  @media (max-width: 1080px) { .bento{grid-template-columns:repeat(4,1fr)} .c4,.c6{grid-column:span 4} .c3{grid-column:span 2} .kanban{grid-template-columns:1fr} }
+  @media (max-width: 760px) {
+    .app{grid-template-columns:1fr; grid-template-areas:"header" "sidebar" "main"; height:auto}
+    .sb{flex-direction:row; flex-wrap:wrap; overflow:visible; border-right:none; border-bottom:1px solid var(--border)}
+    .dodcard{width:100%}
+    .bento{grid-template-columns:repeat(2,1fr)} .c2,.c3,.c4,.c6{grid-column:span 2}
+    .main{padding:1.25rem 1rem 2.5rem}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hd">
+    <div class="brand"><b>—</b><span class="tag">project dashboard</span></div>
+    <div class="sp"></div>
+    <span class="aud" id="hdAud" hidden>—</span>
+    <span class="pill" id="gStatus">—</span>
+    <span class="meta" id="hdMeta">—</span>
+  </header>
+  <aside class="sb" id="sb">
+    <div class="sb-label">Project</div>
+    <div class="nav on" data-v="overview"><span class="d" style="background:var(--accent);border-color:var(--accent)"></span>Overview</div>
+    <div class="nav" data-v="stack"><span class="d" style="background:var(--accent);border-color:var(--accent)"></span>Stack</div>
+    <div class="sb-label">Phases</div>
+    <div id="phaseNav"></div>
+    <div class="dodcard">
+      <h4>Definition of Done</h4>
+      <div id="dod"></div>
+      <div class="bar"><span id="dodBar" style="width:0%"></span></div>
+      <div class="bar-m" id="dodMeta">—</div>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<!-- DATA: the single file the /own:* commands rewrite to keep this in sync -->
+<script src="dashboard-data.js"></script>
+<script>
+const PROJECT = window.PROJECT;
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const tile = (cls, body, idx) => `<div class="tile ${cls}" style="--i:${idx}">${body}</div>`;
+const pad2 = k => String(k).padStart(2,"0");
+
+/* meta.audience enum → human label (see DASHBOARD_CONTRACT §3.1) */
+const AUDIENCE_LABEL = { "myself":"For: Myself", "employers":"For: Employers",
+  "clients":"For: Clients", "real-users":"For: Real users" };
+
+/* stack source attribution (col 3) → css class + display.
+   Values: "package.json" | "mcp:YYYY-MM-DD" | "verify:URL" | "manual" */
+function srcBadge(source){
+  const s = String(source ?? "manual");
+  if (s === "package.json") return `<span class="src package-json">package.json</span>`;
+  if (s.startsWith("mcp:"))  return `<span class="src mcp">MCP ${esc(s.slice(4))}</span>`;
+  if (s.startsWith("verify:")) return `<span class="src verify">verify ↗</span>`;
+  return `<span class="src manual">manual</span>`;
+}
+
+/* Hand-rolled SVG architecture diagram — layered bands + arrowed connectors.
+   No library, no network: works on file://. Redraws from the data. */
+function renderArch(d){
+  const W=620, padL=92, areaW=W-padL-10, gap=16, bandH=54, vGap=30;
+  const n=d.layers.length, H=n*bandH+(n-1)*vGap+12;
+  let y=6, s="";
+  d.layers.forEach((L,li)=>{
+    s+=`<text x="0" y="${y+bandH/2}" class="al-lbl" dominant-baseline="middle">${esc(L.label)}</text>`;
+    const k=L.nodes.length, bw=(areaW-(k-1)*gap)/k;
+    L.nodes.forEach((node,ni)=>{
+      const x=padL+ni*(bw+gap);
+      s+=`<rect x="${x}" y="${y}" width="${bw}" height="${bandH}" rx="9" class="al-box"/>`;
+      s+=`<text x="${x+bw/2}" y="${y+bandH/2}" class="al-node" text-anchor="middle" dominant-baseline="middle">${esc(node)}</text>`;
+    });
+    if(li<n-1){ const ax=padL+areaW/2, y1=y+bandH, y2=y+bandH+vGap;
+      s+=`<line x1="${ax}" y1="${y1}" x2="${ax}" y2="${y2-6}" class="al-arrow"/>`;
+      s+=`<path d="M${ax-4},${y2-6} L${ax+4},${y2-6} L${ax},${y2+1} Z" class="al-head"/>`; }
+    y+=bandH+vGap;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" class="archsvg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Architecture diagram">${s}</svg>`;
+}
+
+function activePhase(){ return PROJECT.phases.find(p => p.status !== "complete"); }
+
+function renderHeader(){
+  const m = PROJECT.meta;
+  document.title = `${m.name} · Project Dashboard`;
+  $(".brand b").textContent = m.name;
+  $(".brand .tag").textContent = m.tagline || "project dashboard";
+  $("#hdMeta").textContent = m.generated + " · v" + m.version;
+  if (m.audience && AUDIENCE_LABEL[m.audience]) {
+    const a = $("#hdAud"); a.textContent = AUDIENCE_LABEL[m.audience]; a.hidden = false;
+  }
+  const cur = activePhase();
+  $("#gStatus").textContent = cur
+    ? `Phase ${cur.n} — ${cur.status === "specced" ? "specced" : "roadmap"}`
+    : "All phases complete";
+}
+
+function renderSidebar(){
+  const nav = $("#phaseNav");
+  const activeN = (activePhase()||{}).n;
+  PROJECT.phases.forEach(p=>{
+    const on = p.n===activeN;
+    const d = document.createElement("div"); d.className="nav"+(on?" active-phase":""); d.dataset.v="phase-"+p.n;
+    d.innerHTML = `<span class="d ${p.status}"></span>Phase ${p.n}: ${esc(p.name)}`+(on?`<span class="atag">Active</span>`:`<span class="n">P${p.n}</span>`);
+    nav.appendChild(d);
+  });
+  const dod = $("#dod");
+  PROJECT.dod.forEach(x=>{ const l=document.createElement("div"); l.className="dodln"+(x.done?" done":"");
+    l.innerHTML=`<span class="b"></span><span>${esc(x.text)}</span>`; dod.appendChild(l); });
+  const done = PROJECT.dod.filter(d=>d.done).length;
+  const pct = PROJECT.dod.length ? Math.round(done/PROJECT.dod.length*100) : 0;
+  $("#dodBar").style.width = pct+"%"; $("#dodMeta").textContent = `${done} / ${PROJECT.dod.length} complete`;
+}
+
+function renderViews(){
+  const main = $("#main");
+  main.appendChild(viewOverview());
+  main.appendChild(viewStack());
+  PROJECT.phases.forEach(p=> main.appendChild(viewPhase(p)));
+}
+
+function viewOverview(){
+  const v=document.createElement("div"); v.className="view on"; v.id="view-overview";
+  const m = PROJECT.meta;
+  const specced = PROJECT.phases.filter(p=>p.status==="specced");
+  const complete = PROJECT.phases.filter(p=>p.status==="complete");
+  const taskTotal = PROJECT.phases.reduce((s,p)=>s+(p.tasks?p.tasks.length:0),0);
+  // Next-action prompt, computed from project + active-phase state.
+  const cur = activePhase();
+  let next;
+  if (!PROJECT.phases.length) next = "This dashboard is empty. Run <span class='inl'>/own:init</span> to define your mission, stack, and roadmap.";
+  else if (!cur) next = "All phases complete. Ship it 🎉";
+  else if (cur.status === "specced") next = `Phase ${cur.n} is specced. Build it, then run <span class='inl'>/own:done</span>.`;
+  else next = `Phase ${cur.n} needs a spec. Run <span class='inl'>/own:feature</span> to generate it.`;
+  let n=0;
+  v.innerHTML = `
+    <div class="vhead"><div class="eye">Project Mission</div><h1>${esc(m.name)}</h1>
+      <p class="lead">${esc(m.tagline||"")}</p></div>
+    <div class="bento">
+      ${tile("hero c4","<div class='k'>The problem</div><p>"+esc(m.mission)+"</p>",n++)}
+      ${tile("stat c2 accent","<span class='num'>"+PROJECT.phases.length+"</span><span class='lbl'>Roadmap phases</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+taskTotal+"</span><span class='lbl'>Tasks specced</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+complete.length+"</span><span class='lbl'>Phases complete</span>",n++)}
+      ${tile("c2","<div class='k'>Next action</div><p>"+next+"</p>",n++)}
+    </div>
+    <div class="bento">
+      ${tile("c6","<div class='k'>Definition of Done</div><ul class='checklist'>"+PROJECT.dod.map((d,k)=>`<li><span class='ix'>${k+1}</span>${esc(d.text)}</li>`).join("")+"</ul>",n++)}
+    </div>`;
+  return v;
+}
+
+function viewStack(){
+  const v=document.createElement("div"); v.className="view"; v.id="view-stack"; let n=0;
+  const layers = new Set(PROJECT.stack.map(r=>r[0]));
+  const verified = PROJECT.stack.filter(r=>{ const s=String(r[3]??""); return s==="package.json"||s.startsWith("mcp:"); }).length;
+  v.innerHTML = `
+    <div class="vhead"><div class="eye">Technology Stack</div><h1>Stack</h1>
+      <p class="lead">Versions current as of ${esc(PROJECT.meta.generated)}. Each row notes its source — verified from <code>package.json</code>, confirmed via MCP, or flagged for manual checking.</p></div>
+    <div class="bento">
+      ${tile("stat c2 accent","<span class='num'>"+PROJECT.stack.length+"</span><span class='lbl'>Technologies</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+layers.size+"</span><span class='lbl'>Layers</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+verified+"</span><span class='lbl'>Version-verified</span>",n++)}
+      ${tile("c6","<div class='k'>Stack table</div><table><thead><tr><th>Layer</th><th>Tech</th><th>Version</th><th>Source</th><th>Purpose</th></tr></thead><tbody>"+
+        PROJECT.stack.map(r=>`<tr><td>${esc(r[0])}</td><td><strong>${esc(r[1])}</strong></td><td class='mono'>${esc(r[2])}</td><td>${srcBadge(r[3])}</td><td>${esc(r[4])}</td></tr>`).join("")+"</tbody></table>",n++)}
+    </div>`;
+  return v;
+}
+
+function viewPhase(p){
+  const v=document.createElement("div"); v.className="view"; v.id="view-phase-"+p.n;
+  const st = p.status==="specced"?"Specced":p.status==="complete"?"Complete":"Roadmap only";
+  const isActive = p.n===(activePhase()||{}).n;
+  const head = `<div class="vhead"><div class="eye">Phase ${p.n}</div><h1>${esc(p.name)}</h1>
+    <p class="lead">${esc(p.description)}</p>
+    <div class="badges">${isActive?'<span class="bdg active">active</span>':''}<span class="bdg ${p.priority}">${esc(p.priority)} priority</span><span class="bdg ${p.status}">${st}</span></div></div>`;
+
+  if(p.status==="roadmap-only"){
+    v.innerHTML = head + `<div class="bento">${tile("c6","<div class='k'>Planned scope</div><ul class='checklist'>"+
+      (p.items||[]).map((it,k)=>`<li><span class='ix'>${k+1}</span>${esc(it)}</li>`).join("")+"</ul>",0)}</div>
+      <div class="note">This phase isn't specced yet. Run <code>/own:feature</code> to generate its spec, design &amp; tasks — it auto-detects the next incomplete roadmap phase.</div>`;
+    return v;
+  }
+  const done = p.tasks.filter(t=>t.done).length;
+  v.innerHTML = head + `
+    <div class="tabs" data-phase="${p.n}">
+      <button class="tab on" data-t="spec">Spec</button>
+      <button class="tab" data-t="design">Design</button>
+      <button class="tab" data-t="tasks">Tasks <span class="c">${done}/${p.tasks.length}</span></button>
+    </div>
+    <div class="panel on" data-p="spec">${specPanel(p)}</div>
+    <div class="panel" data-p="design">${designPanel(p)}</div>
+    <div class="panel" data-p="tasks">${tasksPanel(p)}</div>`;
+  return v;
+}
+
+function specPanel(p){
+  const s=p.spec; let n=0;
+  const stories=(s.userStories||[]).map(u=>`<div class='story'><div><span class='sa'>As a</span>${esc(u.actor)}</div><div><span class='sa'>I want</span>${esc(u.want)}</div><div><span class='sa'>So that</span>${esc(u.soThat)}</div></div>`).join("");
+  const oq=(s.openQuestions||[]);
+  return `
+    <div class="bento">
+      ${tile("stat c2 accent","<span class='num'>"+s.criteria.length+"</span><span class='lbl'>Acceptance criteria</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+s.edges.length+"</span><span class='lbl'>Edge cases</span>",n++)}
+      ${tile("stat c2","<span class='num'>"+(s.userStories||[]).length+"</span><span class='lbl'>User stories</span>",n++)}
+    </div>
+    <div class="bento">
+      ${tile("hero c4","<div class='k'>Overview</div><p>"+esc(s.overview)+"</p>",n++)}
+      ${tile("c2","<div class='k'>Out of scope</div><div class='chips'>"+s.outOfScope.map(o=>`<span class='chip'>${esc(o)}</span>`).join("")+"</div>",n++)}
+    </div>
+    ${s.motivation?`<div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Why this feature</div><p>${esc(s.motivation)}</p></div></div>`:""}
+    ${stories?`<div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">User stories</div><div class="stories">${stories}</div></div></div>`:""}
+    <div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Acceptance criteria</div><ul class="checklist">${s.criteria.map((c,k)=>`<li><span class='ix'>AC${k+1}</span>${esc(c)}</li>`).join("")}</ul></div></div>
+    <div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Edge cases · must handle</div>
+      <div class="minis">${s.edges.map((e,k)=>`<div class='mini'><span class='ei'>Edge ${pad2(k+1)}</span><b>${esc(e[0])}</b><span class='tx'>${esc(e[1])}</span></div>`).join("")}</div></div></div>
+    ${oq.length?`<div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Open questions</div><ul class="qlist">${oq.map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div></div>`:""}`;
+}
+
+function designPanel(p){
+  const d=p.design; let n=0;
+  const oq=(d.openQuestions||[]);
+  return `
+    <div class="bento">
+      ${tile("hero c4","<div class='k'>Architecture</div><p>"+esc(d.overview)+"</p>",n++)}
+      ${tile("stat c2 accent","<span class='num'>"+d.components.length+"</span><span class='lbl'>Modules</span>",n++)}
+    </div>
+    ${d.diagram?`<div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Architecture map</div>
+      <div class="archwrap">${renderArch(d.diagram)}</div>
+      <p class="archcap">${esc(d.diagram.caption)}</p></div></div>`:""}
+    <div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Data flow</div>
+      <div class="flow">${d.flow.map((f,k)=>`<div class='step'><div class='sn'>${k+1}</div><div class='st'>${esc(f)}</div></div>`+(k<d.flow.length-1?`<span class='farrow'>&rarr;</span>`:"")).join("")}</div></div></div>
+    <div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Trade-offs &amp; decisions</div>
+      <div class="trades">${d.tradeoffs.map(t=>`<div class='trade'><h4>${esc(t.title)}</h4>
+        <div class='ln ch'><b>Chosen:</b> ${esc(t.chosen)}</div>
+        <div class='ln rj'><b>Rejected:</b> ${esc(t.rejected)}</div>
+        <div class='why'><b>Why:</b> ${esc(t.why)}</div></div>`).join("")}</div></div></div>
+    <div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Component breakdown</div>
+      <div class="comps">${d.components.map(c=>`<div class='comp'><div class='mn'>${esc(c[0])}${c[2]?`<span class='kind ${esc(c[2])}'>${esc(c[2])}</span>`:""}</div><div class='rs'>${esc(c[1])}</div>${c[3]?`<div class='loc'>${esc(c[3])}</div>`:""}</div>`).join("")}</div></div></div>
+    ${oq.length?`<div class="bento"><div class="tile c6" style="--i:${n++}"><div class="k">Open questions</div><ul class="qlist">${oq.map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div></div>`:""}`;
+}
+
+function tasksPanel(p){
+  const total=p.tasks.length, done=p.tasks.filter(t=>t.done).length, pct=total?Math.round(done/total*100):0;
+  const groups=[...new Set(p.tasks.map(t=>t.group))];
+  const gstats = groups.map(g=>{ const gt=p.tasks.filter(t=>t.group===g); const gd=gt.filter(t=>t.done).length;
+    return `<div class='gst'><div class='gn'>${gd}/${gt.length}</div><div class='gl'>${esc(g)}</div></div>`; }).join("");
+  const ring = `<div class="ring-wrap"><svg class="ring" viewBox="0 0 36 36">
+      <circle class="bgc" cx="18" cy="18" r="15.9" pathLength="100"></circle>
+      <circle class="fgc" cx="18" cy="18" r="15.9" pathLength="100" stroke-dasharray="${pct} 100"></circle>
+    </svg><div class="ring-pct">${pct}%</div></div>`;
+  const cols = groups.map(g=>{
+    const gt=p.tasks.filter(t=>t.group===g);
+    return `<div class="kcol"><h3>${esc(g)}<span class="kc">${gt.filter(t=>t.done).length}/${gt.length}</span></h3>
+      ${gt.map(t=>`<div class="kcard ${t.done?'done':''}" data-task="${esc(t.id)}">
+        <div class="top"><span class="ck"></span><span class="id">${esc(t.id)}</span><span class="tx">${esc(t.text)}</span>${t.detail?'<span class="cv">▸</span>':''}</div>
+        ${t.detail?`<div class="det">${esc(t.detail)}</div>`:''}</div>`).join("")}</div>`;
+  }).join("");
+  return `<div class="tasktop">${ring}
+      <div class="summ"><b>${done}/${total}</b> <span class="s2">tasks complete</span></div>
+      <div class="grpstats">${gstats}</div></div>
+    <div class="kanban">${cols}</div>`;
+}
+
+function wire(){
+  $("#sb").addEventListener("click", e=>{
+    const it=e.target.closest(".nav"); if(!it) return;
+    document.querySelectorAll(".nav").forEach(x=>x.classList.remove("on"));
+    it.classList.add("on");
+    document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
+    const view=$("#view-"+it.dataset.v); if(view){ view.classList.add("on"); $("#main").scrollTop=0; }
+  });
+  $("#main").addEventListener("click", e=>{
+    const tab=e.target.closest(".tab");
+    if(tab){ const tabs=tab.closest(".tabs"), view=tab.closest(".view");
+      tabs.querySelectorAll(".tab").forEach(t=>t.classList.remove("on")); tab.classList.add("on");
+      view.querySelectorAll(".panel").forEach(pl=>pl.classList.remove("on"));
+      view.querySelector(`[data-p="${tab.dataset.t}"]`).classList.add("on"); return; }
+    const top=e.target.closest(".kcard .top");
+    if(top){ const c=top.closest(".kcard"); if(c.querySelector(".det")) c.classList.toggle("open"); }
+  });
+}
+
+/* Boot — guard against a missing/failed data file */
+if (!PROJECT) {
+  $("#main").innerHTML = '<div class="note">⚠️ <strong>dashboard-data.js</strong> didn\'t load. It must sit next to dashboard.html. The /own:* commands keep it in sync.</div>';
+} else {
+  renderHeader(); renderSidebar(); renderViews(); wire();
+}
+</script>
+</body>
+</html>
