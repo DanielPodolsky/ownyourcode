@@ -6,6 +6,13 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-05-30
+
+### The "Dashboard SDD" Release
+
+OwnYourCode's spec-driven development workflow moves from a folder of Markdown
+files to a single, live, app-like dashboard you open in your browser.
+
 ### Added
 
 #### Dashboard SDD — Spec-Driven Development becomes a live dashboard
