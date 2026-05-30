@@ -160,11 +160,11 @@ commands keep it in sync as you work.
 <!-- TODO(daniel): drop a screenshot of the dashboard here (the preview on your
      Desktop works great). Suggested: a specced phase showing the Design tab. -->
 <div align="center">
-  <em>(screenshot coming — open <code>ownyourcode/dashboard.html</code> after <code>/own:init</code>)</em>
+  <em>(screenshot coming — open <code>ownyourcode/dashboard/dashboard.html</code> after <code>/own:init</code>)</em>
 </div>
 
 **How it stays in sync:** all state lives in one data file
-(`ownyourcode/dashboard-data.js`); `dashboard.html` is a stable view that renders
+(`ownyourcode/dashboard/dashboard-data.js`); `dashboard.html` is a stable view that renders
 it. No server — you double-click the file. Want a different look? `/own:theme`
 re-skins it from a design brief.
 

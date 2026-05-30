@@ -16,7 +16,7 @@ This command works for both **new projects** (empty directory) and **existing pr
 
 **Output (v2.5 — Dashboard SDD):**
 
-- `ownyourcode/dashboard-data.js` — `window.PROJECT`: mission, stack, and
+- `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT`: mission, stack, and
   roadmap as a single source of truth (THIS is what you fill in Phase 6)
 - Updated `.claude/ownyourcode-manifest.json` — Profile + theme settings
 - Updated `CLAUDE.md` — Profile-specific behavior injected
@@ -33,9 +33,10 @@ The installation script already seeded `ownyourcode/` with the dashboard:
 <install-location>/
 ├── CLAUDE.md              ← Created/modified during install
 ├── ownyourcode/           ← Created during install (sibling to CLAUDE.md)
-│   ├── dashboard.html        ← The VIEW SHELL — never edit for content
-│   ├── dashboard-data.js     ← Empty scaffold — YOU fill this in Phase 6
-│   └── DASHBOARD_CONTRACT.md ← The schema authority
+│   ├── dashboard/
+│   │   ├── dashboard.html     ← The VIEW SHELL — never edit for content
+│   │   └── dashboard-data.js  ← Empty scaffold — YOU fill this in Phase 6
+│   └── DASHBOARD_CONTRACT.md  ← The schema authority
 ```
 
 **Rules:**
@@ -43,7 +44,7 @@ The installation script already seeded `ownyourcode/` with the dashboard:
 1. Your job is to **fill `dashboard-data.js`** (the data) — never hand-edit
    `dashboard.html` (the shell). Styling is `/own:theme`'s job, not yours.
 2. `ownyourcode/` is always a **sibling to CLAUDE.md** (same directory level)
-3. If `ownyourcode/dashboard-data.js` doesn't exist, the installation is
+3. If `ownyourcode/dashboard/dashboard-data.js` doesn't exist, the installation is
    incomplete or pre-v2.5 — tell the user to re-run the install script
 4. If you detect a project in a subdirectory (e.g., `shelfie/package.json`), still update the `ownyourcode/` at the installation root (sibling to CLAUDE.md), not inside the subdirectory
 
@@ -1174,7 +1175,7 @@ The concept applies to ANY stack: find and use the official CLI tool.
 
 Everything you collected — mission, audience, definition of done, stack, and
 the collaboratively-designed roadmap — gets written into ONE file:
-`ownyourcode/dashboard-data.js`. You do not generate `mission.md`, `stack.md`,
+`ownyourcode/dashboard/dashboard-data.js`. You do not generate `mission.md`, `stack.md`,
 or `roadmap.md` — those are gone in v2.5. You also do NOT touch
 `dashboard.html` (the shell renders whatever you write here).
 
@@ -1183,7 +1184,7 @@ or `roadmap.md` — those are gone in v2.5. You also do NOT touch
 Run this and decide on the literal stdout:
 
 ```bash
-ls ownyourcode/dashboard.html ownyourcode/dashboard-data.js
+ls ownyourcode/dashboard/dashboard.html ownyourcode/dashboard/dashboard-data.js
 ```
 
 If either file is missing, STOP and surface this message verbatim — do not
@@ -1201,7 +1202,7 @@ improvise a dashboard:
 
 1. **Read `ownyourcode/DASHBOARD_CONTRACT.md`** — it is the authority for the
    `window.PROJECT` shape. The summary below is a guide; the contract wins.
-2. **Overwrite `ownyourcode/dashboard-data.js`** with a single
+2. **Overwrite `ownyourcode/dashboard/dashboard-data.js`** with a single
    `window.PROJECT = { … }` assignment built from the collected answers.
 3. Variable counts are real: write exactly as many `dod` items, `stack` rows,
    and `phases` as the user actually defined — do not pad or truncate.
@@ -1270,7 +1271,7 @@ key off it).
 Run:
 
 ```bash
-node --check ownyourcode/dashboard-data.js && echo "VALID" || echo "INVALID"
+node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "INVALID"
 ```
 
 - `VALID` → continue to Step 2.
@@ -1289,9 +1290,9 @@ Done when: [Summary of their definition]
 Stack: [Technologies]
 
 Created:
-- ownyourcode/dashboard-data.js   (your project, as data)
+- ownyourcode/dashboard/dashboard-data.js   (your project, as data)
 
-👉 Open ownyourcode/dashboard.html in your browser to see your cockpit.
+👉 Open ownyourcode/dashboard/dashboard.html in your browser to see your cockpit.
    (Double-click it — no server needed. Refresh after any /own: command.)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

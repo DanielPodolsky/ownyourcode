@@ -14,17 +14,19 @@
 
 ```bash
 mkdir -p ~/Desktop/oyc-manual-test && cd ~/Desktop/oyc-manual-test
-touch CLAUDE.md
-# Install OwnYourCode from this working copy (adjust the path if needed):
+# No need to create CLAUDE.md — the installer creates it if absent (the common
+# fresh-project case). Install from this working copy (adjust the path if needed):
 bash "</absolute/path/to>/ownyourcode/scripts/project-install.sh"
 ```
 
-**Expect:** the installer prints "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init".
+**Expect:** the installer reports "Created CLAUDE.md at project root" and
+"Dashboard seeded — open ownyourcode/dashboard/dashboard.html, then run /own:init".
 
 **Check the seed (before touching Claude):**
 ```bash
-ls ownyourcode/                 # dashboard.html, dashboard-data.js, DASHBOARD_CONTRACT.md, .theme/, …
-open ownyourcode/dashboard.html # opens the EMPTY-STATE dashboard
+ls ownyourcode/                 # dashboard/, DASHBOARD_CONTRACT.md, .theme/, templates/, …
+ls ownyourcode/dashboard/       # dashboard.html, dashboard-data.js
+open ownyourcode/dashboard/dashboard.html # opens the EMPTY-STATE dashboard
 ```
 - [ ] The dashboard opens by **double-click / `open`** (no server needed).
 - [ ] It shows a Terminal-Futurism empty state (dark, green accent) with a
@@ -44,11 +46,11 @@ roadmap phases).
 to open `dashboard.html`.
 
 **Check:**
-- [ ] `ownyourcode/dashboard-data.js` now has your real `meta`, `dod`, `stack`,
+- [ ] `ownyourcode/dashboard/dashboard-data.js` now has your real `meta`, `dod`, `stack`,
       and `phases` (open it — it's readable JS).
 - [ ] Every phase is `status: "roadmap-only"` with an `items: [...]` list (no
       `spec`/`design`/`tasks` yet).
-- [ ] `node --check ownyourcode/dashboard-data.js` passes.
+- [ ] `node --check ownyourcode/dashboard/dashboard-data.js` passes.
 - [ ] Refresh `dashboard.html` → your project renders: mission in Overview, your
       stack table (with source badges), your phases in the sidebar, the DoD
       tracker at 0%.

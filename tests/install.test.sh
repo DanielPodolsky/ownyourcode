@@ -25,12 +25,17 @@ touch "$FIX/CLAUDE.md"
 OYC="$FIX/ownyourcode"
 
 # v2.5 dashboard artifacts seeded
-exists "$OYC/dashboard.html"               "dashboard.html seeded"
-exists "$OYC/dashboard-data.js"            "dashboard-data.js seeded"
+exists "$OYC/dashboard/dashboard.html"               "dashboard.html seeded"
+exists "$OYC/dashboard/dashboard-data.js"            "dashboard-data.js seeded"
 exists "$OYC/DASHBOARD_CONTRACT.md"        "DASHBOARD_CONTRACT.md seeded"
 exists "$OYC/.theme/theme-prompt.md"       ".theme/theme-prompt.md seeded"
 exists "$OYC/.theme/.history"              ".theme/.history created"
 exists "$OYC/templates/dashboard.html.template" "in-project template kept (fallback regen)"
+
+# dashboard files live under dashboard/, NOT at the ownyourcode/ root
+exists "$OYC/dashboard"                      "dashboard/ folder created"
+absent "$OYC/dashboard.html"                 "no flat dashboard.html at root (moved to dashboard/)"
+absent "$OYC/dashboard-data.js"              "no flat dashboard-data.js at root (moved to dashboard/)"
 
 # dead v2.4 artifacts must NOT appear
 absent "$OYC/product"                       "no product/ dir (v2.4 removed)"
@@ -38,14 +43,14 @@ absent "$OYC/templates/html"                "no templates/html/ dir (v2.4 remove
 absent "$OYC/.theme/theme.css"              "no theme.css (dashboard self-styled)"
 
 # generated JS is valid
-cp "$OYC/dashboard-data.js" "$FIX/_data.js" && node --check "$FIX/_data.js" \
+cp "$OYC/dashboard/dashboard-data.js" "$FIX/_data.js" && node --check "$FIX/_data.js" \
   && ok "seeded dashboard-data.js is valid JS" || bad "seeded dashboard-data.js invalid JS"
-node -e 'const fs=require("fs");const h=fs.readFileSync(process.argv[1],"utf8");const j=[...h.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join("\n;\n");fs.writeFileSync(process.argv[2],j);' "$OYC/dashboard.html" "$FIX/_inline.js" \
+node -e 'const fs=require("fs");const h=fs.readFileSync(process.argv[1],"utf8");const j=[...h.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join("\n;\n");fs.writeFileSync(process.argv[2],j);' "$OYC/dashboard/dashboard.html" "$FIX/_inline.js" \
   && node --check "$FIX/_inline.js" && ok "seeded dashboard.html inline JS is valid" || bad "seeded dashboard.html inline JS invalid"
 
 # render-contract integrity (what /own:theme checks before/after a restyle)
-[ "$(grep -c 'window.PROJECT' "$OYC/dashboard.html")" -ge 1 ] && ok "dashboard.html keeps window.PROJECT load" || bad "dashboard.html missing window.PROJECT"
-[ "$(grep -c 'function renderViews' "$OYC/dashboard.html")" -eq 1 ] && ok "dashboard.html keeps render logic" || bad "dashboard.html missing render logic"
+[ "$(grep -c 'window.PROJECT' "$OYC/dashboard/dashboard.html")" -ge 1 ] && ok "dashboard.html keeps window.PROJECT load" || bad "dashboard.html missing window.PROJECT"
+[ "$(grep -c 'function renderViews' "$OYC/dashboard/dashboard.html")" -eq 1 ] && ok "dashboard.html keeps render logic" || bad "dashboard.html missing render logic"
 
 echo ""
 echo "install: ${PASS}/$((PASS+FAIL)) passed"

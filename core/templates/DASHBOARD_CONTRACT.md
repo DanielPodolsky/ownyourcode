@@ -20,8 +20,8 @@
 
 | File | Role | Who edits it |
 |------|------|--------------|
-| `ownyourcode/dashboard.html` | **View shell** — layout, styling, render logic. Stable. | Only `/own:theme` or a deliberate design change. **Never** for content. |
-| `ownyourcode/dashboard-data.js` | **Data** — `window.PROJECT = {…}`. The SDD state. | Every `/own:init`, `/own:feature`, `/own:done`. This is the ONLY content file. |
+| `ownyourcode/dashboard/dashboard.html` | **View shell** — layout, styling, render logic. Stable. | Only `/own:theme` or a deliberate design change. **Never** for content. |
+| `ownyourcode/dashboard/dashboard-data.js` | **Data** — `window.PROJECT = {…}`. The SDD state. | Every `/own:init`, `/own:feature`, `/own:done`. This is the ONLY content file. |
 
 The shell loads the data via `<script src="dashboard-data.js">` (works on
 `file://`, unlike `fetch`). **Sync model:** a command rewrites
@@ -287,7 +287,7 @@ These rules apply to EVERY write to `dashboard-data.js`.
 After every mutation, the command MUST run:
 
 ```bash
-node --check ownyourcode/dashboard-data.js
+node --check ownyourcode/dashboard/dashboard-data.js
 ```
 
 If `node --check` fails, the command must:

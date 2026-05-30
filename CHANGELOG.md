@@ -15,9 +15,9 @@ project — mission, stack, roadmap, and every phase's spec / design / tasks —
 lives in a single **dashboard** you open in your browser. Two files replace all
 the per-page documents:
 
-- `ownyourcode/dashboard.html` — a stable view shell (layout + styling + render
+- `ownyourcode/dashboard/dashboard.html` — a stable view shell (layout + styling + render
   logic) that you never hand-edit for content.
-- `ownyourcode/dashboard-data.js` — `window.PROJECT`, the single source of truth
+- `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT`, the single source of truth
   every `/own:*` command reads and writes.
 
 The shell loads its data via `<script src>` (which works under the `file://`

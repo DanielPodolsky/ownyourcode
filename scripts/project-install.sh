@@ -271,10 +271,12 @@ if [ -f "$DASH_SRC/dashboard.html.template" ]; then
     cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/templates/"
     cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/templates/"
 
-    # Working files: the shell is used as-is (never templated); the data file
-    # starts as the empty scaffold until /own:init fills it from your answers.
-    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/dashboard.html"
-    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/dashboard-data.js"
+    # Working files live in their own dashboard/ folder (keeps ownyourcode/ tidy).
+    # The shell is used as-is (never templated); the data file starts as the empty
+    # scaffold until /own:init fills it from your answers.
+    mkdir -p "$PROJECT_DIR/ownyourcode/dashboard"
+    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/dashboard/dashboard.html"
+    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/dashboard/dashboard-data.js"
 
     # The schema contract ships to the project root for command + human reference.
     cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/DASHBOARD_CONTRACT.md" 2>/dev/null || true
@@ -283,7 +285,7 @@ if [ -f "$DASH_SRC/dashboard.html.template" ]; then
     mkdir -p "$PROJECT_DIR/ownyourcode/.theme/.history"
     cp "$DASH_SRC/theme-prompt.md.template" "$PROJECT_DIR/ownyourcode/.theme/theme-prompt.md" 2>/dev/null || true
 
-    success "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
+    success "Dashboard seeded — open ownyourcode/dashboard/dashboard.html, then run /own:init"
 else
     warn "Dashboard templates not found in source repo — skipping dashboard seed."
     warn "Update your OwnYourCode base install to get the v2.5 dashboard."
@@ -407,8 +409,9 @@ echo ""
 echo "  📄 $CLAUDE_MD_REL           — THE STRICTNESS (mentor behavior)"
 echo ""
 echo "  📁 ownyourcode/              — Your project docs (commit this)"
-echo "     ├── dashboard.html       — Your project cockpit (open in a browser)"
-echo "     ├── dashboard-data.js    — SDD state (the /own:* commands write this)"
+echo "     ├── dashboard/           — Your project cockpit"
+echo "     │   ├── dashboard.html   — open this in a browser"
+echo "     │   └── dashboard-data.js — SDD state (the /own:* commands write this)"
 echo "     ├── DASHBOARD_CONTRACT.md — The window.PROJECT schema authority"
 echo "     ├── specs/               — Feature specifications"
 echo "     ├── career/              — Interview stories & bullets"

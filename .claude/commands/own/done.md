@@ -49,7 +49,7 @@ Options:
 ```
 
 If from active spec, read the dashboard to understand context:
-- Read `ownyourcode/dashboard-data.js` (`window.PROJECT`)
+- Read `ownyourcode/dashboard/dashboard-data.js` (`window.PROJECT`)
 - Find the active phase (first with `status !== "complete"`) and the relevant
   task in its `tasks[]` (match by `text`/`detail`, note its `id`)
 - Note what they were building and why (the phase `spec` / `design`)
@@ -283,7 +283,7 @@ Use severity levels:
 
 ### Phase 4: Update the Dashboard
 
-All state lives in `ownyourcode/dashboard-data.js` (`window.PROJECT`). This phase
+All state lives in `ownyourcode/dashboard/dashboard-data.js` (`window.PROJECT`). This phase
 makes three small, exact-string mutations — never regenerate the whole file, and
 never touch `dashboard.html`. See `DASHBOARD_CONTRACT.md` §4.3 + §6.
 
@@ -328,7 +328,7 @@ the dashboard renders it as done.)
 #### 4d. Validate (mandatory)
 
 ```bash
-node --check ownyourcode/dashboard-data.js && echo "VALID" || echo "INVALID"
+node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "INVALID"
 ```
 
 If `INVALID`, fix the syntax and re-run until valid — never leave a broken data

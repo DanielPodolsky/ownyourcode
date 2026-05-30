@@ -34,7 +34,7 @@ Read project files to compile status. This step is **read-only** — `/own:statu
 never writes to `dashboard-data.js`.
 
 ```
-ownyourcode/dashboard-data.js — window.PROJECT: roadmap, specs, tasks, DoD (the SDD source of truth)
+ownyourcode/dashboard/dashboard-data.js — window.PROJECT: roadmap, specs, tasks, DoD (the SDD source of truth)
 ownyourcode/career/stories/   — Interview stories
 learning/LEARNING_REGISTRY.md — Learning flywheel data
 .claude/skills/learned/       — Auto-generated skills
@@ -79,7 +79,7 @@ From the active phase (first with `status !== "complete"`) in `window.PROJECT`:
 ## Active Phase
 
 ### Phase [n]: [name] — [status]
-Open the Tasks tab in ownyourcode/dashboard.html for the full kanban.
+Open the Tasks tab in ownyourcode/dashboard/dashboard.html for the full kanban.
 
 Tasks:
 - [x] [done task]            (id 1.1)

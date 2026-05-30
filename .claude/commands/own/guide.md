@@ -57,7 +57,7 @@ Options:
 ```
 
 If they have an active spec, read it from the dashboard data:
-- Read `ownyourcode/dashboard-data.js` (`window.PROJECT`); find the active phase
+- Read `ownyourcode/dashboard/dashboard-data.js` (`window.PROJECT`); find the active phase
   (first with `status !== "complete"`) and look at its `tasks[]` for current work
 - Reference the design decisions they made (the phase's `design` / `spec`)
 

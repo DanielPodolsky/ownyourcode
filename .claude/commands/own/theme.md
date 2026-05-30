@@ -23,7 +23,7 @@ inline in `dashboard.html`. This command re-cooks that inline `<style>` block
 ## Files affected
 
 - `ownyourcode/.theme/theme-prompt.md` — the active design brief (you edit this)
-- `ownyourcode/dashboard.html` — its `<style>` block + font `<link>` are regenerated
+- `ownyourcode/dashboard/dashboard.html` — its `<style>` block + font `<link>` are regenerated
 - `ownyourcode/.theme/.history/[ISO-timestamp]/` — backup of the prior
   `dashboard.html` + `theme-prompt.md` (created on every write; enables revert)
 - `.claude/ownyourcode-manifest.json` — `theme.system`, `theme.last_updated`
@@ -52,10 +52,10 @@ inline in `dashboard.html`. This command re-cooks that inline `<style>` block
 
 ### Phase 1: Pre-flight
 
-1. **Verify the dashboard exists:** confirm `ownyourcode/dashboard.html` and
+1. **Verify the dashboard exists:** confirm `ownyourcode/dashboard/dashboard.html` and
    `ownyourcode/.theme/theme-prompt.md` are present.
    ```bash
-   ls ownyourcode/dashboard.html ownyourcode/.theme/theme-prompt.md
+   ls ownyourcode/dashboard/dashboard.html ownyourcode/.theme/theme-prompt.md
    ```
    If either is missing, the project isn't initialized on v2.5 — tell the user to
    run `/own:init` (or re-run the install) and **STOP**.
@@ -124,7 +124,7 @@ backup, no regeneration. **STOP.**
 BACKUP_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
 BACKUP_DIR="ownyourcode/.theme/.history/${BACKUP_TS}"
 mkdir -p "$BACKUP_DIR"
-cp ownyourcode/dashboard.html         "$BACKUP_DIR/dashboard.html"
+cp ownyourcode/dashboard/dashboard.html         "$BACKUP_DIR/dashboard.html"
 cp ownyourcode/.theme/theme-prompt.md "$BACKUP_DIR/theme-prompt.md"
 ```
 
@@ -133,7 +133,7 @@ Tell the user: `"📦 Previous dashboard backed up to .theme/.history/${BACKUP_T
 ### Phase 6: Regenerate the dashboard's styling
 
 You are regenerating **only** the `<head>` font `<link>` and the `<style>`
-block of `ownyourcode/dashboard.html`. Everything else — the `<body>` markup and
+block of `ownyourcode/dashboard/dashboard.html`. Everything else — the `<body>` markup and
 both `<script>` blocks (the data load + the render logic) — is UNTOUCHABLE.
 
 **The class contract is the current `<style>` itself.** Read the existing
@@ -162,13 +162,13 @@ roles — only the visual treatment changes per the brief.
 contract. The file must still contain its render logic and structure:
 
 ```bash
-grep -c "window.PROJECT" ownyourcode/dashboard.html      # expect >= 1
-grep -c "function renderViews" ownyourcode/dashboard.html # expect 1
-grep -c "<style>" ownyourcode/dashboard.html              # expect 1
+grep -c "window.PROJECT" ownyourcode/dashboard/dashboard.html      # expect >= 1
+grep -c "function renderViews" ownyourcode/dashboard/dashboard.html # expect 1
+grep -c "<style>" ownyourcode/dashboard/dashboard.html              # expect 1
 ```
 
 If any check fails, the regeneration damaged the file — **restore the backup**
-(`cp .theme/.history/${BACKUP_TS}/dashboard.html ownyourcode/dashboard.html`),
+(`cp .theme/.history/${BACKUP_TS}/dashboard.html ownyourcode/dashboard/dashboard.html`),
 tell the user, and stop. Never leave a broken dashboard.
 
 Then update the manifest (`theme.system` = a short slug for the brief, e.g.
@@ -179,7 +179,7 @@ confirm:
 ✅ Dashboard restyled.
 
    Brief:  ownyourcode/.theme/theme-prompt.md
-   Styled: ownyourcode/dashboard.html  (inline <style> regenerated)
+   Styled: ownyourcode/dashboard/dashboard.html  (inline <style> regenerated)
    Backup: ownyourcode/.theme/.history/${BACKUP_TS}/
 
 Refresh the dashboard tab to see it. To revert: /own:theme --revert
@@ -189,12 +189,12 @@ Offer to open it:
 
 ```bash
 case "$(uname -s)" in
-  Darwin*) open ownyourcode/dashboard.html ;;
-  Linux*)  xdg-open ownyourcode/dashboard.html ;;
-  *)       echo "Open this file: ownyourcode/dashboard.html" ;;
+  Darwin*) open ownyourcode/dashboard/dashboard.html ;;
+  Linux*)  xdg-open ownyourcode/dashboard/dashboard.html ;;
+  *)       echo "Open this file: ownyourcode/dashboard/dashboard.html" ;;
 esac
 ```
-(On Windows PowerShell: `Start-Process "ownyourcode/dashboard.html"`.)
+(On Windows PowerShell: `Start-Process "ownyourcode/dashboard/dashboard.html"`.)
 
 **END.**
 
@@ -221,10 +221,10 @@ add "Show more".
 CURRENT_TS=$(date -u +"%Y-%m-%dT%H-%M-%SZ")
 PRE="ownyourcode/.theme/.history/${CURRENT_TS}-pre-revert"
 mkdir -p "$PRE"
-cp ownyourcode/dashboard.html         "$PRE/dashboard.html"
+cp ownyourcode/dashboard/dashboard.html         "$PRE/dashboard.html"
 cp ownyourcode/.theme/theme-prompt.md "$PRE/theme-prompt.md"
 
-cp "ownyourcode/.theme/.history/${SELECTED_TS}/dashboard.html"   ownyourcode/dashboard.html
+cp "ownyourcode/.theme/.history/${SELECTED_TS}/dashboard.html"   ownyourcode/dashboard/dashboard.html
 cp "ownyourcode/.theme/.history/${SELECTED_TS}/theme-prompt.md"  ownyourcode/.theme/theme-prompt.md
 ```
 

@@ -418,8 +418,9 @@ function renderHeader(){
     const a = $("#hdAud"); a.textContent = AUDIENCE_LABEL[m.audience]; a.hidden = false;
   }
   const cur = activePhase();
-  $("#gStatus").textContent = cur
-    ? `Phase ${cur.n} — ${cur.status === "specced" ? "specced" : "roadmap"}`
+  $("#gStatus").textContent =
+    !PROJECT.phases.length ? "Ready to begin"
+    : cur ? `Phase ${cur.n} — ${cur.status === "specced" ? "specced" : "roadmap"}`
     : "All phases complete";
 }
 

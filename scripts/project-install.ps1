@@ -306,10 +306,13 @@ if (Test-Path $dashTemplate) {
     Copy-Item $dashTemplate -Destination $tplDir -Force
     Copy-Item (Join-Path $dashSrc "dashboard-data.js.template") -Destination $tplDir -Force
 
-    # Working files: the shell is used as-is (never templated); the data file
-    # starts as the empty scaffold until /own:init fills it from your answers.
-    Copy-Item $dashTemplate -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard.html") -Force
-    Copy-Item (Join-Path $dashSrc "dashboard-data.js.template") -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard-data.js") -Force
+    # Working files live in their own dashboard/ folder (keeps ownyourcode/ tidy).
+    # The shell is used as-is (never templated); the data file starts as the empty
+    # scaffold until /own:init fills it from your answers.
+    $dashDir = Join-Path $PROJECT_DIR "ownyourcode/dashboard"
+    New-Item -ItemType Directory -Force -Path $dashDir | Out-Null
+    Copy-Item $dashTemplate -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard/dashboard.html") -Force
+    Copy-Item (Join-Path $dashSrc "dashboard-data.js.template") -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard/dashboard-data.js") -Force
 
     # The schema contract ships to the project root for command + human reference.
     $contractSrc = Join-Path $dashSrc "DASHBOARD_CONTRACT.md"
@@ -325,7 +328,7 @@ if (Test-Path $dashTemplate) {
         Copy-Item $promptSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/.theme/theme-prompt.md") -Force
     }
 
-    Write-OK "Dashboard seeded — open ownyourcode/dashboard.html, then run /own:init"
+    Write-OK "Dashboard seeded — open ownyourcode/dashboard/dashboard.html, then run /own:init"
 } else {
     Write-Warn "Dashboard templates not found in source repo — skipping dashboard seed."
     Write-Warn "Update your OwnYourCode base install to get the v2.5 dashboard."
@@ -450,8 +453,9 @@ Write-Host ""
 Write-Host "  $CLAUDE_MD_REL           - THE STRICTNESS [mentor behavior]"
 Write-Host ""
 Write-Host "  ownyourcode/              - Your project docs [commit this]"
-Write-Host "     dashboard.html         - Your project cockpit (open in a browser)"
-Write-Host "     dashboard-data.js      - SDD state (the /own:* commands write this)"
+Write-Host "     dashboard/             - Your project cockpit"
+Write-Host "       dashboard.html       - open this in a browser"
+Write-Host "       dashboard-data.js    - SDD state (the /own:* commands write this)"
 Write-Host "     DASHBOARD_CONTRACT.md  - The window.PROJECT schema authority"
 Write-Host "     specs/                 - Feature specifications"
 Write-Host "     career/                - Interview stories & bullets"

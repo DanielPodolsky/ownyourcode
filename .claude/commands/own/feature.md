@@ -19,7 +19,7 @@ This command follows the SDD workflow:
 4. **Then** implementation begins with mentorship
 
 **Output (v2.5 — Dashboard SDD):**
-- The detected `roadmap-only` phase in `ownyourcode/dashboard-data.js` is
+- The detected `roadmap-only` phase in `ownyourcode/dashboard/dashboard-data.js` is
   advanced to `specced` — its `spec`, `design`, and `tasks` objects are written
   in place (replacing the phase's `items[]`). No `spec.md`/`design.md`/`tasks.md`
   files; everything lives in `window.PROJECT`, rendered by the dashboard's tabs.
@@ -52,7 +52,7 @@ The implementation phase is where the junior learns by doing.
 Before asking the user for feature details, auto-detect which phase to spec by
 reading the dashboard data — there is no `roadmap.md` to parse in v2.5.
 
-1. **Read** `ownyourcode/dashboard-data.js` (the `window.PROJECT` object).
+1. **Read** `ownyourcode/dashboard/dashboard-data.js` (the `window.PROJECT` object).
 2. **Find** the FIRST phase in `window.PROJECT.phases` with
    `status: "roadmap-only"` — that is the phase to spec.
 3. **Auto-select** it — no asking, keep it simple. Capture its `n`, `name`,
@@ -205,7 +205,7 @@ Read `.claude/ownyourcode-manifest.json` to determine spec generation mode:
 - Otherwise → Use **Standard Mode** (AI generates, developer reviews)
 
 **Read the project context:**
-1. Read `ownyourcode/dashboard-data.js` — `window.PROJECT.meta.mission` for
+1. Read `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT.meta.mission` for
    project goals, `window.PROJECT.stack` for technology constraints
 2. Scan existing code structure to understand patterns
 
@@ -285,7 +285,7 @@ official docs, and how production apps implement this.
 ✅ Tasks tab — Implementation tasks
    • [count] tasks across [group names]
 
-👉 Refresh ownyourcode/dashboard.html and open Phase [n] to review the
+👉 Refresh ownyourcode/dashboard/dashboard.html and open Phase [n] to review the
    Spec / Design / Tasks tabs.
 
 Please review. You should:
@@ -331,7 +331,7 @@ Based on response:
 ## Generated Output (write into the phase object)
 
 You do NOT create `spec.md` / `design.md` / `tasks.md` files. You **mutate the
-detected phase object** inside `ownyourcode/dashboard-data.js`:
+detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
 
 1. **Read `ownyourcode/DASHBOARD_CONTRACT.md`** (§3.5–§3.7) — the authority for
    the `spec`, `design`, `tasks` shapes.
@@ -342,7 +342,7 @@ detected phase object** inside `ownyourcode/dashboard-data.js`:
    leave every other phase untouched.
 4. Variable counts are real: as many user stories / criteria / edges / tasks as
    the work needs. Don't pad or truncate.
-5. **Validate** with `node --check ownyourcode/dashboard-data.js`. If it fails,
+5. **Validate** with `node --check ownyourcode/dashboard/dashboard-data.js`. If it fails,
    fix the syntax and re-run until valid — never leave a broken data file.
 
 ### The shapes to write (v2.5 — see contract §3.5–§3.7)
