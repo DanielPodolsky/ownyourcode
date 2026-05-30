@@ -741,7 +741,7 @@ To install (takes 30 seconds each):
 
 ### Phase 0.5: Design Capability Check (v2.5)
 
-The v2.5 dashboard ships **self-styled** — the Blueprint Atelier design system
+The v2.5 dashboard ships **self-styled** — the Terminal-Futurism design system
 lives inline in `dashboard.html`, so there is NO `.theme/theme.css` to seed and
 nothing to generate here. This phase does ONE thing: detect whether the
 `frontend-design` plugin is available so the user knows they can later
@@ -754,8 +754,11 @@ Check your OWN available skills list for an entry named `frontend-design`
 signal — do NOT inspect `~/.claude/plugins/cache/...` on disk; that path goes
 stale after uninstalls (a v2.4 runtime lesson).
 
-- **Plugin is present in your skill list** → record `available: true`. Skip to
-  Step 3.
+- **Plugin is present in your skill list** → record `available: true` and show a
+  brief one-line acknowledgment so the user knows it's there:
+  > `🎨 frontend-design detected — you can restyle your dashboard anytime with /own:theme.`
+
+  Then skip to Step 3.
 - **Plugin is NOT present, or you genuinely cannot tell from the skill list**
   → do NOT guess. Go to Step 2 and ask the user directly.
 
@@ -768,7 +771,7 @@ exit the session or make the user re-run `/own:init`:
 🎨 Optional: custom dashboard styling
 
 Your dashboard already looks polished out of the box (the built-in
-"Blueprint Atelier" design). If you want to *re-roll* its look later from a
+"Terminal-Futurism" design). If you want to *re-roll* its look later from a
 design prompt, the `frontend-design` plugin enables that via /own:theme:
 
   /plugin install frontend-design@claude-plugins-official
@@ -786,7 +789,7 @@ Add (or update) this block in `.claude/ownyourcode-manifest.json`:
 ```json
 {
   "theme": {
-    "system": "blueprint-atelier",
+    "system": "terminal-futurism",
     "frontend_design_available": false,
     "last_checked": "[ISO timestamp]"
   }
@@ -794,7 +797,7 @@ Add (or update) this block in `.claude/ownyourcode-manifest.json`:
 ```
 
 Set `frontend_design_available` to the value from Step 1/2. `system` stays
-`"blueprint-atelier"` (the bundled default) until the user re-styles via
+`"terminal-futurism"` (the bundled default) until the user re-styles via
 `/own:theme`.
 
 Continue silently to Phase 1. (Custom styling is a post-init, user-driven
@@ -1268,66 +1271,53 @@ key off it).
 #### Step 1: Validate the data file (mandatory — never skip)
 
 `dashboard-data.js` must be valid JavaScript or the dashboard renders nothing.
-Run:
+Run this from the **project root** (the folder that contains `ownyourcode/`).
+If your shell drifted into a scaffolded subfolder during Phase 5.7, `cd` back
+to the project root — or use the absolute path — so the check targets the right
+file:
 
 ```bash
 node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "INVALID"
 ```
 
-- `VALID` → continue to Step 2.
+- `VALID` → continue to Step 2. (This is an internal safety check — no need to
+  explain `node --check` to the user; the point is the data file is sound.)
 - `INVALID` → you wrote malformed JS. Re-open `dashboard-data.js`, fix the
   syntax error reported by node, and re-run until it prints `VALID`. Do NOT
   present the summary while the file is invalid.
 
 #### Step 2: Summary (then STOP)
 
+The dashboard now *shows* the project (mission, stack, roadmap), so the ending
+is short and points there — don't repeat all the details in text. Fill the
+brackets and present exactly this shape:
+
 ```
-✅ OwnYourCode initialized!
+✅ "[Project Name]" is ready.
 
-Problem: [One-line from their answer]
-For: [Who they selected]
-Done when: [Summary of their definition]
-Stack: [Technologies]
+📊 Your whole project lives in one dashboard — open it:
+      ownyourcode/dashboard/dashboard.html
+      (double-click — no server needed; refresh after any /own: command)
 
-Created:
-- ownyourcode/dashboard/dashboard-data.js   (your project, as data)
+   Mission, stack, and your [N]-phase roadmap are all in there.
 
-👉 Open ownyourcode/dashboard/dashboard.html in your browser to see your cockpit.
-   (Double-click it — no server needed. Refresh after any /own: command.)
+THE LOOP — how you'll work from here:
+      /own:feature   spec the next phase   →  Spec · Design · Tasks
+      …you write the code (I mentor, you own it)…
+      /own:done      finish a task         →  6 Gates + review
+      /own:status    check progress        →  anytime
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 NEXT: Run /own:feature to plan your first phase
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 Make it yours:  /own:theme  restyles the dashboard from a design prompt.
 
-Your roadmap has [N] phases. /own:feature will auto-detect
-Phase 1 and generate specs for you to review.
-
-┌──────────────────────────────────────────────┐
-│  COMMANDS                                    │
-├──────────────────────────────────────────────┤
-│  Planning                                    │
-│    /own:feature  → Spec your next phase      │
-│    /own:advise   → Prep before coding        │
-│                                              │
-│  Building                                    │
-│    /own:guide    → Get implementation help   │
-│    /own:stuck    → Debug systematically      │
-│    /own:test     → Write tests (you write)   │
-│    /own:docs     → Write docs (you write)    │
-│                                              │
-│  Completing                                  │
-│    /own:done     → Finish + code review      │
-│    /own:retro    → Capture what you learned  │
-│                                              │
-│  Checking                                    │
-│    /own:status   → See your progress         │
-└──────────────────────────────────────────────┘
-
-💡 Your learnings persist across ALL projects.
-   Every /own:retro feeds the global registry.
-   Every /own:advise queries your past wins & failures.
-   The more you use it, the smarter it gets.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉  Next:  /own:feature   — specs Phase 1: [Phase 1 name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+Keep it to that. Do NOT print a full command catalog or a Problem/Stack recap —
+the dashboard is the summary. (The other commands — `/own:advise`, `/own:guide`,
+`/own:stuck`, `/own:test`, `/own:docs`, `/own:retro` — surface naturally when
+they're relevant; don't dump them on the user now.)
 
 **END COMMAND HERE.**
 
