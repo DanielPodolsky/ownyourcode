@@ -82,10 +82,10 @@ window.PROJECT = {
         openQuestions: [],
       },
       tasks: [
-        { id: "1.1", group: "Setup", text: "Mark page.tsx as a client component", detail: "App Router renders Server Components by default; localStorage needs the client boundary.", done: true },
-        { id: "2.1", group: "Implementation", text: "Create src/lib/types.ts", detail: "Type the domain before the UI — surfaces hidden assumptions early.", done: true },
-        { id: "2.2", group: "Implementation", text: "Create storage/safe.ts", detail: "The one place that knows localStorage can fail.", done: true },
-        { id: "3.1", group: "Verification", text: "bun run build — no SSR or type errors", detail: "Build proves the SSR guard.", done: true },
+        { id: "1.1.1", group: "Setup", text: "Mark page.tsx as a client component", detail: "App Router renders Server Components by default; localStorage needs the client boundary.", done: true },
+        { id: "1.2.1", group: "Implementation", text: "Create src/lib/types.ts", detail: "Type the domain before the UI — surfaces hidden assumptions early.", done: true },
+        { id: "1.2.2", group: "Implementation", text: "Create storage/safe.ts", detail: "The one place that knows localStorage can fail.", done: true },
+        { id: "1.3.1", group: "Verification", text: "bun run build — no SSR or type errors", detail: "Build proves the SSR guard.", done: true },
       ],
     },
     {
@@ -128,11 +128,11 @@ window.PROJECT = {
         openQuestions: ["Optimistic insert vs re-read after write? (Lean re-read for v1.)"],
       },
       tasks: [
-        { id: "1.1", group: "Setup", text: "Add LogEntry + Project create paths to the repos", detail: "Extend the existing repos; no new storage primitive.", done: true },
-        { id: "2.1", group: "Implementation", text: "Build log-form.tsx (project picker, date, note)", detail: "Controlled inputs; disable submit on empty date.", done: false },
-        { id: "2.2", group: "Implementation", text: "Build entry-list.tsx (last 7 days)", detail: "Sort newest-first; group by day.", done: false },
-        { id: "2.3", group: "Implementation", text: "Wire form → repo.add → list refresh", detail: "", done: false },
-        { id: "3.1", group: "Verification", text: "Refresh-survives + duplicate-same-day tests", detail: "Manually verify both edge cases from the spec.", done: false },
+        { id: "2.1.1", group: "Setup", text: "Add LogEntry + Project create paths to the repos", detail: "Extend the existing repos; no new storage primitive.", done: true },
+        { id: "2.2.1", group: "Implementation", text: "Build log-form.tsx (project picker, date, note)", detail: "Controlled inputs; disable submit on empty date.", done: false },
+        { id: "2.2.2", group: "Implementation", text: "Build entry-list.tsx (last 7 days)", detail: "Sort newest-first; group by day.", done: false },
+        { id: "2.2.3", group: "Implementation", text: "Wire form → repo.add → list refresh", detail: "", done: false },
+        { id: "2.3.1", group: "Verification", text: "Refresh-survives + duplicate-same-day tests", detail: "Manually verify both edge cases from the spec.", done: false },
       ],
     },
     {

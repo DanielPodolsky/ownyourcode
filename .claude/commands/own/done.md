@@ -289,16 +289,18 @@ never touch `dashboard.html`. See `DASHBOARD_CONTRACT.md` §4.3 + §6.
 
 #### 4a. Flip the completed task
 
-Find the task by its unique `id` in the active phase's `tasks[]` and flip its
-`done`:
+Find the task by its `id` in the active phase's `tasks[]` and flip its `done`:
 
 ```
-Before:  { id: "2.3", group: "Implementation", text: "...", detail: "...", done: false }
-After:   { id: "2.3", group: "Implementation", text: "...", detail: "...", done: true }
+Before:  { id: "2.2.3", group: "Implementation", text: "...", detail: "...", done: false }
+After:   { id: "2.2.3", group: "Implementation", text: "...", detail: "...", done: true }
 ```
 
-Use the `Edit` tool anchored on `"id": "2.3"` so the replacement is unique. If
-the user finished several tasks, repeat per `id`.
+Task `id`s are `"<phase>.<group>.<task>"` and therefore **globally unique across
+the whole file** (the phase prefix guarantees it — see DASHBOARD_CONTRACT §3.7 /
+§6.4). So the bare literal `"id": "2.2.3"` is a safe, unambiguous `Edit` anchor
+even when several phases are specced — find that line and flip `done` on the same
+object. If the user finished several tasks, repeat per `id`.
 
 #### 4b. Propagate Definition of Done (agent judgment — be conservative)
 

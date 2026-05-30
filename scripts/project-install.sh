@@ -170,7 +170,8 @@ info "Installing commands..."
 
 # Copy commands from .claude/commands/own/
 cp "$BASE_DIR/.claude/commands/own/"*.md "$PROJECT_DIR/.claude/commands/own/" 2>/dev/null || true
-success "Commands installed (10 commands including test/docs)"
+CMD_COUNT=$(ls "$PROJECT_DIR/.claude/commands/own/"*.md 2>/dev/null | wc -l | tr -d ' ')
+success "Commands installed ($CMD_COUNT commands)"
 
 # ============================================================================
 # STEP 5: Copy skills (NEW in v2.0)
@@ -384,7 +385,8 @@ cat > "$MANIFEST" << EOF
     "own/retro.md",
     "own/status.md",
     "own/stuck.md",
-    "own/test.md"
+    "own/test.md",
+    "own/theme.md"
   ]
 }
 EOF
@@ -419,7 +421,7 @@ echo "     ├── profiles/            — Profile templates (junior, experie
 echo "     └── guides/              — Setup guides"
 echo ""
 echo "  📁 .claude/                 — Claude Code configuration"
-echo "     ├── commands/            — 10 slash commands"
+echo "     ├── commands/            — ${CMD_COUNT} slash commands"
 echo "     └── skills/              — Auto-invoked mentorship skills"
 echo "         ├── fundamentals/    — 13 Core review skills"
 echo "         ├── gates/           — 6 Mentorship gates"

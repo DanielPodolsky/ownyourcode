@@ -98,14 +98,26 @@ const checks = [
   ["component 4-tuple: kind 'new'",       () => all.includes("class='kind new'")],
   ["component 4-tuple: kind 'modified'",  () => all.includes("class='kind modified'")],
   ["component 4-tuple: file location",    () => all.includes("src/lib/storage/safe.ts")],
-  // tasks tab
-  ["kanban task by unique id (1.1)",      () => all.includes('data-task="1.1"')],
-  ["kanban task by unique id (3.1)",      () => all.includes('data-task="3.1"')],
+  // tasks tab — ids are "<phase>.<group>.<task>" (globally unique)
+  ["kanban task id from Phase 1 (1.1.1)", () => all.includes('data-task="1.1.1"')],
+  ["kanban task id from Phase 2 (2.2.3)", () => all.includes('data-task="2.2.3"')],
   ["progress ring renders",               () => all.includes('class="ring"')],
   ["done task struck (kcard done)",       () => all.includes("kcard done")],
   // roadmap-only phase
   ["roadmap-only planned scope",          () => all.includes("Calendar heatmap")],
   ["roadmap-only 'not specced yet' note", () => all.includes("isn't specced yet")],
+  // CONTRACT INVARIANT: task ids must be globally unique (the /own:done anchor).
+  // This guards the multi-phase mutation case the render-only tests can't reach:
+  // Phase 1 and Phase 2 are BOTH specced here, so a phase-local scheme would
+  // collide. (See DASHBOARD_CONTRACT §6.4.)
+  ["task ids are globally unique across all phases", () => {
+    const ids = window.PROJECT.phases.flatMap(p => (p.tasks || []).map(t => t.id));
+    return ids.length > 0 && new Set(ids).size === ids.length;
+  }],
+  ["every task id is phase-prefixed (<phase>.<group>.<task>)", () => {
+    return window.PROJECT.phases.every(p =>
+      (p.tasks || []).every(t => t.id.startsWith(p.n + ".") && t.id.split(".").length === 3));
+  }],
 ];
 
 let pass = 0, fail = 0;

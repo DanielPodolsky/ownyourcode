@@ -390,11 +390,13 @@ detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
     openQuestions: ["[deferred design decision]", /* ... */],
   },
   tasks: [
-    // id = "<group#>.<task#>", unique within the phase. group = kanban column.
-    // text and detail are distinct; done starts false.
-    { id: "1.1", group: "Setup",          text: "[short imperative]", detail: "[optional extended note]", done: false },
-    { id: "2.1", group: "Implementation", text: "[...]", detail: "", done: false },
-    { id: "3.1", group: "Verification",   text: "[...]", detail: "", done: false },
+    // id = "<phase>.<group>.<task>" — the phase prefix is THIS phase's `n`, so
+    // ids are GLOBALLY unique across the file (never restart per phase). group =
+    // kanban column. text and detail are distinct; done starts false.
+    // (example below assumes you're speccing Phase 2)
+    { id: "2.1.1", group: "Setup",          text: "[short imperative]", detail: "[optional extended note]", done: false },
+    { id: "2.2.1", group: "Implementation", text: "[...]", detail: "", done: false },
+    { id: "2.3.1", group: "Verification",   text: "[...]", detail: "", done: false },
     // ...variable groups + variable tasks per group
   ],
 }
@@ -404,8 +406,10 @@ detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
 
 - **`design.components` is a 4-tuple** `[name, responsibility, kind, location]` —
   include the file path and `"new"`/`"modified"`, not just name + responsibility.
-- **`tasks[].id`** is `"<group#>.<task#>"`, unique within the phase. `/own:done`
-  flips `done` by matching this `id`, so uniqueness is load-bearing.
+- **`tasks[].id`** is `"<phase>.<group>.<task>"` — prefix every id with THIS
+  phase's number so ids are **globally unique** across the whole file (don't
+  restart `1.1`, `2.1` each phase). `/own:done` flips `done` by matching the bare
+  `id` literal as an exact-string anchor, so a global collision would break it.
 - **`tasks[].text` vs `detail`**: `text` is the short card title; `detail` is the
   optional expand-on-click body. `detail` may be `""`.
 - **`design.diagram.layers`** are ordered top→bottom; the dashboard renders them

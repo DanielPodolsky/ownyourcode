@@ -175,7 +175,7 @@ if (Test-Path $srcCommands) {
         Copy-Item $file.FullName -Destination $destCommands -Force
     }
     $cmdCount = $files.Count
-    Write-OK "Commands installed ($cmdCount commands including test/docs)"
+    Write-OK "Commands installed ($cmdCount commands)"
 } else {
     Write-Warn "Commands directory not found"
 }
@@ -427,7 +427,8 @@ $manifestContent = @"
     "own/retro.md",
     "own/status.md",
     "own/stuck.md",
-    "own/test.md"
+    "own/test.md",
+    "own/theme.md"
   ]
 }
 "@
@@ -463,7 +464,7 @@ Write-Host "     profiles/              - Profile templates (junior, experienced
 Write-Host "     guides/                - Setup guides"
 Write-Host ""
 Write-Host "  .claude/                  - Claude Code configuration"
-Write-Host "     commands/              - 11 slash commands"
+Write-Host "     commands/              - $cmdCount slash commands"
 Write-Host "     skills/                - Auto-invoked mentorship skills"
 Write-Host "        fundamentals/       - 13 Core review skills"
 Write-Host "        gates/              - 6 Mentorship gates"

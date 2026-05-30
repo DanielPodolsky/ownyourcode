@@ -94,7 +94,7 @@ Design = {
 }
 
 Task = {
-  id:     string,    // "<group#>.<task#>" e.g. "1.1", "2.3"
+  id:     string,    // "<phase>.<group>.<task>" e.g. "1.1.1", "2.2.3" — GLOBALLY unique
   group:  string,    // Sub-phase grouping (e.g. "Setup", "Implementation")
   text:   string,    // Short imperative task description
   detail: string,    // Optional extended description, shown when card expands
@@ -197,16 +197,17 @@ Top-level phase array. Order matches `phases[i].n` (1-indexed).
 ### 3.7 `Task` (per phase)
 
 ```js
+// (these are Phase 1's tasks — note every id starts with the phase number)
 tasks: [
-  { id: "1.1", group: "Setup",          text: "Install dependencies", detail: "...", done: false },
-  { id: "1.2", group: "Setup",          text: "Configure env vars",   detail: "",    done: false },
-  { id: "2.1", group: "Implementation", text: "Build streak logic",   detail: "...", done: false }
+  { id: "1.1.1", group: "Setup",          text: "Install dependencies", detail: "...", done: false },
+  { id: "1.1.2", group: "Setup",          text: "Configure env vars",   detail: "",    done: false },
+  { id: "1.2.1", group: "Implementation", text: "Build streak logic",   detail: "...", done: false }
 ]
 ```
 
 | Field | Type | Constraint |
 |---|---|---|
-| `id` | string | `"<group#>.<task#>"` format. `<group#>` is the 1-indexed group ordinal (Setup=1, Implementation=2, etc.); `<task#>` is the 1-indexed position within the group. **Unique within the phase's `tasks[]` array.** Used as the anchor for `/own:done` exact-string mutation. |
+| `id` | string | `"<phase>.<group>.<task>"` format. `<phase>` is the phase's `n`; `<group>` is the 1-indexed group ordinal within the phase (Setup=1, Implementation=2, …); `<task>` is the 1-indexed position within the group. **Globally unique across the entire `dashboard-data.js` file** (the phase prefix guarantees it). This is what makes the bare `"id": "2.2.3"` literal a valid, unambiguous anchor for `/own:done`'s exact-string `Edit`, even once several phases are specced. |
 | `group` | string | Sub-phase grouping label. Renders as a kanban column header. |
 | `text` | string | Short imperative task description (≤ 80 chars recommended). |
 | `detail` | string | Extended description shown when the task card expands. May be empty (`""`). Plain text; newlines render as paragraph breaks. |
@@ -235,14 +236,18 @@ These rules constrain what each `/own:*` command may write. Any command violatin
   - Remove `items`
   - Add `spec`, `design`, `tasks` objects matching the contract
   - All tasks start with `done: false`
-  - All task `id`s are unique within the phase
+  - Every task `id` is `"<phase>.<group>.<task>"` (the phase prefix = this phase's
+    `n`), so ids are unique across the WHOLE file, not just within the phase
 - Triggers `node --check`.
 
 ### 4.3 `/own:done`
 
 - Reads `window.PROJECT.phases[]`. Finds the phase containing the just-completed task.
 - **Mutations** (in order):
-  1. Flip the matching task's `done: false` → `done: true`. Anchor by unique `id` (e.g., find the line containing `"id": "2.1"` and flip `done` on the same task object).
+  1. Flip the matching task's `done: false` → `done: true`. The task `id` is
+     globally unique (`"<phase>.<group>.<task>"`), so the bare literal — e.g.
+     `"id": "2.2.3"` — is a safe, unambiguous `Edit` anchor: find that line and
+     flip `done` on the same task object. No need to match surrounding text.
   2. For zero or more `dod` items the completed task materially advances, flip `done: false` → `done: true`. **This is an agent judgment, not a deterministic mapping.** Claude reads the task's `text`/`detail` and reasons about which DoD items (if any) the work satisfies. Be conservative — only mark a DoD item complete when the work clearly advances it. The user can always manually flip any DoD item via direct edit if Claude's judgment is wrong.
   3. If ALL `tasks[*].done === true` in the phase, set the phase `status: "specced"` → `"complete"`.
 - Triggers `node --check`.
@@ -311,9 +316,17 @@ Rationale: surface area of an Edit ≪ surface area of a rewrite. Smaller writes
 
 `/own:init`, `/own:feature`, `/own:done`, `/own:status` MUST NOT write to `dashboard.html`.
 
-### 6.4 Unique IDs are load-bearing
+### 6.4 Globally-unique task IDs are load-bearing
 
-Every `Task.id` MUST be unique within its phase's `tasks[]` array. `/own:done`'s exact-string mutation depends on this. Duplicate IDs cause silent wrong-task completion.
+Every `Task.id` MUST be unique across the ENTIRE `dashboard-data.js` file — not
+merely within its own phase. The `"<phase>.<group>.<task>"` scheme guarantees
+this: the phase prefix keeps Phase 2's `2.1.1` distinct from Phase 1's `1.1.1`.
+
+This is exactly what makes `/own:done`'s exact-string `Edit` safe on a
+multi-phase project: the `"id"` literal is a unique anchor. A phase-local-only
+scheme (`1.1`, `2.1` restarting each phase) would make `"id": "2.1"` ambiguous
+once two phases are specced — the `Edit` would refuse to apply, or worse, flip
+the wrong task silently. Never reuse an id across phases.
 
 ---
 

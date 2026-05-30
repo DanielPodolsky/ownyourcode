@@ -366,7 +366,7 @@
 <script>
 const PROJECT = window.PROJECT;
 const $ = (s,r=document)=>r.querySelector(s);
-const esc = s => String(s ?? "").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const tile = (cls, body, idx) => `<div class="tile ${cls}" style="--i:${idx}">${body}</div>`;
 const pad2 = k => String(k).padStart(2,"0");
 

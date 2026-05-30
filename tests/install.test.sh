@@ -37,6 +37,10 @@ exists "$OYC/dashboard"                      "dashboard/ folder created"
 absent "$OYC/dashboard.html"                 "no flat dashboard.html at root (moved to dashboard/)"
 absent "$OYC/dashboard-data.js"              "no flat dashboard-data.js at root (moved to dashboard/)"
 
+# manifest is in sync with installed commands (regression guard: theme.md drift)
+MANIFEST="$FIX/.claude/ownyourcode-manifest.json"
+grep -q '"own/theme.md"' "$MANIFEST" 2>/dev/null && ok "manifest lists own/theme.md" || bad "manifest missing own/theme.md"
+
 # dead v2.4 artifacts must NOT appear
 absent "$OYC/product"                       "no product/ dir (v2.4 removed)"
 absent "$OYC/templates/html"                "no templates/html/ dir (v2.4 removed)"
