@@ -21,7 +21,7 @@ This command works for both **new projects** (empty directory) and **existing pr
 - Updated `.claude/ownyourcode-manifest.json` — Profile + theme settings
 - Updated `CLAUDE.md` — Profile-specific behavior injected
 
-> **Schema authority:** `ownyourcode/DASHBOARD_CONTRACT.md` defines the exact
+> **Schema authority:** `ownyourcode/dashboard/DASHBOARD_CONTRACT.md` defines the exact
 > `window.PROJECT` shape and mutation rules. When this command's prose and the
 > contract disagree, the contract wins. Read it before writing Phase 6 output.
 
@@ -33,10 +33,10 @@ The installation script already seeded `ownyourcode/` with the dashboard:
 <install-location>/
 ├── CLAUDE.md              ← Created/modified during install
 ├── ownyourcode/           ← Created during install (sibling to CLAUDE.md)
-│   ├── dashboard/
-│   │   ├── dashboard.html     ← The VIEW SHELL — never edit for content
-│   │   └── dashboard-data.js  ← Empty scaffold — YOU fill this in Phase 6
-│   └── DASHBOARD_CONTRACT.md  ← The schema authority
+│   └── dashboard/
+│       ├── dashboard.html        ← The VIEW SHELL — never edit for content
+│       ├── dashboard-data.js     ← Empty scaffold — YOU fill this in Phase 6
+│       └── DASHBOARD_CONTRACT.md ← The schema authority
 ```
 
 **Rules:**
@@ -1200,7 +1200,7 @@ improvise a dashboard:
 
 #### How to write it
 
-1. **Read `ownyourcode/DASHBOARD_CONTRACT.md`** — it is the authority for the
+1. **Read `ownyourcode/dashboard/DASHBOARD_CONTRACT.md`** — it is the authority for the
    `window.PROJECT` shape. The summary below is a guide; the contract wins.
 2. **Overwrite `ownyourcode/dashboard/dashboard-data.js`** with a single
    `window.PROJECT = { … }` assignment built from the collected answers.

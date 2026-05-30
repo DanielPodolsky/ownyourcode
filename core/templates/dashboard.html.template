@@ -10,7 +10,7 @@
   not. The /own:* commands rewrite dashboard-data.js, NOT this file, to
   keep the dashboard in sync. Refresh the tab to see updates.
 
-  Authority: ownyourcode/DASHBOARD_CONTRACT.md defines the window.PROJECT
+  Authority: ownyourcode/dashboard/DASHBOARD_CONTRACT.md defines the window.PROJECT
   schema this shell renders. Do not hand-edit this file for content —
   only /own:theme (or a deliberate design change) touches the styling.
   ════════════════════════════════════════════════════════════════════

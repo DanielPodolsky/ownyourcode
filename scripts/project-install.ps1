@@ -289,7 +289,7 @@ if (Test-Path $srcGuides) {
 # v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
 # single dashboard: a stable view shell (dashboard.html) + a data file
 # (dashboard-data.js) that every /own:* command reads and writes. The schema
-# authority is DASHBOARD_CONTRACT.md (shipped into the project root).
+# authority is DASHBOARD_CONTRACT.md (shipped into ownyourcode/dashboard/).
 # Fallback-first: if the source templates are missing (older base install),
 # warn and skip rather than seeding a broken project.
 
@@ -317,7 +317,7 @@ if (Test-Path $dashTemplate) {
     # The schema contract ships to the project root for command + human reference.
     $contractSrc = Join-Path $dashSrc "DASHBOARD_CONTRACT.md"
     if (Test-Path $contractSrc) {
-        Copy-Item $contractSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/DASHBOARD_CONTRACT.md") -Force
+        Copy-Item $contractSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/dashboard/DASHBOARD_CONTRACT.md") -Force
     }
 
     # Seed the theme brief that /own:theme reads to restyle the dashboard.
@@ -456,7 +456,7 @@ Write-Host "  ownyourcode/              - Your project docs [commit this]"
 Write-Host "     dashboard/             - Your project cockpit"
 Write-Host "       dashboard.html       - open this in a browser"
 Write-Host "       dashboard-data.js    - SDD state (the /own:* commands write this)"
-Write-Host "     DASHBOARD_CONTRACT.md  - The window.PROJECT schema authority"
+Write-Host "       DASHBOARD_CONTRACT.md - The window.PROJECT schema authority"
 Write-Host "     specs/                 - Feature specifications"
 Write-Host "     career/                - Interview stories & bullets"
 Write-Host "     profiles/              - Profile templates (junior, experienced, etc.)"

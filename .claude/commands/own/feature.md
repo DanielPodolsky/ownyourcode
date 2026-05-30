@@ -24,7 +24,7 @@ This command follows the SDD workflow:
   in place (replacing the phase's `items[]`). No `spec.md`/`design.md`/`tasks.md`
   files; everything lives in `window.PROJECT`, rendered by the dashboard's tabs.
 
-> **Schema authority:** `ownyourcode/DASHBOARD_CONTRACT.md` defines the exact
+> **Schema authority:** `ownyourcode/dashboard/DASHBOARD_CONTRACT.md` defines the exact
 > `spec` / `design` / `tasks` shapes and the mutation rules. Read it before
 > writing. When this command's prose and the contract disagree, the contract wins.
 
@@ -333,7 +333,7 @@ Based on response:
 You do NOT create `spec.md` / `design.md` / `tasks.md` files. You **mutate the
 detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
 
-1. **Read `ownyourcode/DASHBOARD_CONTRACT.md`** (§3.5–§3.7) — the authority for
+1. **Read `ownyourcode/dashboard/DASHBOARD_CONTRACT.md`** (§3.5–§3.7) — the authority for
    the `spec`, `design`, `tasks` shapes.
 2. On the detected `roadmap-only` phase: **remove its `items: [...]`** and **add
    `spec`, `design`, `tasks`** objects built from the collected answers + MCP

@@ -257,7 +257,7 @@ success "Guides copied"
 # v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
 # single dashboard: a stable view shell (dashboard.html) + a data file
 # (dashboard-data.js) that every /own:* command reads and writes. The schema
-# authority is DASHBOARD_CONTRACT.md (shipped into the project root).
+# authority is DASHBOARD_CONTRACT.md (shipped into ownyourcode/dashboard/).
 # Fallback-first: if the source templates are missing (older base install),
 # warn and skip rather than seeding a broken project.
 
@@ -279,7 +279,7 @@ if [ -f "$DASH_SRC/dashboard.html.template" ]; then
     cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/dashboard/dashboard-data.js"
 
     # The schema contract ships to the project root for command + human reference.
-    cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/DASHBOARD_CONTRACT.md" 2>/dev/null || true
+    cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/dashboard/DASHBOARD_CONTRACT.md" 2>/dev/null || true
 
     # Seed the theme brief that /own:theme reads to restyle the dashboard.
     mkdir -p "$PROJECT_DIR/ownyourcode/.theme/.history"
@@ -410,9 +410,9 @@ echo "  📄 $CLAUDE_MD_REL           — THE STRICTNESS (mentor behavior)"
 echo ""
 echo "  📁 ownyourcode/              — Your project docs (commit this)"
 echo "     ├── dashboard/           — Your project cockpit"
-echo "     │   ├── dashboard.html   — open this in a browser"
-echo "     │   └── dashboard-data.js — SDD state (the /own:* commands write this)"
-echo "     ├── DASHBOARD_CONTRACT.md — The window.PROJECT schema authority"
+echo "     │   ├── dashboard.html        — open this in a browser"
+echo "     │   ├── dashboard-data.js     — SDD state (the /own:* commands write this)"
+echo "     │   └── DASHBOARD_CONTRACT.md — The window.PROJECT schema authority"
 echo "     ├── specs/               — Feature specifications"
 echo "     ├── career/              — Interview stories & bullets"
 echo "     ├── profiles/            — Profile templates (junior, experienced, etc.)"

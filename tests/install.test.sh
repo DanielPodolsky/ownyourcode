@@ -27,7 +27,7 @@ OYC="$FIX/ownyourcode"
 # v2.5 dashboard artifacts seeded
 exists "$OYC/dashboard/dashboard.html"               "dashboard.html seeded"
 exists "$OYC/dashboard/dashboard-data.js"            "dashboard-data.js seeded"
-exists "$OYC/DASHBOARD_CONTRACT.md"        "DASHBOARD_CONTRACT.md seeded"
+exists "$OYC/dashboard/DASHBOARD_CONTRACT.md"        "DASHBOARD_CONTRACT.md seeded"
 exists "$OYC/.theme/theme-prompt.md"       ".theme/theme-prompt.md seeded"
 exists "$OYC/.theme/.history"              ".theme/.history created"
 exists "$OYC/templates/dashboard.html.template" "in-project template kept (fallback regen)"

@@ -13,7 +13,7 @@
    works on file://, unlike fetch). Edit data here, refresh the dashboard.
    Do not hand-edit dashboard.html for content — only styling lives there.
 
-   Schema authority: ownyourcode/DASHBOARD_CONTRACT.md. Keep this file valid
+   Schema authority: ownyourcode/dashboard/DASHBOARD_CONTRACT.md. Keep this file valid
    JavaScript — every command verifies it with `node --check` after writing.
 
    ── This is the SCAFFOLD. Run /own:init to replace it with your project. ──
