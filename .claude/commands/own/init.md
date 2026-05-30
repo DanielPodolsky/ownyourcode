@@ -1288,9 +1288,10 @@ node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "IN
 
 #### Step 2: Summary (then STOP)
 
-The dashboard now *shows* the project (mission, stack, roadmap), so the ending
-is short and points there — don't repeat all the details in text. Fill the
-brackets and present exactly this shape:
+The dashboard *shows* the project (mission, stack, roadmap), so the text doesn't
+repeat all that — it points to the dashboard, then hands over a friendly command
+map. Fill the brackets and present exactly this shape. Keep the wording **general
+— never assume the developer's profile**:
 
 ```
 ✅ "[Project Name]" is ready.
@@ -1301,23 +1302,38 @@ brackets and present exactly this shape:
 
    Mission, stack, and your [N]-phase roadmap are all in there.
 
-THE LOOP — how you'll work from here:
-      /own:feature   spec the next phase   →  Spec · Design · Tasks
-      …you write the code (I mentor, you own it)…
-      /own:done      finish a task         →  6 Gates + review
-      /own:status    check progress        →  anytime
-
-🎨 Make it yours:  /own:theme  restyles the dashboard from a design prompt.
+┌──────────────────────────────────────────────┐
+│  COMMANDS                                    │
+├──────────────────────────────────────────────┤
+│  Planning                                    │
+│    /own:feature  → Spec your next phase      │
+│    /own:advise   → Prep before coding        │
+│                                              │
+│  Building                                    │
+│    /own:guide    → Get implementation help   │
+│    /own:stuck    → Debug systematically      │
+│    /own:test     → Write tests (you write)   │
+│    /own:docs     → Write docs (you write)    │
+│                                              │
+│  Completing                                  │
+│    /own:done     → Finish + code review      │
+│    /own:retro    → Capture what you learned  │
+│                                              │
+│  Checking                                    │
+│    /own:status   → See your progress         │
+│                                              │
+│  Customizing                                 │
+│    /own:theme    → Restyle the dashboard     │
+└──────────────────────────────────────────────┘
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 👉  Next:  /own:feature   — specs Phase 1: [Phase 1 name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-Keep it to that. Do NOT print a full command catalog or a Problem/Stack recap —
-the dashboard is the summary. (The other commands — `/own:advise`, `/own:guide`,
-`/own:stuck`, `/own:test`, `/own:docs`, `/own:retro` — surface naturally when
-they're relevant; don't dump them on the user now.)
+Keep the COMMANDS box — it's the friendly map users liked. Do NOT add a
+Problem/Stack recap on top of it; the dashboard already shows that. Word
+everything generally and stay warm — this is the same hand-off for every profile.
 
 **END COMMAND HERE.**
 
