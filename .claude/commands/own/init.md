@@ -14,33 +14,38 @@ Initialize a OwnYourCode project by selecting your profile, defining the mission
 
 This command works for both **new projects** (empty directory) and **existing projects** (mid-development).
 
-**Output:**
+**Output (v2.5 — Dashboard SDD):**
 
-- `ownyourcode/product/mission.md` — Project purpose and vision
-- `ownyourcode/product/stack.md` — Technology decisions and rationale
-- `ownyourcode/product/roadmap.md` — Phased development plan
-- Updated `.claude/ownyourcode-manifest.json` — Profile settings
+- `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT`: mission, stack, and
+  roadmap as a single source of truth (THIS is what you fill in Phase 6)
+- Updated `.claude/ownyourcode-manifest.json` — Profile + theme settings
 - Updated `CLAUDE.md` — Profile-specific behavior injected
 
-**CRITICAL: You Are UPDATING, Not Creating**
+> **Schema authority:** `ownyourcode/dashboard/DASHBOARD_CONTRACT.md` defines the exact
+> `window.PROJECT` shape and mutation rules. When this command's prose and the
+> contract disagree, the contract wins. Read it before writing Phase 6 output.
 
-The installation script already created `ownyourcode/` with placeholder files:
+**CRITICAL: You Fill the Data File — You Do NOT Touch the Shell**
+
+The installation script already seeded `ownyourcode/` with the dashboard:
 
 ```
 <install-location>/
 ├── CLAUDE.md              ← Created/modified during install
 ├── ownyourcode/           ← Created during install (sibling to CLAUDE.md)
-│   └── product/
-│       ├── mission.md     ← Placeholder waiting to be filled
-│       ├── stack.md       ← Placeholder waiting to be filled
-│       └── roadmap.md     ← Placeholder waiting to be filled
+│   └── dashboard/
+│       ├── dashboard.html        ← The VIEW SHELL — never edit for content
+│       ├── dashboard-data.js     ← Empty scaffold — YOU fill this in Phase 6
+│       └── DASHBOARD_CONTRACT.md ← The schema authority
 ```
 
 **Rules:**
 
-1. Your job is to **UPDATE** the existing placeholder files — never create new ones
+1. Your job is to **fill `dashboard-data.js`** (the data) — never hand-edit
+   `dashboard.html` (the shell). Styling is `/own:theme`'s job, not yours.
 2. `ownyourcode/` is always a **sibling to CLAUDE.md** (same directory level)
-3. If `ownyourcode/product/` doesn't exist, the installation is incomplete — inform the user
+3. If `ownyourcode/dashboard/dashboard-data.js` doesn't exist, the installation is
+   incomplete or pre-v2.5 — tell the user to re-run the install script
 4. If you detect a project in a subdirectory (e.g., `shelfie/package.json`), still update the `ownyourcode/` at the installation root (sibling to CLAUDE.md), not inside the subdirectory
 
 ---
@@ -610,7 +615,7 @@ Update `.claude/ownyourcode-manifest.json` with profile settings:
 
 ```json
 {
-  "version": "2.3.0",
+  "version": "2.5.0",
   "installed_at": "...",
   "profile": {
     "type": "junior",
@@ -634,7 +639,7 @@ Update `.claude/ownyourcode-manifest.json` with profile settings:
 
 ```json
 {
-  "version": "2.3.0",
+  "version": "2.5.0",
   "installed_at": "...",
   "profile": {
     "type": "custom",
@@ -734,91 +739,69 @@ To install (takes 30 seconds each):
 
 ---
 
-### Phase 0.5: HTML Theme Setup (v2.4.0+)
+### Phase 0.5: Design Capability Check (v2.5)
 
-Set up the visual theme that all generated HTML files will use. This phase
-runs ONCE per project (idempotent: detects existing `.theme/` and skips).
+The v2.5 dashboard ships **self-styled** — the Terminal-Futurism design system
+lives inline in `dashboard.html`, so there is NO `.theme/theme.css` to seed and
+nothing to generate here. This phase does ONE thing: detect whether the
+`frontend-design` plugin is available so the user knows they can later
+re-style the dashboard with `/own:theme`. It never blocks init.
 
-**Design note:** This phase deliberately does NOT check for or attempt to
-install the `frontend-design` plugin. Runtime testing during PR 1 demonstrated
-that programmatic plugin detection inside a slash-command flow is unreliable
-(stale cache directories from previous uninstalls, agent assumptions, no
-in-flow Skill invocation). Instead, this phase always seeds the bundled
-fallback CSS — which the PR reviewer praised as production-quality — and
-surfaces an optional upgrade path in the user-facing summary. Users who
-want premium styling install the plugin themselves and run `/own:theme`
-to regenerate.
+#### Step 1: Detect `frontend-design` via the session skill list
 
-#### Step 1: Detect existing theme
+Check your OWN available skills list for an entry named `frontend-design`
+(it appears as `frontend-design:frontend-design`). This is the reliable
+signal — do NOT inspect `~/.claude/plugins/cache/...` on disk; that path goes
+stale after uninstalls (a v2.4 runtime lesson).
 
-**Execute this bash command via the Bash tool. Decide based on the literal stdout:**
+- **Plugin is present in your skill list** → record `available: true` and show a
+  brief one-line acknowledgment so the user knows it's there:
+  > `🎨 frontend-design detected — you can restyle your dashboard anytime with /own:theme.`
 
-```bash
-test -d ownyourcode/.theme && echo "exists" || echo "missing"
+  Then skip to Step 3.
+- **Plugin is NOT present, or you genuinely cannot tell from the skill list**
+  → do NOT guess. Go to Step 2 and ask the user directly.
+
+#### Step 2: Ask inline (only if detection was negative/uncertain)
+
+Pause and ask — then continue the flow with whichever answer you get. Do NOT
+exit the session or make the user re-run `/own:init`:
+
+```
+🎨 Optional: custom dashboard styling
+
+Your dashboard already looks polished out of the box (the built-in
+"Terminal-Futurism" design). If you want to *re-roll* its look later from a
+design prompt, the `frontend-design` plugin enables that via /own:theme:
+
+  /plugin install frontend-design@claude-plugins-official
+
+Install it now in a separate message and say "ready", or say "skip" to
+continue with the built-in design. Either way I'll keep going from here.
 ```
 
-- Output is `exists` → Skip the entire Phase 0.5. Continue to Phase 1.
-- Output is `missing` → Continue to Step 2.
-
-#### Step 2: Create `.theme/` directory and seed files from the bundle
-
-Execute these bash commands via the Bash tool:
-
-```bash
-mkdir -p ownyourcode/.theme/.history
-cp ownyourcode/templates/html/theme-prompt.md.template ownyourcode/.theme/theme-prompt.md
-cp ownyourcode/templates/html/theme-fallback.css ownyourcode/.theme/theme.css
-```
-
-(The HTML templates were copied into the user's project during install — see `scripts/project-install.sh` STEP 7.5. They live at `ownyourcode/templates/html/` relative to the project root.)
+Record `available: true` if they install it, else `available: false`.
 
 #### Step 3: Update manifest
 
-Add this block to `.claude/ownyourcode-manifest.json`:
+Add (or update) this block in `.claude/ownyourcode-manifest.json`:
 
 ```json
 {
   "theme": {
-    "fallback_mode": true,
-    "last_updated": "[ISO timestamp]",
-    "prompt_source": "default"
+    "system": "terminal-futurism",
+    "frontend_design_available": false,
+    "last_checked": "[ISO timestamp]"
   }
 }
 ```
 
-- `fallback_mode` is `true` until the user regenerates `theme.css` via `/own:theme` with the `frontend-design` plugin installed.
-- `prompt_source` is `"default"` for the bundled prompt; it becomes `"custom"` if the user supplies their own prompt through `/own:theme`.
+Set `frontend_design_available` to the value from Step 1/2. `system` stays
+`"terminal-futurism"` (the bundled default) until the user re-styles via
+`/own:theme`.
 
-#### Step 4: Inform the user with the optional upgrade hint
-
-Show this message exactly:
-
-```
-🎨 Theme set up: ownyourcode/.theme/
-   ├── theme-prompt.md  (default Apple Documentation aesthetic)
-   └── theme.css        (bundled fallback CSS — production-quality default)
-
-All HTML files generated by /own:feature will reference this theme.
-
-────────────────────────────────────────────────────────────────────
-✨ Make it even better (optional, recommended for portfolio work)
-────────────────────────────────────────────────────────────────────
-
-OwnYourCode ships with a hand-authored fallback CSS that already looks
-great. For *fully custom* styling generated from your theme prompt — with
-Anthropic's official design framework — install the `frontend-design`
-plugin yourself in a separate message:
-
-  /plugin install frontend-design@claude-plugins-official
-
-Then run `/own:theme` to regenerate `theme.css` based on your prompt.
-You can change the prompt and re-roll the design anytime.
-
-Skip this for now if you're just trying things out — the bundled fallback
-is ready to use.
-```
-
-Continue silently to Phase 1.
+Continue silently to Phase 1. (Custom styling is a post-init, user-driven
+action — never a mid-init dependency.)
 
 ---
 
@@ -971,7 +954,7 @@ Options:
 
 **Version Verification Protocol (ENFORCED):**
 
-This is NOT optional. Every technology in stack.md MUST have a verified version with source attribution.
+This is NOT optional. Every `stack` row you write in Phase 6 MUST have a verified version with source attribution. The `source` field uses the contract enum: `"package.json"` | `"mcp:YYYY-MM-DD"` | `"verify:URL"` | `"manual"`.
 
 **FOR EXISTING PROJECTS (has package.json):**
 
@@ -979,16 +962,16 @@ This is NOT optional. Every technology in stack.md MUST have a verified version 
 2. Use MCPs (Context7 + Octocode) to check if versions are outdated
 3. If outdated, show warning but DO NOT override package.json versions:
    > "Your package.json shows [X] version [old]. The latest stable is [new]. Consider upgrading."
-4. In stack.md, source = "package.json"
+4. Stack row source = `"package.json"`
 
 **FOR NEW PROJECTS (empty/no package.json):**
 
 1. MUST use `mcp__octocode__packageSearch` to get current stable versions
-2. If MCP succeeds → use those versions, source = "MCP verified (YYYY-MM-DD)"
+2. If MCP succeeds → use those versions, source = `"mcp:YYYY-MM-DD"`
 3. If MCP fails → do NOT use hardcoded versions like "React 18+" — instead:
    - Version = "—" (dash)
-   - Source = "Verify at [official docs URL]"
-   - Example: `| Frontend | React | — | Verify at react.dev | UI framework |`
+   - Source = `"verify:[official docs URL]"`
+   - Example row: `["Frontend", "React", "—", "verify:react.dev", "UI framework"]`
 4. NEVER show hardcoded version numbers. Either verify or be honest.
 5. NEVER use Claude's internal knowledge for version numbers — always use packageSearch.
 
@@ -1017,17 +1000,17 @@ mcp__octocode__packageSearch:
 **Extract from response:**
 
 - `version` → latest stable version (e.g., "16.1.6")
-- `lastPublished` → use date portion for "MCP verified (YYYY-MM-DD)"
+- `lastPublished` → use date portion for the `"mcp:YYYY-MM-DD"` source
 
 **Example workflow:**
 
 1. User selects "React/Next.js with TypeScript"
 2. Call packageSearch for: `react`, `next`, `typescript`
-3. Populate stack.md with returned versions:
-   ```
-   | Frontend | React | 19.2.4 | MCP verified (2026-01-26) | UI framework |
-   | Framework | Next.js | 16.1.6 | MCP verified (2026-01-27) | React framework |
-   | Language | TypeScript | 5.7.3 | MCP verified (2026-01-15) | Type safety |
+3. These become `stack` 5-tuples in Phase 6:
+   ```js
+   ["Frontend",  "React",      "19.2.4", "mcp:2026-01-26", "UI framework"],
+   ["Framework", "Next.js",    "16.1.6", "mcp:2026-01-27", "React framework"],
+   ["Language",  "TypeScript", "5.7.3",  "mcp:2026-01-15", "Type safety"],
    ```
 
 **Finding Official Docs:**
@@ -1129,12 +1112,12 @@ AI: "Exactly! So when would you choose JWT anyway?"
 Throughout this phase:
 - The junior proposes and reasons through decisions
 - You ask questions, provide MCP-grounded context
-- You write the final mission.md, stack.md, roadmap.md
-- Present as: "These files reflect YOUR thinking, refined through our discussion"
+- You capture the final mission, stack, and roadmap as `dashboard-data.js` (Phase 6)
+- Present as: "Your dashboard reflects YOUR thinking, refined through our discussion"
 
 **CRITICAL: Roadmap Phase Collaboration**
 
-Before generating roadmap.md, explicitly involve the junior in phase design:
+Before writing the `phases` array in Phase 6, explicitly involve the junior in phase design:
 
 1. **Ask them to propose phases:**
    > "Based on our architecture discussion, how would YOU break this project into phases? What comes first, second, third?"
@@ -1145,7 +1128,7 @@ Before generating roadmap.md, explicitly involve the junior in phase design:
 3. **Challenge their sequencing:**
    > "You put authentication in Phase 2. Could that be Phase 1 instead? Why or why not?"
 
-4. **Only AFTER they've proposed the structure** do you refine and write roadmap.md
+4. **Only AFTER they've proposed the structure** do you refine it into the `phases` array (Phase 6)
 
 **Do NOT auto-generate phase names like "Phase 1: Foundation, Phase 2: Daily Progress"** without the junior proposing and agreeing to them first. The phase names should be THEIR words, refined through discussion.
 
@@ -1182,7 +1165,7 @@ The concept applies to ANY stack: find and use the official CLI tool.
 2. **Run the official CLI command** — let it create the proper structure
 3. **Walk through what was created** — explain each folder and file
 4. **Add any missing pieces** (e.g., additional dependencies they need)
-5. Document the final structure in stack.md
+5. Reflect the final structure in the `stack` rows you write in Phase 6
 
 **Why this matters:**
 - Official tools set up proper configs, gitignore, tsconfig, etc.
@@ -1191,148 +1174,133 @@ The concept applies to ANY stack: find and use the official CLI tool.
 
 ---
 
-### Phase 6: Generate Outputs
+### Phase 6: Write the Dashboard Data
 
-Based on collected information, generate:
+Everything you collected — mission, audience, definition of done, stack, and
+the collaboratively-designed roadmap — gets written into ONE file:
+`ownyourcode/dashboard/dashboard-data.js`. You do not generate `mission.md`, `stack.md`,
+or `roadmap.md` — those are gone in v2.5. You also do NOT touch
+`dashboard.html` (the shell renders whatever you write here).
 
-#### mission.md
+#### Pre-flight: verify the dashboard exists (fallback-first)
 
-```markdown
-# Project Mission
+Run this and decide on the literal stdout:
 
-## The Problem
-
-[User's problem statement - in their words]
-
-## Who Is This For?
-
-[Based on selection: Myself/Employers/Client/Real Users]
-
-## Definition of Done
-
-When these things work, the project is COMPLETE:
-
-- [ ] [From user's definition of done]
-- [ ] [Break down into specific checkboxes]
-- [ ] [Be concrete and measurable]
-
-## Why This Matters
-
-[Brief statement connecting problem to solution - written by mentor based on their answers]
+```bash
+ls ownyourcode/dashboard/dashboard.html ownyourcode/dashboard/dashboard-data.js
 ```
 
-#### stack.md
+If either file is missing, STOP and surface this message verbatim — do not
+improvise a dashboard:
 
-```markdown
-# Technology Stack
+> ❌ The dashboard wasn't seeded (this project predates v2.5, or the install
+> didn't finish). Re-run the install:
+>
+> ```bash
+> curl -sSL https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.sh | bash
+> ~/ownyourcode/scripts/project-install.sh
+> ```
 
-## Detected/Chosen Stack
+#### How to write it
 
-| Layer    | Technology | Version        | Source                                               | Purpose   |
-| -------- | ---------- | -------------- | ---------------------------------------------------- | --------- |
-| Frontend | [Name]     | [Version or —] | [package.json / MCP verified (date) / Verify at URL] | [Purpose] |
-| Backend  | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
-| Database | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
-| Styling  | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
-| Build    | [Name]     | [Version or —] | [Source]                                             | [Purpose] |
+1. **Read `ownyourcode/dashboard/DASHBOARD_CONTRACT.md`** — it is the authority for the
+   `window.PROJECT` shape. The summary below is a guide; the contract wins.
+2. **Overwrite `ownyourcode/dashboard/dashboard-data.js`** with a single
+   `window.PROJECT = { … }` assignment built from the collected answers.
+3. Variable counts are real: write exactly as many `dod` items, `stack` rows,
+   and `phases` as the user actually defined — do not pad or truncate.
+4. **Validate** immediately (see Pre-flight of the next phase).
 
-**Source Legend:**
+#### The shape to write (v2.5 — see contract §2–§3)
 
-- `package.json` — Version from your installed dependencies (source of truth)
-- `MCP verified (YYYY-MM-DD)` — Confirmed via Context7/Octocode on this date
-- `Verify at [URL]` — Could not verify; check official docs for current version
-
-## Package Manager
-
-**Using:** [npm/pnpm/bun/yarn]
-
-[Brief education snippet from Phase 5]
-
-## Why These Choices?
-
-[If detected: "These were already in your project."]
-[If chosen: Brief rationale for the stack choice]
-
-## Version Notes
-
-[Any outdated versions detected and recommendations]
-
-## Reference Projects (via Octocode)
-
-[List 1-2 well-structured GitHub repos using similar stack for reference]
-
-## Key Files
-
-| File                        | Purpose   |
-| --------------------------- | --------- |
-| [Auto-detected entry point] | [Purpose] |
-| [Config files]              | [Purpose] |
-
-## Version Freshness
-
-⚠️ **Generated**: [YYYY-MM-DD]
-
-Technology versions change frequently. If this document is more than 30 days old, re-run `/own:init` or check the official documentation for each technology listed above.
+```js
+window.PROJECT = {
+  meta: {
+    name:     "[project name]",
+    tagline:  "[one-line subtitle — mentor-written from the problem]",
+    audience: "[enum: myself | employers | clients | real-users]",
+    mission:  "[the PROBLEM statement, in the user's words]",
+    generated:"[today YYYY-MM-DD]",
+    version:  "2.5.0",
+  },
+  dod: [
+    { text: "[one concrete, measurable done-criterion]", done: false },
+    // ...one object per Definition-of-Done item (variable count)
+  ],
+  stack: [
+    // 5-tuple: [layer, tech, version, source, purpose]
+    // source ∈ "package.json" | "mcp:YYYY-MM-DD" | "verify:URL" | "manual"
+    ["[Layer]", "[Tech]", "[version or —]", "[source]", "[purpose]"],
+    // ...one row per technology the project actually has
+  ],
+  phases: [
+    {
+      n: 1, name: "[Phase name]", slug: "[kebab-slug]",
+      priority: "[high|medium|low]", status: "roadmap-only",
+      description: "[1–2 sentence summary]",
+      items: ["[scope bullet]", "[scope bullet]"],  // roadmap-only ⇒ items, no spec/design/tasks
+    },
+    // ...one object per phase the junior proposed in Phase 5.5 (variable count)
+  ],
+};
 ```
 
-#### roadmap.md
+#### Field mapping (collected answer → schema field)
 
-```markdown
-# Project Roadmap
+| Field | Source |
+| --- | --- |
+| `meta.name` | Project name (working dir or asked) |
+| `meta.tagline` | Mentor-written one-liner derived from the problem |
+| `meta.audience` | Phase 3 selection → enum: "Yourself"→`myself`, "Employers"→`employers`, "A client"→`clients`, "Real users"→`real-users` |
+| `meta.mission` | Phase 2 problem statement (the *why*, in their words) |
+| `meta.generated` | Today, `YYYY-MM-DD` |
+| `meta.version` | Literal `2.5.0` |
+| `dod[]` | Phase 4 Definition-of-Done items, each `done:false` |
+| `stack[]` | Phase 5 stack + Phase 5.1 MCP-verified versions, as 5-tuples |
+| `phases[]` | Phase 5.5 collaborative roadmap — each `status:"roadmap-only"` with `items:[…]`, NO `spec`/`design`/`tasks` (those come from `/own:feature`) |
 
-## Current Status
-
-[New project / Existing project description]
-
-## Phase 1: Foundation
-
-Priority: HIGH
-
-- [ ] Project setup complete
-- [ ] Core structure in place
-- [ ] [Based on their Definition of Done]
-
-## Phase 2: Core Features
-
-Priority: MEDIUM
-
-- [ ] [Derived from their problem statement]
-- [ ] [Break down logically]
-
-## Phase 3: Polish & Deploy
-
-Priority: LOW
-
-- [ ] Testing and bug fixes
-- [ ] Documentation
-- [ ] Deployment
-```
+**Phase status:** every phase starts `"roadmap-only"`. `/own:feature` advances
+the first one to `"specced"`; `/own:done` advances it to `"complete"`. The
+`slug` is the phase name kebab-cased and must stay stable (downstream commands
+key off it).
 
 ---
 
-### Phase 7: Summary & Next Step (HARD STOP)
+### Phase 7: Validate, Summarize & Next Step (HARD STOP)
 
-After generating files, provide this summary and **STOP**:
+#### Step 1: Validate the data file (mandatory — never skip)
+
+`dashboard-data.js` must be valid JavaScript or the dashboard renders nothing.
+Run this from the **project root** (the folder that contains `ownyourcode/`).
+If your shell drifted into a scaffolded subfolder during Phase 5.7, `cd` back
+to the project root — or use the absolute path — so the check targets the right
+file:
+
+```bash
+node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "INVALID"
+```
+
+- `VALID` → continue to Step 2. (This is an internal safety check — no need to
+  explain `node --check` to the user; the point is the data file is sound.)
+- `INVALID` → you wrote malformed JS. Re-open `dashboard-data.js`, fix the
+  syntax error reported by node, and re-run until it prints `VALID`. Do NOT
+  present the summary while the file is invalid.
+
+#### Step 2: Summary (then STOP)
+
+The dashboard *shows* the project (mission, stack, roadmap), so the text doesn't
+repeat all that — it points to the dashboard, then hands over a friendly command
+map. Fill the brackets and present exactly this shape. Keep the wording **general
+— never assume the developer's profile**:
 
 ```
-✅ OwnYourCode initialized!
+✅ "[Project Name]" is ready.
 
-Problem: [One-line from their answer]
-For: [Who they selected]
-Done when: [Summary of their definition]
-Stack: [Technologies]
+📊 Your whole project lives in one dashboard — open it:
+      ownyourcode/dashboard/dashboard.html
+      (double-click — no server needed; refresh after any /own: command)
 
-Created:
-- ownyourcode/product/mission.md
-- ownyourcode/product/stack.md
-- ownyourcode/product/roadmap.md
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 NEXT: Run /own:feature to plan your first phase
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Your roadmap has [N] phases. /own:feature will auto-detect
-Phase 1 and generate specs for you to review.
+   Mission, stack, and your [N]-phase roadmap are all in there.
 
 ┌──────────────────────────────────────────────┐
 │  COMMANDS                                    │
@@ -1353,13 +1321,19 @@ Phase 1 and generate specs for you to review.
 │                                              │
 │  Checking                                    │
 │    /own:status   → See your progress         │
+│                                              │
+│  Customizing                                 │
+│    /own:theme    → Restyle the dashboard     │
 └──────────────────────────────────────────────┘
 
-💡 Your learnings persist across ALL projects.
-   Every /own:retro feeds the global registry.
-   Every /own:advise queries your past wins & failures.
-   The more you use it, the smarter it gets.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+👉  Next:  /own:feature   — specs Phase 1: [Phase 1 name]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+Keep the COMMANDS box — it's the friendly map users liked. Do NOT add a
+Problem/Stack recap on top of it; the dashboard already shows that. Word
+everything generally and stay warm — this is the same hand-off for every profile.
 
 **END COMMAND HERE.**
 

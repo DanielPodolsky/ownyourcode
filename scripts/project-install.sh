@@ -2,7 +2,7 @@
 
 # OwnYourCode Project Installation Script
 # AI-Mentored Development for All Developers
-# Version 2.3.0 - Profiles Support
+# Version 2.5.0 - Dashboard SDD
 
 set -e
 
@@ -29,7 +29,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Header
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║            OwnYourCode Installation v2.3.0                 ║${NC}"
+echo -e "${GREEN}║            OwnYourCode Installation v2.5.0                 ║${NC}"
 echo -e "${GREEN}║    AI-Mentored Development with Profile Support            ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
@@ -65,7 +65,7 @@ fi
 info "Creating directories..."
 
 # OwnYourCode project directories
-mkdir -p "$PROJECT_DIR/ownyourcode/product"
+# Note: v2.5 drops product/ — mission/stack/roadmap now live in the dashboard.
 mkdir -p "$PROJECT_DIR/ownyourcode/specs/active"
 mkdir -p "$PROJECT_DIR/ownyourcode/specs/completed"
 mkdir -p "$PROJECT_DIR/ownyourcode/career/stories"
@@ -170,7 +170,8 @@ info "Installing commands..."
 
 # Copy commands from .claude/commands/own/
 cp "$BASE_DIR/.claude/commands/own/"*.md "$PROJECT_DIR/.claude/commands/own/" 2>/dev/null || true
-success "Commands installed (10 commands including test/docs)"
+CMD_COUNT=$(ls "$PROJECT_DIR/.claude/commands/own/"*.md 2>/dev/null | wc -l | tr -d ' ')
+success "Commands installed ($CMD_COUNT commands)"
 
 # ============================================================================
 # STEP 5: Copy skills (NEW in v2.0)
@@ -252,88 +253,44 @@ cp "$BASE_DIR/guides/"*.md "$PROJECT_DIR/ownyourcode/guides/" 2>/dev/null || tru
 success "Guides copied"
 
 # ============================================================================
-# STEP 7.5: Copy HTML templates (v2.4.0+)
+# STEP 7.5: Seed the dashboard (v2.5 — Dashboard SDD)
 # ============================================================================
-# These templates power the HTML-canonical SDD workflow. They are read at
-# runtime by /own:init (Phase 0.5), /own:feature, and /own:theme.
-# Safe on older source repos: missing templates are silently skipped.
+# v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
+# single dashboard: a stable view shell (dashboard.html) + a data file
+# (dashboard-data.js) that every /own:* command reads and writes. The schema
+# authority is DASHBOARD_CONTRACT.md (shipped into ownyourcode/dashboard/).
+# Fallback-first: if the source templates are missing (older base install),
+# warn and skip rather than seeding a broken project.
 
-info "Copying HTML templates..."
+info "Seeding the project dashboard..."
 
-mkdir -p "$PROJECT_DIR/ownyourcode/templates/html"
-# Recursive so future subdirectories (e.g., presets/) are copied automatically.
-# Mirrors the -Recurse semantics of the PowerShell variant for cross-platform parity.
-if [ -d "$BASE_DIR/core/templates/html" ]; then
-    cp -R "$BASE_DIR/core/templates/html/." "$PROJECT_DIR/ownyourcode/templates/html/" 2>/dev/null || true
-    success "HTML templates copied"
+DASH_SRC="$BASE_DIR/core/templates"
+if [ -f "$DASH_SRC/dashboard.html.template" ]; then
+    # Keep the source templates in-project so /own:init can regenerate the
+    # shell if it is ever missing (fallback-first, self-contained project).
+    mkdir -p "$PROJECT_DIR/ownyourcode/templates"
+    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/templates/"
+    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/templates/"
+
+    # Working files live in their own dashboard/ folder (keeps ownyourcode/ tidy).
+    # The shell is used as-is (never templated); the data file starts as the empty
+    # scaffold until /own:init fills it from your answers.
+    mkdir -p "$PROJECT_DIR/ownyourcode/dashboard"
+    cp "$DASH_SRC/dashboard.html.template"    "$PROJECT_DIR/ownyourcode/dashboard/dashboard.html"
+    cp "$DASH_SRC/dashboard-data.js.template" "$PROJECT_DIR/ownyourcode/dashboard/dashboard-data.js"
+
+    # The schema contract ships to the project root for command + human reference.
+    cp "$DASH_SRC/DASHBOARD_CONTRACT.md" "$PROJECT_DIR/ownyourcode/dashboard/DASHBOARD_CONTRACT.md" 2>/dev/null || true
+
+    # Seed the theme brief that /own:theme reads to restyle the dashboard.
+    mkdir -p "$PROJECT_DIR/ownyourcode/.theme/.history"
+    cp "$DASH_SRC/theme-prompt.md.template" "$PROJECT_DIR/ownyourcode/.theme/theme-prompt.md" 2>/dev/null || true
+
+    success "Dashboard seeded — open ownyourcode/dashboard/dashboard.html, then run /own:init"
 else
-    info "No HTML templates to copy (older source repo)"
+    warn "Dashboard templates not found in source repo — skipping dashboard seed."
+    warn "Update your OwnYourCode base install to get the v2.5 dashboard."
 fi
-
-# ============================================================================
-# STEP 8: Create product templates
-# ============================================================================
-
-info "Creating product templates..."
-
-cat > "$PROJECT_DIR/ownyourcode/product/mission.md" << 'EOF'
-# Project Mission
-
-> Run `/own:init` to define your project vision.
-
-## The Problem
-
-<!-- What problem are you solving? Describe the PROBLEM, not features. -->
-
-## Who Is This For?
-
-<!-- Who will use this? -->
-
-## Definition of Done
-
-<!-- When is this project DONE? What must work? -->
-EOF
-
-cat > "$PROJECT_DIR/ownyourcode/product/stack.md" << 'EOF'
-# Technology Stack
-
-> Run `/own:init` to auto-detect and document your stack.
-
-## Frontend
-
-<!-- Technologies detected or chosen -->
-
-## Backend
-
-<!-- Technologies detected or chosen -->
-
-## Why These Choices?
-
-<!-- Document your reasoning -->
-EOF
-
-cat > "$PROJECT_DIR/ownyourcode/product/roadmap.md" << 'EOF'
-# Project Roadmap
-
-> Run `/own:init` to create your development roadmap.
-
-## Phase 1: Foundation
-
-- [ ] Project setup
-- [ ] Core structure
-
-## Phase 2: Core Features
-
-- [ ] Feature 1
-- [ ] Feature 2
-
-## Phase 3: Polish & Deploy
-
-- [ ] Testing
-- [ ] Deployment
-EOF
-
-success "Product templates created"
 
 # ============================================================================
 # STEP 9: Update .gitignore
@@ -368,7 +325,7 @@ fi
 
 cat > "$MANIFEST" << EOF
 {
-  "version": "2.3.0",
+  "version": "2.5.0",
   "installed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "claude_md_location": "$CLAUDE_MD_REL",
   "backup_path": $BACKUP_JSON,
@@ -428,7 +385,8 @@ cat > "$MANIFEST" << EOF
     "own/retro.md",
     "own/status.md",
     "own/stuck.md",
-    "own/test.md"
+    "own/test.md",
+    "own/theme.md"
   ]
 }
 EOF
@@ -441,11 +399,11 @@ success "Manifest created at .claude/ownyourcode-manifest.json"
 
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║          Installation Complete! v2.3.0                    ║${NC}"
+echo -e "${GREEN}║          Installation Complete! v2.5.0                    ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-success "OwnYourCode v2.3.0 installed successfully!"
+success "OwnYourCode v2.5.0 installed successfully!"
 echo ""
 
 info "What was created:"
@@ -453,14 +411,17 @@ echo ""
 echo "  📄 $CLAUDE_MD_REL           — THE STRICTNESS (mentor behavior)"
 echo ""
 echo "  📁 ownyourcode/              — Your project docs (commit this)"
-echo "     ├── product/             — Mission, stack, roadmap"
+echo "     ├── dashboard/           — Your project cockpit"
+echo "     │   ├── dashboard.html        — open this in a browser"
+echo "     │   ├── dashboard-data.js     — SDD state (the /own:* commands write this)"
+echo "     │   └── DASHBOARD_CONTRACT.md — The window.PROJECT schema authority"
 echo "     ├── specs/               — Feature specifications"
 echo "     ├── career/              — Interview stories & bullets"
 echo "     ├── profiles/            — Profile templates (junior, experienced, etc.)"
 echo "     └── guides/              — Setup guides"
 echo ""
 echo "  📁 .claude/                 — Claude Code configuration"
-echo "     ├── commands/            — 10 slash commands"
+echo "     ├── commands/            — ${CMD_COUNT} slash commands"
 echo "     └── skills/              — Auto-invoked mentorship skills"
 echo "         ├── fundamentals/    — 13 Core review skills"
 echo "         ├── gates/           — 6 Mentorship gates"

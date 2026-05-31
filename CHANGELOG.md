@@ -6,16 +6,73 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-05-30
+
+### The "Dashboard SDD" Release
+
+OwnYourCode's spec-driven development workflow moves from a folder of Markdown
+files to a single, live, app-like dashboard you open in your browser.
+
 ### Added
 
-#### v2.4.0 — HTML SDD Migration (Foundation — PR 1 of 5)
-- **HTML Template Bundle:** Six `.html.template` files in `core/templates/html/` defining the semantic structure of the v2.4.0 HTML-canonical SDD workflow (`mission`, `stack`, `roadmap`, `spec`, `design`, `tasks`). Each template encodes a `data-*` mutation contract so Claude's existing `Edit` tool — not an external HTML parser — performs all state mutations and progress counts (Option D design from #9).
-- **Default Theme Assets:** `theme-prompt.md.template` shipping an Apple Documentation aesthetic as the default prompt consumed by the `frontend-design` plugin, plus a hand-authored `theme-fallback.css` covering every semantic class and `data-*` selector for users without the plugin. Light + dark mode parity via `prefers-color-scheme`.
-- **`/own:theme` Command:** New slash command for managing the visual styling of HTML SDD files. Four user actions (change prompt / pick preset / regenerate / view) plus `/own:theme --revert` for restoring any timestamped backup. Every write is backup-first via `ownyourcode/.theme/.history/[ISO-timestamp]/`.
-- **`/own:init` Phase 0.5:** New idempotent phase inserted between the MCP Check and Detection phases. Seeds `ownyourcode/.theme/` with the bundled theme prompt and `theme-fallback.css` as the project's initial `theme.css`, then surfaces a prominent opt-in upgrade hint pointing users to `/plugin install frontend-design@claude-plugins-official` followed by `/own:theme` for fully custom styling. Phase deliberately does not attempt programmatic plugin detection or auto-install — runtime testing during PR 1 showed those paths are unreliable inside a slash-command flow (stale plugin cache directories, no in-flow Skill invocation). The deterministic fallback-first design ships instead; plugin-generated styling is a user-driven upgrade, not an automatic mid-flow dependency.
-- **Install Script Updates:** New STEP 7.5 in both `project-install.sh` and `project-install.ps1` copies the HTML template bundle from the OwnYourCode source repo to `ownyourcode/templates/html/` inside each user's project.
+#### Dashboard SDD — Spec-Driven Development becomes a live dashboard
 
-> Note: PR 1 ships **infrastructure only**. `/own:init` Phase 6 and `/own:feature` still write Markdown until PR 2 and PR 3 activate HTML output. Existing projects see zero behavior change.
+Spec-Driven Development no longer produces a folder of Markdown files. Your whole
+project — mission, stack, roadmap, and every phase's spec / design / tasks — now
+lives in a single **dashboard** you open in your browser. Two files replace all
+the per-page documents:
+
+- `ownyourcode/dashboard/dashboard.html` — a stable view shell (layout + styling + render
+  logic) that you never hand-edit for content.
+- `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT`, the single source of truth
+  every `/own:*` command reads and writes.
+
+The shell loads its data via `<script src>` (which works under the `file://`
+protocol where `fetch()` is CORS-blocked), so the dashboard is a **double-click
+artifact — no local server**, while still loading web fonts from the network.
+
+- **`DASHBOARD_CONTRACT.md`** (ships into every project): the schema authority
+  for `window.PROJECT` — field semantics, per-command mutation rules, the phase
+  lifecycle (`roadmap-only → specced → complete`), and the safety invariants
+  (`node --check` after every write; exact-string `Edit` by unique task `id`;
+  the shell is never edited for content).
+- **The whole workflow is dashboard-native:**
+  - `/own:init` fills `dashboard-data.js` from the (unchanged) Q&A flow.
+  - `/own:feature` detects the next `roadmap-only` phase and writes its `spec`,
+    `design`, and `tasks` into the phase object, advancing it to `specced`.
+  - `/own:done` flips a task's `done` by unique `id`, propagates satisfied
+    Definition-of-Done items, and completes a phase when all its tasks are done.
+  - `/own:status` reads `window.PROJECT` for all progress (read-only).
+  - `/own:guide` reads the active phase's tasks from the dashboard.
+  Every mutating command validates with `node --check` and uses exact-string
+  `Edit` (never a full-file rewrite).
+- **The dashboard itself** renders the entire project as an app-like cockpit:
+  header + sidebar + per-phase **Spec / Design / Tasks** tabs, a hand-rolled SVG
+  architecture diagram (no library — redraws from data), and a kanban board with
+  a live progress ring. Stack rows carry source attribution
+  (`package.json` / `mcp:DATE` / `verify:URL` / `manual`); component breakdowns
+  include `new`/`modified` badges and file paths.
+- **Default theme — "Terminal-Futurism":** a 1:1 capture of
+  [ownyourcode.dev](https://www.ownyourcode.dev)'s design system — dark
+  near-black surfaces, a terminal-green accent with glow, `Outfit` + `JetBrains
+  Mono`, and a signature "ghost numeral" motif. Dark-native; motion gated by
+  `prefers-reduced-motion`. Ships inline in `dashboard.html` (self-styled).
+- **`/own:theme` is the styling engine:** detects `frontend-design` via the
+  session skill list (not the unreliable filesystem cache), reads a design brief
+  (`.theme/theme-prompt.md`), and regenerates **only** the dashboard's inline
+  `<style>` + font `<link>` — backup-first, with a post-write integrity check
+  that auto-restores if the render contract is damaged. Never touches your data.
+- **Install seeds the dashboard:** `project-install.sh` / `.ps1` provision
+  `dashboard.html` + `dashboard-data.js` + `DASHBOARD_CONTRACT.md` + the theme
+  brief, and retire the old `product/` placeholders. Fallback-first: a missing
+  source template warns and skips rather than seeding a broken project.
+- **Regression suite** (`tests/`, dev-only — never shipped to user projects):
+  install + headless render + static command-contract layers (run via
+  `bash tests/run.sh`), plus a manual fresh-install walkthrough.
+
+> Supersedes an earlier per-page HTML approach (explored after the 2.3.0 release,
+> never tagged) — that work was folded into this single-dashboard model. Existing
+> Markdown projects are unaffected until re-initialized.
 
 #### Repository Infrastructure
 - **Claude PR Review Gate:** Every PR targeting `main` is now automatically reviewed by Claude against the OwnYourCode standards (P/S/T/X/D rule set across Philosophy, Structure, Tooling, Security, and Documentation), the 4 Protocols, and the universal-audience product mission. The reviewer's system prompt lives in `.github/CLAUDE_REVIEWER.md` and is isolated from the workflow YAML for fast iteration. Reviewer enforces an explicit `VERDICT:` contract (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`) so branch protection can gate merges on the verdict.

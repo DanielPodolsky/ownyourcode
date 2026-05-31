@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <sub>v2.3.0 · MIT License</sub>
+  <sub>v2.5.0 · MIT License</sub>
 </p>
 
 ---
@@ -115,7 +115,7 @@ Learnings compound across projects. Patterns that worked. Mistakes you won't rep
 | -------------- | ---------------------------------- |
 | `/own:status`  | Check progress, tasks, and career stats |
 | `/own:profile` | View or change your profile        |
-| `/own:theme`   | Manage HTML theme styling (v2.4.0+) |
+| `/own:theme`   | Restyle your project dashboard      |
 | `/own:test`    | Guide through writing tests        |
 | `/own:docs`    | Guide through writing documentation |
 
@@ -146,6 +146,27 @@ Yes. That's the point.
 Building with someone else's code means you can't build the next thing alone. Building yourself takes longer — but now you can build anything.
 
 [Full Philosophy →](guides/philosophy.md)
+
+---
+
+## The Dashboard
+
+Your project's plan isn't scattered across a dozen Markdown files — it's a single
+**dashboard** you open in your browser. Mission, stack, and roadmap up top; every
+phase opens **Spec / Design / Tasks** tabs (acceptance criteria, a real
+architecture diagram, a kanban board with a live progress ring). The `/own:*`
+commands keep it in sync as you work.
+
+<!-- TODO(daniel): drop a screenshot of the dashboard here (the preview on your
+     Desktop works great). Suggested: a specced phase showing the Design tab. -->
+<div align="center">
+  <em>(screenshot coming — open <code>ownyourcode/dashboard/dashboard.html</code> after <code>/own:init</code>)</em>
+</div>
+
+**How it stays in sync:** all state lives in one data file
+(`ownyourcode/dashboard/dashboard-data.js`); `dashboard.html` is a stable view that renders
+it. No server — you double-click the file. Want a different look? `/own:theme`
+re-skins it from a design brief.
 
 ---
 

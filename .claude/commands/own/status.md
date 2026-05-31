@@ -30,16 +30,21 @@ Check `.claude/ownyourcode-manifest.json` for `profile.settings.career_focus`:
 
 ### Step 1: Gather Data
 
-Read project files to compile status:
+Read project files to compile status. This step is **read-only** — `/own:status`
+never writes to `dashboard-data.js`.
 
 ```
-ownyourcode/product/roadmap.md — Overall progress
-ownyourcode/specs/active/ — Current work
-ownyourcode/specs/completed/ — Finished features
-ownyourcode/career/stories/ — Interview stories
+ownyourcode/dashboard/dashboard-data.js — window.PROJECT: roadmap, specs, tasks, DoD (the SDD source of truth)
+ownyourcode/career/stories/   — Interview stories
 learning/LEARNING_REGISTRY.md — Learning flywheel data
-.claude/skills/learned/ — Auto-generated skills
+.claude/skills/learned/       — Auto-generated skills
 ```
+
+From `window.PROJECT`, compute (do not store — these are derived):
+- **Roadmap progress** = phases grouped by `status` (roadmap-only / specced / complete)
+- **Active phase** = first phase with `status !== "complete"`
+- **Per-phase task progress** = `tasks.filter(t => t.done).length / tasks.length`
+- **DoD progress** = `dod.filter(d => d.done).length / dod.length`
 
 Also check git activity:
 ```bash
@@ -52,46 +57,56 @@ git log --oneline -10 --since="1 week ago"
 
 #### Roadmap Progress
 
+Derive each phase's line from its `status` and (if specced) its task progress:
+
 ```markdown
 ## Roadmap Progress
 
-Phase 1: Foundation ████████░░ 80%
-- [x] Project setup
-- [x] Basic structure
-- [ ] Auth system (in progress)
-- [ ] API routes
+Phase 1: Foundation     ██████████ complete
+Phase 2: Logging        █████░░░░░ specced · 3/5 tasks
+Phase 3: Visualization  ░░░░░░░░░░ roadmap-only
 
-Phase 2: Core Features ░░░░░░░░░░ 0%
-- [ ] Feature 1
-- [ ] Feature 2
-
-Overall: ████░░░░░░ 40%
+Overall: 1 complete · 1 specced · 1 planned  (of 3 phases)
 ```
 
 ---
 
 #### Active Work
 
-```markdown
-## Active Specs
+From the active phase (first with `status !== "complete"`) in `window.PROJECT`:
 
-### Phase [N]: [Phase Name] (in progress)
-Location: ownyourcode/specs/active/phase-[N]-[name]/
+```markdown
+## Active Phase
+
+### Phase [n]: [name] — [status]
+Open the Tasks tab in ownyourcode/dashboard/dashboard.html for the full kanban.
 
 Tasks:
-- [x] [Completed task]
-- [ ] [Current task] <-- YOU ARE HERE
-- [ ] [Pending task]
+- [x] [done task]            (id 1.1)
+- [ ] [next undone task]     (id 2.1) <-- YOU ARE HERE
+- [ ] [pending task]         (id 2.2)
 
 Progress: 2/4 tasks (50%)
 ```
 
-If no active specs:
+The `[x]`/`[ ]` above is just the terminal rendering of each task's `done`
+flag — the source of truth is `window.PROJECT`, not a Markdown file.
+
+If the active phase is still `roadmap-only` (not yet specced):
 
 ```markdown
-## Active Specs
+## Active Phase
 
-No active specs. Run /own:feature to start a new feature.
+### Phase [n]: [name] — roadmap-only
+Not specced yet. Run /own:feature to generate its spec, design & tasks.
+```
+
+If every phase is `complete`:
+
+```markdown
+## Active Phase
+
+All phases complete 🎉 Run /own:feature to plan what's next.
 ```
 
 ---

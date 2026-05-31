@@ -15,7 +15,7 @@ Complete a task with gate checks, senior-level code review, and career value ext
 This command is run when the user finishes a task or feature. It performs:
 1. **Gate Checks** — 6 Mentorship Gates verification
 2. **Code Review** — FAANG-level feedback on their code
-3. **Task Completion** — Update spec and roadmap
+3. **Task Completion** — Update the dashboard (task done, DoD, phase status)
 4. **Interview Story** — Extract STAR format story (if career_focus allows)
 5. **Resume Bullet** — Draft action-impact bullet (if career_focus allows)
 
@@ -48,10 +48,11 @@ Options:
    Description: Improved existing code
 ```
 
-If from active spec, read the spec to understand context:
-- Check `ownyourcode/specs/active/*/tasks.md`
-- Find the relevant task
-- Note what they were building and why
+If from active spec, read the dashboard to understand context:
+- Read `ownyourcode/dashboard/dashboard-data.js` (`window.PROJECT`)
+- Find the active phase (first with `status !== "complete"`) and the relevant
+  task in its `tasks[]` (match by `text`/`detail`, note its `id`)
+- Note what they were building and why (the phase `spec` / `design`)
 
 ---
 
@@ -280,39 +281,61 @@ Use severity levels:
 
 ---
 
-### Phase 4: Task & Spec Update
+### Phase 4: Update the Dashboard
 
-#### 4a. Update Task Files
+All state lives in `ownyourcode/dashboard/dashboard-data.js` (`window.PROJECT`). This phase
+makes three small, exact-string mutations — never regenerate the whole file, and
+never touch `dashboard.html`. See `DASHBOARD_CONTRACT.md` §4.3 + §6.
 
-1. Mark task as complete in `tasks.md`
-2. Update status from "In Progress" to "Complete"
-3. Add completion timestamp
+#### 4a. Flip the completed task
 
-#### 4b. Spec Archival (MANDATORY when all tasks complete)
+Find the task by its `id` in the active phase's `tasks[]` and flip its `done`:
 
-If ALL tasks in the feature are complete:
+```
+Before:  { id: "2.2.3", group: "Implementation", text: "...", detail: "...", done: false }
+After:   { id: "2.2.3", group: "Implementation", text: "...", detail: "...", done: true }
+```
 
-1. Add completion metadata to spec.md header:
-   ```markdown
-   ---
-   status: completed
-   completed_at: [ISO date]
-   ---
-   ```
+Task `id`s are `"<phase>.<group>.<task>"` and therefore **globally unique across
+the whole file** (the phase prefix guarantees it — see DASHBOARD_CONTRACT §3.7 /
+§6.4). So the bare literal `"id": "2.2.3"` is a safe, unambiguous `Edit` anchor
+even when several phases are specced — find that line and flip `done` on the same
+object. If the user finished several tasks, repeat per `id`.
 
-2. **Move the entire spec folder to completed:**
-   ```bash
-   mv ownyourcode/specs/active/phase-[N]-[name]/ ownyourcode/specs/completed/
-   ```
+#### 4b. Propagate Definition of Done (agent judgment — be conservative)
 
-3. Confirm to the junior:
-   ```
-   ✅ Spec archived to completed/phase-[N]-[name]/
-   ```
+For each `window.PROJECT.dod` item the completed work *materially advances*, flip
+its `done: false → true`. This is a judgment call, not a deterministic mapping —
+only flip a DoD item when the work clearly satisfies it. When unsure, leave it
+`false` (the user can flip it themselves). Never flip a DoD item on speculation.
 
-4. Update `roadmap.md` with progress
+#### 4c. Complete the phase when all its tasks are done
 
-**Important:** Always move completed specs. The `active/` folder should only contain work in progress.
+After 4a, check the active phase's `tasks[]`. If EVERY task now has `done: true`,
+advance the phase:
+
+```
+Before:  status: "specced"
+After:   status: "complete"
+```
+
+Then confirm to the junior:
+```
+🎉 Phase [n] — [name] complete! All [N] tasks done.
+```
+
+(There is no folder to archive in v2.5 — the phase simply becomes `complete` and
+the dashboard renders it as done.)
+
+#### 4d. Validate (mandatory)
+
+```bash
+node --check ownyourcode/dashboard/dashboard-data.js && echo "VALID" || echo "INVALID"
+```
+
+If `INVALID`, fix the syntax and re-run until valid — never leave a broken data
+file. Then tell the user to **refresh the dashboard** to see the updated ring,
+kanban, and Definition-of-Done tracker.
 
 ---
 

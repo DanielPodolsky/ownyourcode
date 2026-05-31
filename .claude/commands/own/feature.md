@@ -1,7 +1,7 @@
 ---
 name: feature
 description: Create a feature specification using spec-driven development
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__octocode__githubSearchCode, mcp__octocode__githubGetFileContent, mcp__octocode__githubSearchRepositories
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash, AskUserQuestion, mcp__context7__resolve-library-id, mcp__context7__get-library-docs, mcp__octocode__githubSearchCode, mcp__octocode__githubGetFileContent, mcp__octocode__githubSearchRepositories
 ---
 
 # /own:feature
@@ -13,18 +13,20 @@ Create a feature specification using **Spec-Driven Development (SDD)**.
 ## Overview
 
 This command follows the SDD workflow:
-1. **AI generates** spec.md, design.md, tasks.md based on minimal input
-2. **Developer reviews** the generated specs
+1. **AI generates** the spec, design, and tasks for a phase based on minimal input
+2. **Developer reviews** them in the dashboard (the phase's Spec / Design / Tasks tabs)
 3. **Developer adds** any missing edge cases or requirements
 4. **Then** implementation begins with mentorship
 
-**Output:**
-- `ownyourcode/specs/active/phase-[N]-[phase-name]/spec.md` — Feature specification
-- `ownyourcode/specs/active/phase-[N]-[phase-name]/design.md` — Technical design
-- `ownyourcode/specs/active/phase-[N]-[phase-name]/tasks.md` — Phased implementation checklist
+**Output (v2.5 — Dashboard SDD):**
+- The detected `roadmap-only` phase in `ownyourcode/dashboard/dashboard-data.js` is
+  advanced to `specced` — its `spec`, `design`, and `tasks` objects are written
+  in place (replacing the phase's `items[]`). No `spec.md`/`design.md`/`tasks.md`
+  files; everything lives in `window.PROJECT`, rendered by the dashboard's tabs.
 
-**Naming convention:** `phase-1-foundation`, `phase-2-core-features`, `phase-3-polish`
-This gives clear visibility of which phase you're working on.
+> **Schema authority:** `ownyourcode/dashboard/DASHBOARD_CONTRACT.md` defines the exact
+> `spec` / `design` / `tasks` shapes and the mutation rules. Read it before
+> writing. When this command's prose and the contract disagree, the contract wins.
 
 **Profile-Aware Behavior:**
 Check `.claude/ownyourcode-manifest.json` for profile settings:
@@ -45,37 +47,42 @@ The implementation phase is where the junior learns by doing.
 
 ## Execution Flow
 
-### Before Asking Questions: Check the Roadmap
+### Before Asking Questions: Detect the Next Phase
 
-Before asking the user for feature details, automatically check the roadmap:
+Before asking the user for feature details, auto-detect which phase to spec by
+reading the dashboard data — there is no `roadmap.md` to parse in v2.5.
 
-1. **Read** `ownyourcode/product/roadmap.md`
-2. **Find** the first phase with any incomplete tasks (`- [ ]`)
-3. **Auto-select** that phase — no asking, keep it simple
+1. **Read** `ownyourcode/dashboard/dashboard-data.js` (the `window.PROJECT` object).
+2. **Find** the FIRST phase in `window.PROJECT.phases` with
+   `status: "roadmap-only"` — that is the phase to spec.
+3. **Auto-select** it — no asking, keep it simple. Capture its `n`, `name`,
+   `slug`, and `items[]` (the planned scope you'll expand into a full spec).
 
-**Completion criteria:**
-- A phase is COMPLETE when: All tasks marked `[x]`
-- A phase is INCOMPLETE if: Any task is `[ ]`
+**Status meaning (see contract §3.4 / §5):**
+- `"roadmap-only"` → planned, not yet specced (has `items[]`, no spec/design/tasks)
+- `"specced"` → already specced (skip — `/own:feature` already ran for it)
+- `"complete"` → done
 
-**If roadmap found with incomplete phase:**
+**If a `roadmap-only` phase is found:**
 ```
-📍 Detected from roadmap: Phase [N] — [Phase Name]
+📍 Detected from your roadmap: Phase [n] — [name]
 
 This phase covers:
-- [Task 1]
-- [Task 2]
+- [item 1]
+- [item 2]
 ...
 
-Generating specs for this phase...
+Generating the spec for this phase...
 ```
-→ Proceed directly to Phase 2 (MCP Research)
-→ Spec folder: `ownyourcode/specs/active/phase-[N]-[phase-name]/`
+→ Proceed directly to Phase 2 (MCP Research). You will write the spec/design/
+  tasks into THIS phase object in `dashboard-data.js`.
 
-**If NO roadmap exists:**
-→ Ask user for feature details (proceed to "Core Requirements" section below)
+**If `dashboard-data.js` is missing or has no `phases`:**
+→ The project isn't initialized. Tell the user to run `/own:init` first.
 
-**If ALL phases complete:**
-→ Congratulate them! Then ask what they want to build next.
+**If ALL phases are `specced`/`complete` (no `roadmap-only` left):**
+→ Congratulate them! Then ask what they want to build next (a new phase can be
+  appended to `window.PROJECT.phases` with `status:"roadmap-only"`).
 
 ---
 
@@ -163,11 +170,11 @@ frontend, backend, database, security, performance, error-handling, engineering,
 - **frontend skill** → Component structure, state management patterns
 - **backend skill** → API design, request/response handling, middleware
 - **accessibility skill** → Add edge cases for keyboard navigation, screen readers
-- **security skill** → Add input validation, auth checks to design.md
-- **error-handling skill** → Pre-populate error scenarios in edge cases
-- **seo skill** → Include semantic HTML requirements in design.md
-- **performance skill** → Add performance considerations to design.md
-- **testing skill** → Include "what tests to write" in tasks.md
+- **security skill** → Add input validation, auth checks to the `design`
+- **error-handling skill** → Pre-populate error scenarios in `spec.edges`
+- **seo skill** → Include semantic HTML requirements in the `design`
+- **performance skill** → Add performance considerations to the `design`
+- **testing skill** → Include "what tests to write" as `tasks` in the Verification group
 
 **How skills shape code review:**
 - During `/own:done`, apply skill checklists naturally
@@ -198,16 +205,16 @@ Read `.claude/ownyourcode-manifest.json` to determine spec generation mode:
 - Otherwise → Use **Standard Mode** (AI generates, developer reviews)
 
 **Read the project context:**
-1. Check `ownyourcode/product/mission.md` for project goals
-2. Check `ownyourcode/product/stack.md` for technology constraints
-3. Scan existing code structure to understand patterns
+1. Read `ownyourcode/dashboard/dashboard-data.js` — `window.PROJECT.meta.mission` for
+   project goals, `window.PROJECT.stack` for technology constraints
+2. Scan existing code structure to understand patterns
 
 **Standard Mode (design_involvement=false):**
-Generate all three files based on:
+Generate the phase's `spec`, `design`, and `tasks` (written into the phase
+object — see "Generated Output" below) based on:
 - User's input from Phase 1
 - MCP research from Phase 2
-- Project context
-- Technology stack
+- Project context (`window.PROJECT.meta` + `window.PROJECT.stack`)
 - Best practices from documentation AND production examples
 
 **Collaborative Mode (Junior or design_involvement=true):**
@@ -257,39 +264,38 @@ Present as: "These specs reflect YOUR thinking, refined through our discussion"
 
 ### Phase 4: Present Specs for Review
 
-After generating, present a summary:
+After writing the phase into `dashboard-data.js` and validating it (see
+"Generated Output" below), present a summary:
 
 ```
-I've generated your feature specs based on your requirements, official docs,
-and how production apps implement this.
+I've specced Phase [n] — [name] in your dashboard, based on your requirements,
+official docs, and how production apps implement this.
 
-📋 spec.md — What we're building
-   • User Story: [their story]
-   • Acceptance Criteria: [3-4 items I generated]
-   • Edge Cases: [4-5 I identified from research]
-   • Out of Scope: [2-3 exclusions]
+📋 Spec tab — What we're building
+   • User Stories: [count]
+   • Acceptance Criteria: [count]
+   • Edge Cases: [count from research]
+   • Out of Scope: [count]
 
-🏗️ design.md — How we're building it
-   • Components: [list]
-   • Data Flow: [summary]
-   • State: [where it lives]
-   • Patterns: [based on Context7 + Octocode research]
+🏗️ Design tab — How we're building it
+   • Architecture + a diagram
+   • Components: [count]
+   • Trade-offs: [count]
 
-✅ tasks.md — Implementation phases
-   • Phase 1: Foundation [X tasks]
-   • Phase 2: Core Logic [X tasks]
-   • Phase 3: Integration [X tasks]
-   • Phase 4: Polish [X tasks]
+✅ Tasks tab — Implementation tasks
+   • [count] tasks across [group names]
 
-Please review these specs. You should:
-1. Read through spec.md and design.md
-2. ADD any edge cases I missed
-3. MODIFY anything that doesn't match your vision
-4. REMOVE anything out of scope
+👉 Refresh ownyourcode/dashboard/dashboard.html and open Phase [n] to review the
+   Spec / Design / Tasks tabs.
+
+Please review. You should:
+1. Read the Spec and Design tabs
+2. Tell me any edge cases I missed (I'll add them)
+3. Tell me anything that doesn't match your vision (I'll change it)
 
 When ready:
 - Run /own:advise to prepare for implementation
-- Then /own:guide to start Phase 1
+- Then /own:guide to start the first task
 ```
 
 ---
@@ -322,211 +328,95 @@ Based on response:
 
 ---
 
-## Generated File Templates
+## Generated Output (write into the phase object)
 
-### spec.md
+You do NOT create `spec.md` / `design.md` / `tasks.md` files. You **mutate the
+detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
 
-```markdown
-# Feature: [Feature Name]
+1. **Read `ownyourcode/dashboard/DASHBOARD_CONTRACT.md`** (§3.5–§3.7) — the authority for
+   the `spec`, `design`, `tasks` shapes.
+2. On the detected `roadmap-only` phase: **remove its `items: [...]`** and **add
+   `spec`, `design`, `tasks`** objects built from the collected answers + MCP
+   research, then **set `status: "specced"`**.
+3. Use the `Edit` tool for an exact-string replacement of that phase object —
+   leave every other phase untouched.
+4. Variable counts are real: as many user stories / criteria / edges / tasks as
+   the work needs. Don't pad or truncate.
+5. **Validate** with `node --check ownyourcode/dashboard/dashboard-data.js`. If it fails,
+   fix the syntax and re-run until valid — never leave a broken data file.
 
-> Generated by OwnYourCode. Review and modify as needed.
+### The shapes to write (v2.5 — see contract §3.5–§3.7)
 
-## User Story
+```js
+// the phase BEFORE (roadmap-only):
+{ n: 2, name: "Logging", slug: "logging", priority: "high",
+  status: "roadmap-only", description: "...", items: ["...", "..."] }
 
-As a [user type], I want to [action] so that [benefit].
-
-## Acceptance Criteria
-
-When these pass, the feature is DONE:
-
-- [ ] [Criterion 1 - specific and testable]
-- [ ] [Criterion 2]
-- [ ] [Criterion 3]
-- [ ] [Criterion 4]
-
-## Edge Cases
-
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Empty input | Show validation error, focus on field |
-| Network failure | Show error message, allow retry |
-| Double submission | Disable button after first click |
-| [From Octocode research] | [Appropriate handling] |
-| [From Octocode research] | [Appropriate handling] |
-
-> **Junior:** Add any edge cases I missed below:
-> - [ ] _Your edge case here_
-
-## Out of Scope
-
-What this feature does NOT include (keeps focus):
-
-- [Exclusion 1 — future feature]
-- [Exclusion 2 — different feature]
-- [Exclusion 3 — out of MVP]
-
-## Dependencies
-
-Before starting:
-- [ ] [Any prerequisites]
-- [ ] [APIs that must exist]
-- [ ] [Components that must be built first]
-
-## Research References
-
-- Context7: [Library docs referenced]
-- Octocode: [Repos examined for patterns]
+// the phase AFTER (specced) — items removed, spec/design/tasks added:
+{
+  n: 2, name: "Logging", slug: "logging", priority: "high",
+  status: "specced", description: "...",
+  spec: {
+    overview:   "[what we're building — 1–2 sentences]",
+    motivation: "[why this feature exists]",
+    userStories: [
+      { actor: "[user type]", want: "[action]", soThat: "[benefit]" },
+      // ...variable count; [] allowed (e.g. a pure refactor)
+    ],
+    criteria:   ["[testable acceptance criterion]", /* ... */],
+    edges:      [ ["[edge title]", "[scenario + expected behavior]"], /* ... */ ],
+    outOfScope: ["[explicit non-goal]", /* ... */],
+    openQuestions: ["[decision deferred to implementation]", /* ... */],
+  },
+  design: {
+    overview: "[1-paragraph technical approach]",
+    diagram: {
+      caption: "[1-line caption]",
+      layers: [   // top→bottom dependency bands → drives the SVG architecture map
+        { label: "[band name]", nodes: ["[module]", "[module]"] },
+        // ...
+      ],
+    },
+    flow: ["[data-flow step]", /* ...rendered as a connected stepper */],
+    tradeoffs: [
+      { title: "[decision]", chosen: "[option]", rejected: "[option(s)]", why: "[reasoning]" },
+      // ...variable count; [] allowed
+    ],
+    components: [
+      // 4-tuple: [name, responsibility, kind, location]   kind ∈ "new" | "modified"
+      ["[name]", "[responsibility]", "new", "src/path/file.ts"],
+      // ...
+    ],
+    openQuestions: ["[deferred design decision]", /* ... */],
+  },
+  tasks: [
+    // id = "<phase>.<group>.<task>" — the phase prefix is THIS phase's `n`, so
+    // ids are GLOBALLY unique across the file (never restart per phase). group =
+    // kanban column. text and detail are distinct; done starts false.
+    // (example below assumes you're speccing Phase 2)
+    { id: "2.1.1", group: "Setup",          text: "[short imperative]", detail: "[optional extended note]", done: false },
+    { id: "2.2.1", group: "Implementation", text: "[...]", detail: "", done: false },
+    { id: "2.3.1", group: "Verification",   text: "[...]", detail: "", done: false },
+    // ...variable groups + variable tasks per group
+  ],
+}
 ```
 
-### design.md
+### Contract reminders (don't break these)
 
-```markdown
-# Technical Design: [Feature Name]
-
-> Generated by OwnYourCode based on your stack, official docs, and production patterns.
-
-## Overview
-
-[One paragraph explaining the technical approach, based on project stack and research]
-
-## Architecture
-
-```
-[ASCII diagram showing component relationships]
-```
-
-## Components
-
-| Component | Purpose | New/Modified | Location |
-|-----------|---------|--------------|----------|
-| [Component 1] | [What it does] | New | src/components/ |
-| [Component 2] | [What it does] | Modified | src/pages/ |
-
-## Data Flow
-
-1. **Trigger:** [User action that starts this]
-2. **Frontend:** [What happens in UI]
-3. **State Update:** [How state changes]
-4. **API Call:** [If applicable]
-5. **Response:** [What comes back]
-6. **UI Update:** [How UI reflects result]
-
-## State Management
-
-| State | Type | Location | Initial Value |
-|-------|------|----------|---------------|
-| [state name] | boolean | useState | false |
-| [state name] | object | [per stack] | null |
-
-## Error Handling
-
-| Error Type | User Sees | Code Does |
-|------------|-----------|-----------|
-| Validation | "Please enter a valid email" | Prevent submit, focus field |
-| Network | "Something went wrong. Try again." | Log error, show retry button |
-| Auth | "Please log in to continue" | Redirect to login |
-
-## Security Considerations
-
-- [ ] Input validation on frontend AND backend
-- [ ] No sensitive data in localStorage
-- [ ] [Other considerations based on feature]
-
-## Patterns from Research
-
-Based on Context7 and Octocode research:
-- [Pattern 1 from docs or production apps]
-- [Pattern 2]
-- [Anti-pattern to avoid]
-```
-
-### tasks.md
-
-```markdown
-# Implementation Tasks: [Feature Name]
-
-> Work through these phases IN ORDER. Each phase builds on the previous.
-
-## Before You Start
-
-- [ ] Read and understand spec.md
-- [ ] Read and understand design.md
-- [ ] Run /own:advise for pre-work preparation
-- [ ] Check that dependencies are met
-- [ ] Ask mentor if anything is unclear
-
----
-
-## Phase 1: Foundation
-> Build the skeleton. No logic yet.
-
-- [ ] Create component file(s) at correct location
-- [ ] Set up basic structure (HTML/JSX only)
-  └── Depends on: Component file exists
-- [ ] Add placeholder styling
-  └── Depends on: Basic structure
-
-**Checkpoint:** You should see the component render (empty/unstyled is fine).
-
----
-
-## Phase 2: Core Logic
-> Add the main functionality.
-
-- [ ] [First core task]
-  └── Depends on: Phase 1 complete
-- [ ] [Second core task]
-  └── Depends on: [specific task]
-- [ ] [Third core task]
-  └── Depends on: [specific task]
-
-**Checkpoint:** Core functionality works with happy path.
-
----
-
-## Phase 3: Edge Cases
-> Handle what can go wrong.
-
-- [ ] Handle empty/invalid input
-- [ ] Handle network failures
-- [ ] Handle loading states
-- [ ] [Other edge cases from spec]
-
-**Checkpoint:** Feature handles errors gracefully.
-
----
-
-## Phase 4: Polish
-> Make it production-ready.
-
-- [ ] Add proper error messages
-- [ ] Add loading indicators
-- [ ] Final styling pass
-- [ ] Test against acceptance criteria
-
-**Checkpoint:** All acceptance criteria pass.
-
----
-
-## Completion
-
-- [ ] Self-review: Does it match the spec?
-- [ ] Run /own:done for 6 Gates + code review + STAR story
-- [ ] Run /own:retro to capture learnings
-
-## Progress Tracking
-
-| Phase | Status | Started | Completed |
-|-------|--------|---------|-----------|
-| Foundation | Not Started | - | - |
-| Core Logic | Not Started | - | - |
-| Edge Cases | Not Started | - | - |
-| Polish | Not Started | - | - |
-
----
-
-*Remember: YOU write the code. Ask your mentor when stuck.*
-```
+- **`design.components` is a 4-tuple** `[name, responsibility, kind, location]` —
+  include the file path and `"new"`/`"modified"`, not just name + responsibility.
+- **`tasks[].id`** is `"<phase>.<group>.<task>"` — prefix every id with THIS
+  phase's number so ids are **globally unique** across the whole file (don't
+  restart `1.1`, `2.1` each phase). `/own:done` flips `done` by matching the bare
+  `id` literal as an exact-string anchor, so a global collision would break it.
+- **`tasks[].text` vs `detail`**: `text` is the short card title; `detail` is the
+  optional expand-on-click body. `detail` may be `""`.
+- **`design.diagram.layers`** are ordered top→bottom; the dashboard renders them
+  as a layered SVG with arrows between bands.
+- The collaborative questioning, MCP research, and edge-case discovery
+  (Phases 1–3) are UNCHANGED — only the output target moved from files to the
+  phase object.
 
 ---
 
