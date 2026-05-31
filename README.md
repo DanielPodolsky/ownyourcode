@@ -157,10 +157,8 @@ phase opens **Spec / Design / Tasks** tabs (acceptance criteria, a real
 architecture diagram, a kanban board with a live progress ring). The `/own:*`
 commands keep it in sync as you work.
 
-<!-- TODO(daniel): drop a screenshot of the dashboard here (the preview on your
-     Desktop works great). Suggested: a specced phase showing the Design tab. -->
 <div align="center">
-  <img width="4110" height="2332" alt="image" src="https://github.com/user-attachments/assets/eccd7a8d-1f28-49e0-bc01-5f423c192bf5" />
+  <img width="4110" height="2332" alt="OwnYourCode dashboard — a project's mission, stack, and roadmap, with per-phase Spec / Design / Tasks tabs in one view" src="https://github.com/user-attachments/assets/eccd7a8d-1f28-49e0-bc01-5f423c192bf5" />
 </div>
 
 **How it stays in sync:** all state lives in one data file
