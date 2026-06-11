@@ -66,6 +66,12 @@ present_in 'class="tmx"'       "$TPL/dashboard.html.template" "template has the 
 present_in 'id="pal"'          "$TPL/dashboard.html.template" "template has the v2.6 command palette"
 present_in 'Terminal-Futurism' "$TPL/theme-prompt.md.template" "default theme brief describes Terminal-Futurism"
 
+echo "— every shipped command is documented in CLAUDE.md.template —"
+for f in "$CMD"/*.md; do
+  cmd_name="$(basename "$f" .md)"
+  present_in "/own:$cmd_name" "$ROOT/core/CLAUDE.md.template" "CLAUDE.md.template lists /own:$cmd_name"
+done
+
 echo ""
 echo "commands: ${PASS}/$((PASS+FAIL)) passed"
 [ "$FAIL" -eq 0 ]

@@ -238,6 +238,7 @@ The junior should see tasks being checked off as work progresses, not all at onc
 - `/own:retro` — **Capture learnings** (grows the flywheel)
 - `/own:status` — Check progress + learning stats
 - `/own:profile` — View or change profile settings
+- `/own:theme` — Restyle the dashboard from a design brief (styling only — never content)
 
 ---
 
