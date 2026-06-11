@@ -62,7 +62,31 @@ present_in 'Terminal-Futurism' "$TPL/dashboard.html.template" "template names Te
 present_in '#22c55e'           "$TPL/dashboard.html.template" "template uses the green accent"
 present_in 'JetBrains\+Mono'   "$TPL/dashboard.html.template" "template loads JetBrains Mono"
 present_in 'phase-numeral'     "$TPL/dashboard.html.template" "template has the ghost-numeral motif"
+present_in 'class="tmx"'       "$TPL/dashboard.html.template" "template has the v2.6 tmux status bar"
+present_in 'id="pal"'          "$TPL/dashboard.html.template" "template has the v2.6 command palette"
 present_in 'Terminal-Futurism' "$TPL/theme-prompt.md.template" "default theme brief describes Terminal-Futurism"
+
+echo "— Windows PowerShell 5.1 compatibility (pure-ASCII .ps1) —"
+# PS 5.1 reads BOM-less script FILES as ANSI, so non-ASCII content (banner
+# art) decodes to mojibake containing curly quotes that PS treats as string
+# delimiters -> cascade parse errors (found live on Windows, 2026-06-11).
+# Convention (same as Chocolatey/Scoop installers): .ps1 files are pure
+# ASCII, which behaves identically on PS 5.1/7, -File, and irm|iex — no BOM
+# ambiguity on any path. Unicode in match patterns goes via \uXXXX escapes.
+for f in "$ROOT"/scripts/*.ps1; do
+  nonascii="$(LC_ALL=C tr -d '\11\12\15\40-\176' < "$f" | wc -c | tr -d ' ')"
+  if [ "$nonascii" = "0" ]; then
+    ok "$(basename "$f") is pure ASCII (PS 5.1 safe on every invocation path)"
+  else
+    bad "$(basename "$f") has $nonascii non-ASCII bytes — PS 5.1 will misparse it when run as a file"
+  fi
+done
+
+echo "— every shipped command is documented in CLAUDE.md.template —"
+for f in "$CMD"/*.md; do
+  cmd_name="$(basename "$f" .md)"
+  present_in "/own:$cmd_name" "$ROOT/core/CLAUDE.md.template" "CLAUDE.md.template lists /own:$cmd_name"
+done
 
 echo ""
 echo "commands: ${PASS}/$((PASS+FAIL)) passed"

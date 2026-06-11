@@ -615,7 +615,7 @@ Update `.claude/ownyourcode-manifest.json` with profile settings:
 
 ```json
 {
-  "version": "2.5.0",
+  "version": "2.6.0",
   "installed_at": "...",
   "profile": {
     "type": "junior",
@@ -639,7 +639,7 @@ Update `.claude/ownyourcode-manifest.json` with profile settings:
 
 ```json
 {
-  "version": "2.5.0",
+  "version": "2.6.0",
   "installed_at": "...",
   "profile": {
     "type": "custom",
@@ -1221,7 +1221,7 @@ window.PROJECT = {
     audience: "[enum: myself | employers | clients | real-users]",
     mission:  "[the PROBLEM statement, in the user's words]",
     generated:"[today YYYY-MM-DD]",
-    version:  "2.5.0",
+    version:  "2.6.0",
   },
   dod: [
     { text: "[one concrete, measurable done-criterion]", done: false },
@@ -1254,7 +1254,7 @@ window.PROJECT = {
 | `meta.audience` | Phase 3 selection → enum: "Yourself"→`myself`, "Employers"→`employers`, "A client"→`clients`, "Real users"→`real-users` |
 | `meta.mission` | Phase 2 problem statement (the *why*, in their words) |
 | `meta.generated` | Today, `YYYY-MM-DD` |
-| `meta.version` | Literal `2.5.0` |
+| `meta.version` | Literal `2.6.0` |
 | `dod[]` | Phase 4 Definition-of-Done items, each `done:false` |
 | `stack[]` | Phase 5 stack + Phase 5.1 MCP-verified versions, as 5-tuples |
 | `phases[]` | Phase 5.5 collaborative roadmap — each `status:"roadmap-only"` with `items:[…]`, NO `spec`/`design`/`tasks` (those come from `/own:feature`) |
