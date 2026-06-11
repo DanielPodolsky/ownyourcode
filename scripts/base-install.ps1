@@ -1,4 +1,4 @@
-# OwnYourCode Base Installation Script (Windows)
+﻿# OwnYourCode Base Installation Script (Windows)
 # AI-Mentored Development for All Developers
 # Version 2.6.0 - Dashboard Elevated
 #

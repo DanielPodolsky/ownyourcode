@@ -1,4 +1,4 @@
-# OwnYourCode Project Uninstallation Script (Windows)
+﻿# OwnYourCode Project Uninstallation Script (Windows)
 # Cleanly removes OwnYourCode from a project
 
 $ErrorActionPreference = "Stop"

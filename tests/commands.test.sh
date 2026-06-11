@@ -66,6 +66,19 @@ present_in 'class="tmx"'       "$TPL/dashboard.html.template" "template has the 
 present_in 'id="pal"'          "$TPL/dashboard.html.template" "template has the v2.6 command palette"
 present_in 'Terminal-Futurism' "$TPL/theme-prompt.md.template" "default theme brief describes Terminal-Futurism"
 
+echo "— Windows PowerShell 5.1 compatibility (BOM) —"
+# PS 5.1 reads BOM-less scripts as ANSI; our .ps1 files contain Unicode banner
+# art whose mojibake includes curly quotes that PS treats as string delimiters
+# → cascade parse errors. UTF-8 BOM is the documented fix. (Found live on a
+# real Windows machine, 2026-06-11.)
+for f in "$ROOT"/scripts/*.ps1; do
+  if [ "$(head -c 3 "$f" | od -An -tx1 | tr -d ' \n')" = "efbbbf" ]; then
+    ok "$(basename "$f") has UTF-8 BOM (PS 5.1 safe)"
+  else
+    bad "$(basename "$f") missing UTF-8 BOM — Windows PowerShell 5.1 misparses its Unicode"
+  fi
+done
+
 echo "— every shipped command is documented in CLAUDE.md.template —"
 for f in "$CMD"/*.md; do
   cmd_name="$(basename "$f" .md)"
