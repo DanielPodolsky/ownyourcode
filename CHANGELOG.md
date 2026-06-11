@@ -6,6 +6,54 @@ All notable changes to OwnYourCode will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-06-11
+
+### The "Dashboard Elevated" Release
+
+The Terminal-Futurism shell grows up: the terminal voice becomes *interaction*,
+not just decoration. Same `window.PROJECT` contract as v2.5 — existing projects
+upgrade by replacing `dashboard.html` only; `dashboard-data.js` is untouched.
+
+### Added
+
+- **Boot sequence** — on load, a terminal window (mac traffic-light chrome from
+  the existing status palette) types your live project status
+  (`$ own status --dashboard` → phases, task counts) before the app rises in.
+  Any key or click skips it; `prefers-reduced-motion` bypasses it entirely;
+  `#noboot` in the URL disables it.
+- **Command palette** — `⌘K` / `Ctrl+K` (label adapts per platform) or `/`
+  opens a shell-prompt jump menu over every view; digits `1–9` jump directly
+  and `[` / `]` cycle views.
+- **tmux-style status bar** — a live bottom bar with segments for version,
+  project, active phase, task totals, DoD percent, generation date, and a
+  ticking clock.
+- **Mission track** — the Overview renders the roadmap as a timeline: complete
+  phases filled, the active phase pulsing, roadmap phases hollow; a progress
+  line interpolates through the active phase's task completion. Nodes navigate.
+- **Task burn** — per-phase progress bars on the Overview, derived from the
+  same task data the kanban renders (roadmap-only phases show hollow bars).
+- **Micro-interactions** — pointer-tracking glow borders on tiles, count-up
+  stat numerals, kanban column progress bars, a segmented LED Definition-of-Done
+  bar, marching-ants connectors on the architecture diagram, aurora + radar-sweep
+  atmosphere behind the blueprint grid.
+
+### Fixed
+
+- **Architecture diagram overflow** — the SVG no longer stretches to fill wide
+  tiles (capped + centered), and layout is now content-aware: the label gutter
+  sizes to the longest layer label and node boxes size to their text (JetBrains
+  Mono's fixed metrics make text width computable), scaling down then
+  ellipsizing with full text preserved as a hover tooltip. Long labels like
+  `Project (committed)` and long node names no longer collide.
+
+### Changed
+
+- `tests/dashboard-render.test.js` grows 35 → 48 assertions, covering the
+  mission track, task burn, tmux segments, palette, and LED bar alongside every
+  existing v2.5 contract check (the `window.PROJECT` schema is unchanged).
+- `/own:theme`'s class-contract examples now name the v2.6 selector families
+  (`.boot`, `.pal`, `.tmx`, `.tnode`, `.burn`, `.segbar`).
+
 ## [2.5.0] - 2026-05-30
 
 ### The "Dashboard SDD" Release

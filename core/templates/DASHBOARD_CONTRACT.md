@@ -115,7 +115,7 @@ Task = {
 | `audience` | enum | `"myself"` \| `"employers"` \| `"clients"` \| `"real-users"` | `/own:init` Phase 3 |
 | `mission` | string | The PROBLEM statement (the *why* — not the solution) | `/own:init` Phase 2 |
 | `generated` | string | ISO date `YYYY-MM-DD` | Set on every write that re-stamps |
-| `version` | string | OwnYourCode version that generated/last-modified this file (e.g. `"2.5.0"`) | Source-of-truth: the OwnYourCode release at write time. NOT the user's project version. |
+| `version` | string | OwnYourCode version that generated/last-modified this file (e.g. `"2.6.0"`) | Source-of-truth: the OwnYourCode release at write time. NOT the user's project version. |
 
 ### 3.2 `dod` (Definition of Done items)
 

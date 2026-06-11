@@ -62,6 +62,8 @@ present_in 'Terminal-Futurism' "$TPL/dashboard.html.template" "template names Te
 present_in '#22c55e'           "$TPL/dashboard.html.template" "template uses the green accent"
 present_in 'JetBrains\+Mono'   "$TPL/dashboard.html.template" "template loads JetBrains Mono"
 present_in 'phase-numeral'     "$TPL/dashboard.html.template" "template has the ghost-numeral motif"
+present_in 'class="tmx"'       "$TPL/dashboard.html.template" "template has the v2.6 tmux status bar"
+present_in 'id="pal"'          "$TPL/dashboard.html.template" "template has the v2.6 command palette"
 present_in 'Terminal-Futurism' "$TPL/theme-prompt.md.template" "default theme brief describes Terminal-Futurism"
 
 echo ""

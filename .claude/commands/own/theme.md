@@ -139,7 +139,8 @@ both `<script>` blocks (the data load + the render logic) — is UNTOUCHABLE.
 **The class contract is the current `<style>` itself.** Read the existing
 `<style>` block in `dashboard.html` to learn the complete set of selectors the
 render JS depends on (`.app`, `.hd`, `.sb`, `.nav`, `.tile`, `.bento`, `.kcard`,
-`.ring`, `.phase-numeral`, `.src`, `.bdg`, `.al-*`, etc.). The regenerated CSS
+`.ring`, `.phase-numeral`, `.src`, `.bdg`, `.al-*`, and the v2.6 additions:
+`.boot`/`.bline`, `.pal`, `.tmx`/`.seg`, `.tnode`/`.track`, `.burn`, `.segbar`, etc.). The regenerated CSS
 MUST style that exact same selector set — same class names, same structural
 roles — only the visual treatment changes per the brief.
 
