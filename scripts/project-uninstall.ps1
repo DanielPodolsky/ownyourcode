@@ -1,4 +1,4 @@
-﻿# OwnYourCode Project Uninstallation Script (Windows)
+# OwnYourCode Project Uninstallation Script (Windows)
 # Cleanly removes OwnYourCode from a project
 
 $ErrorActionPreference = "Stop"
@@ -52,9 +52,9 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 
 # Header
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Red
-Write-Host "║            OwnYourCode Uninstallation                     ║" -ForegroundColor Red
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Red
+Write-Host "+===========================================================+" -ForegroundColor Red
+Write-Host "|            OwnYourCode Uninstallation                     |" -ForegroundColor Red
+Write-Host "+===========================================================+" -ForegroundColor Red
 Write-Host ""
 
 # ============================================================================
@@ -112,7 +112,7 @@ if (Test-Path $CLAUDE_MD) {
     } elseif ((Get-Content $CLAUDE_MD -Raw) -match "OWNYOURCODE:") {
         # Legacy fallback - remove OwnYourCode section using regex
         $content = Get-Content $CLAUDE_MD -Raw
-        $cleaned = $content -replace "# ═.*OWNYOURCODE[\s\S]*?# ═.*END OWNYOURCODE[^\n]*\n?", ""
+        $cleaned = $content -replace "# \u2550.*OWNYOURCODE[\s\S]*?# \u2550.*END OWNYOURCODE[^\n]*\n?", ""
         $cleaned = $cleaned.Trim()
 
         if ([string]::IsNullOrWhiteSpace($cleaned)) {
@@ -225,9 +225,9 @@ if (Test-Path $ownyourcodeDir) {
 # ============================================================================
 
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║          Uninstallation Complete!                         ║" -ForegroundColor Green
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
+Write-Host "|          Uninstallation Complete!                         |" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
 Write-Host ""
 
 Write-OK "OwnYourCode has been removed from this project."

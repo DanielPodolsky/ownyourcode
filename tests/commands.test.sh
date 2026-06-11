@@ -66,16 +66,19 @@ present_in 'class="tmx"'       "$TPL/dashboard.html.template" "template has the 
 present_in 'id="pal"'          "$TPL/dashboard.html.template" "template has the v2.6 command palette"
 present_in 'Terminal-Futurism' "$TPL/theme-prompt.md.template" "default theme brief describes Terminal-Futurism"
 
-echo "— Windows PowerShell 5.1 compatibility (BOM) —"
-# PS 5.1 reads BOM-less scripts as ANSI; our .ps1 files contain Unicode banner
-# art whose mojibake includes curly quotes that PS treats as string delimiters
-# → cascade parse errors. UTF-8 BOM is the documented fix. (Found live on a
-# real Windows machine, 2026-06-11.)
+echo "— Windows PowerShell 5.1 compatibility (pure-ASCII .ps1) —"
+# PS 5.1 reads BOM-less script FILES as ANSI, so non-ASCII content (banner
+# art) decodes to mojibake containing curly quotes that PS treats as string
+# delimiters -> cascade parse errors (found live on Windows, 2026-06-11).
+# Convention (same as Chocolatey/Scoop installers): .ps1 files are pure
+# ASCII, which behaves identically on PS 5.1/7, -File, and irm|iex — no BOM
+# ambiguity on any path. Unicode in match patterns goes via \uXXXX escapes.
 for f in "$ROOT"/scripts/*.ps1; do
-  if [ "$(head -c 3 "$f" | od -An -tx1 | tr -d ' \n')" = "efbbbf" ]; then
-    ok "$(basename "$f") has UTF-8 BOM (PS 5.1 safe)"
+  nonascii="$(LC_ALL=C tr -d '\11\12\15\40-\176' < "$f" | wc -c | tr -d ' ')"
+  if [ "$nonascii" = "0" ]; then
+    ok "$(basename "$f") is pure ASCII (PS 5.1 safe on every invocation path)"
   else
-    bad "$(basename "$f") missing UTF-8 BOM — Windows PowerShell 5.1 misparses its Unicode"
+    bad "$(basename "$f") has $nonascii non-ASCII bytes — PS 5.1 will misparse it when run as a file"
   fi
 done
 

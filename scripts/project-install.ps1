@@ -1,4 +1,4 @@
-﻿# OwnYourCode Project Installation Script (Windows)
+# OwnYourCode Project Installation Script (Windows)
 # AI-Mentored Development for All Developers
 # Version 2.6.0 - Dashboard Elevated
 
@@ -17,10 +17,10 @@ function Write-Err { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red;
 
 # Header
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║            OwnYourCode Installation v2.6.0                ║" -ForegroundColor Green
-Write-Host "║    AI-Mentored Development with Profile Support           ║" -ForegroundColor Green
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
+Write-Host "|            OwnYourCode Installation v2.6.0                |" -ForegroundColor Green
+Write-Host "|    AI-Mentored Development with Profile Support           |" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
 Write-Host ""
 
 # Check base exists
@@ -54,7 +54,7 @@ if (Test-Path $ownyourcodeDir) {
 Write-Info "Creating directories..."
 
 $directories = @(
-    # Note: v2.5 drops product/ — mission/stack/roadmap now live in the dashboard.
+    # Note: v2.5 drops product/ - mission/stack/roadmap now live in the dashboard.
     "ownyourcode/specs/active",
     "ownyourcode/specs/completed",
     "ownyourcode/career/stories",
@@ -129,7 +129,7 @@ if (Test-Path $CLAUDE_MD) {
 
         if (($replace -eq "y" -or $replace -eq "Y") -and (Test-Path $TEMPLATE)) {
             # Remove existing section and append fresh
-            $cleaned = $content -replace "# ═.*OWNYOURCODE[\s\S]*?# ═.*END OWNYOURCODE[^\n]*", ""
+            $cleaned = $content -replace "# \u2550.*OWNYOURCODE[\s\S]*?# \u2550.*END OWNYOURCODE[^\n]*", ""
             $templateContent = Get-Content $TEMPLATE -Raw
             Set-Content -Path $CLAUDE_MD -Value ($cleaned.Trim() + "`n`n" + $templateContent)
             Write-OK "OwnYourCode section replaced"
@@ -284,7 +284,7 @@ if (Test-Path $srcGuides) {
 }
 
 # ============================================================================
-# STEP 7.5: Seed the dashboard (v2.5 — Dashboard SDD)
+# STEP 7.5: Seed the dashboard (v2.5 - Dashboard SDD)
 # ============================================================================
 # v2.5 replaces the per-page product/*.html and specs/**/*.html files with a
 # single dashboard: a stable view shell (dashboard.html) + a data file
@@ -328,9 +328,9 @@ if (Test-Path $dashTemplate) {
         Copy-Item $promptSrc -Destination (Join-Path $PROJECT_DIR "ownyourcode/.theme/theme-prompt.md") -Force
     }
 
-    Write-OK "Dashboard seeded — open ownyourcode/dashboard/dashboard.html, then run /own:init"
+    Write-OK "Dashboard seeded - open ownyourcode/dashboard/dashboard.html, then run /own:init"
 } else {
-    Write-Warn "Dashboard templates not found in source repo — skipping dashboard seed."
+    Write-Warn "Dashboard templates not found in source repo - skipping dashboard seed."
     Write-Warn "Update your OwnYourCode base install to get the v2.5 dashboard."
 }
 
@@ -441,9 +441,9 @@ Write-OK "Manifest created at .claude/ownyourcode-manifest.json"
 # ============================================================================
 
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║          Installation Complete! v2.6.0                    ║" -ForegroundColor Green
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
+Write-Host "|          Installation Complete! v2.6.0                    |" -ForegroundColor Green
+Write-Host "+===========================================================+" -ForegroundColor Green
 Write-Host ""
 
 Write-OK "OwnYourCode v2.6.0 installed successfully!"
