@@ -11,6 +11,7 @@
 - Fixed the architecture diagram stretching to fill wide tiles and text overflowing its boxes — layout is now content-aware (label gutter and node boxes size to their text via JetBrains Mono's fixed metrics), with clipped text preserved as a hover tooltip
 - Fixed Windows PowerShell 5.1 failing to parse the installers when run from disk — all `.ps1` scripts are now pure ASCII (the same convention Chocolatey and Scoop installers use)
 - Expanded the render test from 35 to 48 assertions and added drift guards: every shipped command must be documented in `CLAUDE.md.template`, and every `.ps1` must stay pure ASCII
+- The PR review gate now runs one full review when a PR opens and cheap incremental reviews (previous comments + newly pushed commits only) on each push, with turn caps and a one-comment praise cap
 - Existing projects upgrade by replacing `dashboard.html` only — the `window.PROJECT` contract is unchanged and `dashboard-data.js` is untouched
 
 ## 2.5.0
