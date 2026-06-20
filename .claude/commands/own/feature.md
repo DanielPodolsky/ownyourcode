@@ -38,10 +38,15 @@ Check `.claude/ownyourcode-manifest.json` for profile settings:
 
 ## The SDD Philosophy
 
-> "Spec first, code second. But YOU write the code."
+> "Spec first, code second. But YOU own the judgment behind every line."
 
-Unlike other SDD tools where AI writes code, OwnYourCode uses SDD for PLANNING only.
-The implementation phase is where the junior learns by doing.
+OwnYourCode uses SDD for planning, then builds with ownership — not by handing the
+junior a finished feature to read. **How "build" works depends on profile:**
+- **Junior profile** → Phase 6 runs the Implementation Loop: the junior predicts the
+  judgment for each task *before* the AI reveals the code, then gets graded on the
+  prediction. They own the code by being able to evaluate it, not by transcribing it.
+- **Other profiles** → SDD stops at the spec; implementation happens however that
+  developer ships (they don't need the gym).
 
 ---
 
@@ -294,8 +299,9 @@ Please review. You should:
 3. Tell me anything that doesn't match your vision (I'll change it)
 
 When ready:
-- Run /own:advise to prepare for implementation
-- Then /own:guide to start the first task
+- **Junior profile:** we go straight into building — Phase 6 runs the Implementation
+  Loop here, task by task. (No need to run /own:guide; the gym is built in.)
+- **Other profiles:** run /own:advise to prepare, then implement your way.
 ```
 
 ---
@@ -322,9 +328,69 @@ Options:
 ```
 
 Based on response:
-- **Looks good:** Finalize and move to implementation
+- **Looks good:** Finalize, then proceed to Phase 6 (Junior) or end (other profiles)
 - **Add/Modify:** Make changes, regenerate summary
 - **Read first:** End command, let them review
+
+---
+
+### Phase 6: The Implementation Loop (JUNIOR PROFILE ONLY)
+
+**⚠️ Profile Check:** Read `.claude/ownyourcode-manifest.json`.
+- If `profile.type = "junior"` → run this phase. The command builds the feature
+  task-by-task through Predict → Reveal → Judge.
+- All other profiles → **skip Phase 6.** End the command after Phase 5 with the
+  usual "now implement" handoff. (This phase is the junior gym; seniors ship in
+  the game.)
+
+> **Authority:** the full loop mechanics, prediction prompt, rubric, grounding
+> guard, and anti-sycophancy rule live in `profiles/junior.md` → "The Implementation
+> Loop". This phase is the *trigger and bookkeeping*; that profile section is the
+> *behavior*. If they disagree, the profile wins.
+
+**Why this lives in `/own:feature` and not `/own:guide`:** the loop must be a HARD
+gate. `/own:guide` is optional and rarely run; juniors would skip it and lose the
+mechanism. Because `/own:feature` runs Phase 6 inline, the gate can't be bypassed.
+
+**The loop:**
+
+1. **Read the tasks** just written to the phase's `tasks[]`. Identify the
+   `Implementation`-group tasks (these gate) vs. `Setup` / `Verification` (these flow).
+
+2. **For each task, in order:**
+   - **Setup / Verification task** → implement it directly, no prediction gate.
+     (Scaffolding and test-running carry no design judgment.)
+   - **Implementation task** → run the full gate:
+     1. **PREDICT** — present the prediction prompt (4 dimensions, free-text,
+        N/A-with-reason allowed). Do not proceed until answered with specifics;
+        bounce vague answers.
+     2. **GATE** — no committed prediction → no code. Don't cave to "just show me."
+     3. **REVEAL** — write the actual production code for that task.
+     4. **JUDGE** — grade prediction vs. actual on the rubric (MATCH/PARTIAL/MISS
+        per relevant dimension), name the specific gap, ground it (Context7 for
+        authority, Octocode for prevalence — cite *why*, not just *that it's common*).
+     5. **OWN** — have them acknowledge the named gap in their own words.
+
+3. **Record** each Implementation task's verdicts to the **Prediction Scorecard** in
+   `~/ownyourcode/learning/LEARNING_REGISTRY.md`, and add every `MISS` to that file's
+   **Failures (Anti-Patterns)** table. (See that file for the row formats.)
+
+4. **Mark tasks `done`** as they're completed (flip `done: true` in `dashboard-data.js`
+   by exact-id match — same mechanism `/own:done` uses; re-validate with
+   `node --check`).
+
+5. **Close out:**
+   ```
+   ✅ Phase [n] built — [x] Implementation tasks, [y] predictions logged.
+
+   Your judgment scorecard this phase:
+   • Approach:       [M/P/MISS tally]
+   • Data structure: [M/P/MISS tally]
+   • Control flow:   [M/P/MISS tally]
+   • Edge cases:     [M/P/MISS tally]
+
+   When you're ready to verify ownership and ship, run /own:done.
+   ```
 
 ---
 
@@ -422,7 +488,8 @@ detected phase object** inside `ownyourcode/dashboard/dashboard-data.js`:
 
 ## Important Notes
 
-1. **AI generates, junior reviews** — This is the SDD model
+1. **AI generates the spec, junior reviews** — the SDD planning model. (Implementation
+   is different for juniors: Phase 6's loop has them *predict before* the reveal.)
 2. **Keep specs lean** — Verbose specs amplify confusion, not clarity
 3. **Phases are mandatory** — Don't skip to Phase 3 before Phase 1 is done
 4. **Edge cases are pre-populated** — Junior adds any we missed
