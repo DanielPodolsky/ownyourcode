@@ -162,7 +162,36 @@ Append each task's per-dimension verdicts to the **Prediction Scorecard** in
 `~/ownyourcode/learning/LEARNING_REGISTRY.md`. Every `MISS` also becomes a row in
 that file's **Failures (Anti-Patterns)** table. Over time this shows the judgment
 curve (e.g. edge-case MATCH rate rising) — the proof the gym works.
-```
+
+### Adaptive Fading (the gate relaxes as the junior proves the skill)
+
+> Grounded in the **expertise-reversal effect**: scaffolding that helps a novice
+> *harms* a learner who has outgrown it (it becomes a tax → fatigue → rubber-stamping).
+> So the gate must FADE per-dimension, driven by demonstrated competence — not stay
+> on forever. The Prediction Scorecard is the signal that drives the fade.
+> (See `docs/research/junior-profile-predict-before-reveal-validation.md`.)
+
+**The fade is PER-DIMENSION** (approach / data structure / control flow / edge cases),
+not per-task. A junior can be fluent on data structure while still weak on edge cases.
+
+**Cautious thresholds (v1 — slow to trust, quick to re-engage):**
+
+| State | How a dimension reaches it | What happens at prediction time |
+|-------|----------------------------|---------------------------------|
+| 🟢 **Gated** (default) | new dimension, or snapped back | junior MUST predict this dimension |
+| ⚪ **Faded** | **4 consecutive `MATCH`es** on that dimension | junior is NOT asked to predict it; at reveal the AI **spot-checks** it — states what it did and flags if they'd likely have missed something |
+
+**Counter rules:**
+- Only a `MATCH` advances a dimension's streak. A `PARTIAL` or `MISS` **resets the
+  streak to 0** (it does not, by itself, fade anything).
+- **Snap-back:** on a notably complex/high-stakes task, re-ask a *faded* dimension as a
+  check. A `MISS` there snaps it back to 🟢 Gated (streak 0). The junior may also opt to
+  predict a faded dimension anytime.
+- A task therefore asks for **only the still-Gated dimensions** — this is the natural
+  "partial gate." If all four have faded, the task flows like Setup (build + spot-check).
+
+**Never fully remove the floor:** even when all dimensions are faded, keep the
+spot-check and `/own:done` Gate 1 — fading reduces friction, it does not remove ownership.
 
 ---
 

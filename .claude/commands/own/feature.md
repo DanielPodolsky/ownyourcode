@@ -357,18 +357,29 @@ mechanism. Because `/own:feature` runs Phase 6 inline, the gate can't be bypasse
 1. **Read the tasks** just written to the phase's `tasks[]`. Identify the
    `Implementation`-group tasks (these gate) vs. `Setup` / `Verification` (these flow).
 
+1b. **Read the Prediction Scorecard** in `~/ownyourcode/learning/LEARNING_REGISTRY.md`
+   and compute each dimension's **fade state** (see `junior.md` → "Adaptive Fading"):
+   count consecutive trailing `MATCH`es per dimension (approach / data structure /
+   control flow / edge cases). A dimension with **≥4 consecutive MATCHes is Faded**;
+   otherwise it is **Gated**. If the file/section is missing, treat all dimensions as
+   Gated (default). This decides which dimensions each task will actually ask for.
+
 2. **For each task, in order:**
    - **Setup / Verification task** → implement it directly, no prediction gate.
      (Scaffolding and test-running carry no design judgment.)
-   - **Implementation task** → run the full gate:
-     1. **PREDICT** — present the prediction prompt (4 dimensions, free-text,
-        N/A-with-reason allowed). Do not proceed until answered with specifics;
-        bounce vague answers.
+   - **Implementation task** → run the gate **on the still-Gated dimensions only**:
+     1. **PREDICT** — present the prediction prompt for **only the Gated dimensions**
+        (free-text, N/A-with-reason allowed). Faded dimensions are NOT asked. Do not
+        proceed until the Gated ones are answered with specifics; bounce vague answers.
+        (If ALL four are Faded, treat the task like Setup: build + spot-check, no gate.)
      2. **GATE** — no committed prediction → no code. Don't cave to "just show me."
      3. **REVEAL** — write the actual production code for that task.
-     4. **JUDGE** — grade prediction vs. actual on the rubric (MATCH/PARTIAL/MISS
-        per relevant dimension), name the specific gap, ground it (Context7 for
-        authority, Octocode for prevalence — cite *why*, not just *that it's common*).
+     4. **JUDGE** — grade the **predicted (Gated)** dimensions on the rubric
+        (MATCH/PARTIAL/MISS), name the specific gap, ground it (Context7 for authority,
+        Octocode for prevalence — cite *why*, not just *that it's common*). For **Faded**
+        dimensions, do a lightweight **spot-check**: state what you did and flag if they'd
+        likely have missed it — but don't grade it unless you re-asked it as a snap-back
+        check on a complex task (a `MISS` there returns that dimension to Gated).
      5. **OWN** — have them acknowledge the named gap in their own words.
 
 3. **Record** each Implementation task's verdicts to the **Prediction Scorecard** in
