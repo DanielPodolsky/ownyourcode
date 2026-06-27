@@ -25,7 +25,7 @@ window.PROJECT = {
     audience: "myself",
     mission: "This dashboard is empty. Run /own:init in Claude Code to define your project's mission, stack, and roadmap — then /own:feature to spec your first phase.",
     generated: "—",
-    version: "2.6.0",
+    version: "2.7.0",
   },
   dod: [],     // Definition-of-Done items: { text, done }
   stack: [],   // 5-tuple rows: [layer, tech, version, source, purpose]

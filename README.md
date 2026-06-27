@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <sub>v2.6.0 · MIT License</sub>
+  <sub>v2.7.0 · MIT License</sub>
 </p>
 
 ---
@@ -102,12 +102,14 @@ Learnings compound across projects. Patterns that worked. Mistakes you won't rep
 | Command        | Purpose                            |
 | -------------- | ---------------------------------- |
 | `/own:init`    | Set your profile, stack, and goals |
-| `/own:feature` | Plan with spec-driven development  |
+| `/own:feature` | Plan with spec-driven development — and, for the Junior profile, build it via the predict-before-reveal loop (Phase 6) |
 | `/own:advise`  | Query past learnings before starting |
-| `/own:guide`   | Get implementation guidance        |
+| `/own:guide`   | Optional implementation help (for the Junior profile the gym now runs inline in `/own:feature` Phase 6) |
 | `/own:stuck`   | Debug systematically               |
 | `/own:done`    | Complete with gates + code review  |
 | `/own:retro`   | Capture learnings                  |
+
+> **Junior profile note:** implementation for juniors happens inside `/own:feature` (Phase 6) as a *predict-before-reveal* loop — you commit a prediction before the AI reveals code, then get graded on it. `/own:guide` remains available for ad-hoc help but is no longer the primary path to writing code.
 
 ### Utilities
 
