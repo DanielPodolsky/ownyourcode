@@ -208,6 +208,11 @@ just inside a learning tool.
 
 ### C2. Prioritized refinements
 
+> **Implementation status (updated post-review, PR #21):** **P0 ✅ shipped**;
+> **P2 ✅ shipped** (OWN step is now a self-explanation, not an acknowledgement);
+> **P3 ⚙️ partial** — a deterministic *staleness nudge* re-asks a faded dimension after
+> 5 stale tasks (lightweight spaced re-prediction). **P1 ⏳ not yet built.**
+
 **P0 — Adaptive fading tied to the Prediction Scorecard.**
 Use the per-dimension MATCH/PARTIAL/MISS history we already log. When a junior sustains high MATCH
 rates on a dimension (e.g. 4–5 consecutive MATCHes on *data structure*), **fade the gate for that

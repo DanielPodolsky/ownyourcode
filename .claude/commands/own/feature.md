@@ -45,8 +45,13 @@ junior a finished feature to read. **How "build" works depends on profile:**
 - **Junior profile** → Phase 6 runs the Implementation Loop: the junior predicts the
   judgment for each task *before* the AI reveals the code, then gets graded on the
   prediction. They own the code by being able to evaluate it, not by transcribing it.
-- **Other profiles** → SDD stops at the spec; implementation happens however that
-  developer ships (they don't need the gym).
+- **Other profiles (v1)** → the loop is **not yet wired** for them; SDD stops at the spec
+  and implementation happens however that developer ships.
+  > **Deliberate v1 scoping, not a permanent exclusion.** The loop is built for the Junior
+  > profile first. **Interview Prep** is the strongest candidate to get it next — defending
+  > judgment in a live review is exactly what predict-before-reveal trains — with **Career
+  > Switcher** (rebuilding fundamentals) close behind. A future PR can extend Phase 6 to
+  > those profiles without contradicting this copy.
 
 ---
 
@@ -339,9 +344,10 @@ Based on response:
 **⚠️ Profile Check:** Read `.claude/ownyourcode-manifest.json`.
 - If `profile.type = "junior"` → run this phase. The command builds the feature
   task-by-task through Predict → Reveal → Judge.
-- All other profiles → **skip Phase 6.** End the command after Phase 5 with the
-  usual "now implement" handoff. (This phase is the junior gym; seniors ship in
-  the game.)
+- All other profiles → **skip Phase 6 (v1).** End the command after Phase 5 with the
+  usual "now implement" handoff. The loop is wired for Junior first by deliberate v1
+  scoping — **Interview Prep** and **Career Switcher** are the intended next profiles,
+  not permanent exclusions (see "The SDD Philosophy" above).
 
 > **Authority:** the full loop mechanics, prediction prompt, rubric, grounding
 > guard, and anti-sycophancy rule live in `profiles/junior.md` → "The Implementation
@@ -363,6 +369,10 @@ mechanism. Because `/own:feature` runs Phase 6 inline, the gate can't be bypasse
    control flow / edge cases). A dimension with **≥4 consecutive MATCHes is Faded**;
    otherwise it is **Gated**. If the file/section is missing, treat all dimensions as
    Gated (default). This decides which dimensions each task will actually ask for.
+   Also compute **staleness** per Faded dimension: how many logged tasks since it was
+   last graded. A Faded dimension that is **≥5 tasks stale** is re-asked once this phase
+   (the deterministic staleness nudge) — a `MISS` snaps it back to Gated, a `MATCH`
+   resets its staleness.
 
 2. **For each task, in order:**
    - **Setup / Verification task** → implement it directly, no prediction gate.
@@ -378,9 +388,13 @@ mechanism. Because `/own:feature` runs Phase 6 inline, the gate can't be bypasse
         (MATCH/PARTIAL/MISS), name the specific gap, ground it (Context7 for authority,
         Octocode for prevalence — cite *why*, not just *that it's common*). For **Faded**
         dimensions, do a lightweight **spot-check**: state what you did and flag if they'd
-        likely have missed it — but don't grade it unless you re-asked it as a snap-back
-        check on a complex task (a `MISS` there returns that dimension to Gated).
-     5. **OWN** — have them acknowledge the named gap in their own words.
+        likely have missed it. Snap-back to Gated happens on a `MISS` when a faded
+        dimension was re-asked — either by the **deterministic staleness nudge** (step 1b)
+        or because this was a notably complex/high-stakes task.
+     5. **OWN** — have them **explain *why* the actual approach is better and *where their
+        prediction's logic broke***, not just acknowledge the gap (the self-explanation
+        step — see `junior.md` → OWN). Push past a vague "yeah I missed that" to the causal
+        *why*; that reconstruction is the ownership evidence `/own:done` Gate 1 consumes.
 
 3. **Record** each Implementation task's verdicts to the **Prediction Scorecard** in
    `~/ownyourcode/learning/LEARNING_REGISTRY.md`, and add every `MISS` to that file's

@@ -153,9 +153,14 @@ must come **before** the reveal, and why being wrong is productive, not a failur
    use Octocode for prevalence. If you can't justify *why*, say so rather than
    citing frequency as if it were proof.
 
-5. **OWN** — The junior acknowledges the named gap in their own words before moving
-   on. Then record the scores (see Measurement below). This transcript becomes the
-   evidence for `/own:done` Gate 1 (Ownership).
+5. **OWN** — The junior must **explain, in their own words, *why* the actual approach is
+   better and *where their prediction's logic broke*** — not merely acknowledge that a
+   gap exists. Acknowledgement is recognition; reconstruction is ownership. (This is the
+   **self-explanation** step: far transfer comes from reasoning about the error, not from
+   noting it — see research doc §C2 P2.) A vague "yeah I missed that" doesn't close the
+   step; push for the causal *why*, same as the prediction's "be specific" bar. Then record
+   the scores (see Measurement below). This reconstruction is the evidence `/own:done`
+   Gate 1 (Ownership) consumes.
 
 **Measurement (Protocol E — the eval is built in):**
 Append each task's per-dimension verdicts to the **Prediction Scorecard** in
@@ -181,12 +186,22 @@ not per-task. A junior can be fluent on data structure while still weak on edge 
 | 🟢 **Gated** (default) | new dimension, or snapped back | junior MUST predict this dimension |
 | ⚪ **Faded** | **4 consecutive `MATCH`es** on that dimension | junior is NOT asked to predict it; at reveal the AI **spot-checks** it — states what it did and flags if they'd likely have missed something |
 
+> **The "4" is a deliberately conservative v1 number, not a settled one.** The research
+> lists "at what threshold should each dimension fade?" as an *open question* (§C3 Q2).
+> Treat it as a starting dial to tune against real scorecard data, not a constant.
+
 **Counter rules:**
 - Only a `MATCH` advances a dimension's streak. A `PARTIAL` or `MISS` **resets the
   streak to 0** (it does not, by itself, fade anything).
-- **Snap-back:** on a notably complex/high-stakes task, re-ask a *faded* dimension as a
-  check. A `MISS` there snaps it back to 🟢 Gated (streak 0). The junior may also opt to
-  predict a faded dimension anytime.
+- **Snap-back has two triggers — one deterministic, one judgment-based:**
+  - *Deterministic staleness nudge (primary):* a faded dimension that has **gone 5 tasks
+    without being re-checked** is automatically re-asked once (a one-off "prove it's still
+    there"). A `MISS` snaps it back to 🟢 Gated; a `MATCH` re-arms the staleness counter.
+    This makes re-engagement scorecard-driven, not vibes — it is the lightweight form of
+    the research's P3 "spaced re-prediction" (§C3).
+  - *Judgment-based (secondary):* on a notably complex/high-stakes task, re-ask a faded
+    dimension regardless of staleness; a `MISS` snaps it back. The junior may also opt to
+    predict a faded dimension anytime.
 - A task therefore asks for **only the still-Gated dimensions** — this is the natural
   "partial gate." If all four have faded, the task flows like Setup (build + spot-check).
 
