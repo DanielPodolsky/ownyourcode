@@ -2,7 +2,7 @@
 
 # OwnYourCode Base Installation Script
 # AI-Mentored Development for All Developers
-# Version 2.6.0 - Dashboard Elevated
+# Version 2.7.0 - Dashboard Elevated
 #
 # Usage: curl -sSL https://raw.githubusercontent.com/DanielPodolsky/ownyourcode/main/scripts/base-install.sh | bash
 
@@ -28,7 +28,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Header
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║         OwnYourCode Installation v2.6.0               ║${NC}"
+echo -e "${GREEN}║         OwnYourCode Installation v2.7.0               ║${NC}"
 echo -e "${GREEN}║   AI-Mentored Development with Profile Support        ║${NC}"
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════╝${NC}"
 echo ""

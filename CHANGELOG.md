@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.7.0
+
+- Reworked the Junior profile from "hand-type every line" to **predict-before-reveal**: on each implementation task the junior commits a prediction (approach, data structure, control flow, edge cases) *before* the AI writes the code, then the AI grades the prediction against a rubric and names the specific gap — ownership shifts from typing the code to being able to evaluate it
+- The predict-before-reveal loop runs inline as a new `/own:feature` **Phase 6** (Junior profile only) so the gate can't be skipped; only judgment-carrying Implementation tasks gate, while Setup and Verification tasks flow
+- Added a per-dimension **Prediction Scorecard** to the global learning registry that logs MATCH/PARTIAL/MISS over time, turning "is the junior's judgment improving?" into a measurable curve
+- Added **adaptive fading**: the prediction gate relaxes per-dimension as the junior proves the skill (4 consecutive matches retires a dimension to a spot-check), with a deterministic staleness re-check so a faded-but-rusty dimension re-engages on its own — the gym never decays into a rubber-stamp tax
+- The Junior `OWN` step now requires a self-explanation (why the actual approach is better and where the prediction broke), feeding `/own:done` Gate 1 with real ownership evidence
+- Added `docs/research/junior-profile-predict-before-reveal-validation.md` — the redesign validated against learning-science literature and real-world industry practice, with prioritized refinements
+- `/own:guide` is no longer the primary implementation path for juniors; it remains available for ad-hoc help (README and command docs updated to match)
+
 ## 2.6.0
 
 - Added a boot sequence — a terminal window types your live project status (phases, task counts) on load; any key skips it, `prefers-reduced-motion` bypasses it, `#noboot` disables it
